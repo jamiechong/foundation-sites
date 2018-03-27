@@ -33,9 +33,6 @@
 /******/ 	// expose the module cache
 /******/ 	__webpack_require__.c = installedModules;
 /******/
-/******/ 	// identity function for calling harmony imports with the correct context
-/******/ 	__webpack_require__.i = function(value) { return value; };
-/******/
 /******/ 	// define getter function for harmony exports
 /******/ 	__webpack_require__.d = function(exports, name, getter) {
 /******/ 		if(!__webpack_require__.o(exports, name)) {
@@ -63,7 +60,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 97);
+/******/ 	return __webpack_require__(__webpack_require__.s = 74);
 /******/ })
 /************************************************************************/
 /******/ ({
@@ -92,22 +89,14 @@ module.exports = {onImagesLoaded: window.Foundation.onImagesLoaded};
 /***/ 2:
 /***/ (function(module, exports) {
 
-module.exports = {Plugin: window.Foundation.Plugin};
+module.exports = {rtl: window.Foundation.rtl, GetYoDigits: window.Foundation.GetYoDigits, transitionend: window.Foundation.transitionend, RegExpEscape: window.Foundation.RegExpEscape, onLoad: window.Foundation.onLoad};
 
 /***/ }),
 
-/***/ 31:
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ 3:
+/***/ (function(module, exports) {
 
-"use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__foundation_core__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__foundation_core___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__foundation_core__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__foundation_tabs__ = __webpack_require__(61);
-
-
-
-__WEBPACK_IMPORTED_MODULE_0__foundation_core__["Foundation"].plugin(__WEBPACK_IMPORTED_MODULE_1__foundation_tabs__["a" /* Tabs */], 'Tabs');
+module.exports = {Plugin: window.Foundation.Plugin};
 
 /***/ }),
 
@@ -118,19 +107,44 @@ module.exports = {Keyboard: window.Foundation.Keyboard};
 
 /***/ }),
 
-/***/ 61:
+/***/ 74:
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = __webpack_require__(75);
+
+
+/***/ }),
+
+/***/ 75:
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__foundation_core__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__foundation_core___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__foundation_core__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__foundation_tabs__ = __webpack_require__(76);
+
+
+
+__WEBPACK_IMPORTED_MODULE_0__foundation_core__["Foundation"].plugin(__WEBPACK_IMPORTED_MODULE_1__foundation_tabs__["a" /* Tabs */], 'Tabs');
+
+/***/ }),
+
+/***/ 76:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Tabs; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_jquery__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_jquery___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_jquery__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__foundation_util_keyboard__ = __webpack_require__(5);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__foundation_util_keyboard___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__foundation_util_keyboard__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__foundation_util_imageLoader__ = __webpack_require__(10);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__foundation_util_imageLoader___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2__foundation_util_imageLoader__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__foundation_plugin__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__foundation_plugin___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3__foundation_plugin__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__foundation_util_core__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__foundation_util_core___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__foundation_util_core__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__foundation_util_keyboard__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__foundation_util_keyboard___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2__foundation_util_keyboard__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__foundation_util_imageLoader__ = __webpack_require__(10);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__foundation_util_imageLoader___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3__foundation_util_imageLoader__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__foundation_plugin__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__foundation_plugin___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4__foundation_plugin__);
 
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -140,6 +154,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
 
 
 
@@ -178,7 +193,7 @@ var Tabs = function (_Plugin) {
       this.className = 'Tabs'; // ie9 back compat
 
       this._init();
-      __WEBPACK_IMPORTED_MODULE_1__foundation_util_keyboard__["Keyboard"].register('Tabs', {
+      __WEBPACK_IMPORTED_MODULE_2__foundation_util_keyboard__["Keyboard"].register('Tabs', {
         'ENTER': 'open',
         'SPACE': 'open',
         'ARROW_RIGHT': 'next',
@@ -234,7 +249,7 @@ var Tabs = function (_Plugin) {
         }
 
         if (isActive && _this.options.autoFocus) {
-          __WEBPACK_IMPORTED_MODULE_0_jquery___default()(window).load(function () {
+          _this.onLoadListener = Object(__WEBPACK_IMPORTED_MODULE_1__foundation_util_core__["onLoad"])(__WEBPACK_IMPORTED_MODULE_0_jquery___default()(window), function () {
             __WEBPACK_IMPORTED_MODULE_0_jquery___default()('html, body').animate({ scrollTop: $elem.offset().top }, _this.options.deepLinkSmudgeDelay, function () {
               $link.focus();
             });
@@ -245,18 +260,24 @@ var Tabs = function (_Plugin) {
         var $images = this.$tabContent.find('img');
 
         if ($images.length) {
-          __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__foundation_util_imageLoader__["onImagesLoaded"])($images, this._setHeight.bind(this));
+          Object(__WEBPACK_IMPORTED_MODULE_3__foundation_util_imageLoader__["onImagesLoaded"])($images, this._setHeight.bind(this));
         } else {
           this._setHeight();
         }
       }
 
-      //current context-bound function to open tabs on page load or history popstate
-      this._checkDeepLink = function () {
+      //current context-bound function to open tabs on page load or history hashchange
+      this._checkDeepLink = function (useDefaultTabIfNoHash) {
         var anchor = window.location.hash;
+
+        if (!anchor.length && useDefaultTabIfNoHash !== false) {
+          anchor = _this3.$element.find('.' + _this3.options.linkDefaultClass + ' a').attr('href') || '';
+        }
+
         //need a hash and a relevant anchor in this tabset
         if (anchor.length) {
-          var $link = _this3.$element.find('[href$="' + anchor + '"]');
+          var anchorNoHash = anchor.indexOf('#') >= 0 ? anchor.slice(1) : anchor;
+          var $link = _this3.$element.find('[href$="' + anchor + '"],[data-tabs-target="' + anchorNoHash + '"]').first();
           if ($link.length) {
             _this3.selectTab(__WEBPACK_IMPORTED_MODULE_0_jquery___default()(anchor), true);
 
@@ -277,7 +298,7 @@ var Tabs = function (_Plugin) {
 
       //use browser to open a tab, if it exists in this tabset
       if (this.options.deepLink) {
-        this._checkDeepLink();
+        this._checkDeepLink(false); // do not useDefaultTabIfNoHash on init
       }
 
       this._events();
@@ -302,7 +323,7 @@ var Tabs = function (_Plugin) {
       }
 
       if (this.options.deepLink) {
-        __WEBPACK_IMPORTED_MODULE_0_jquery___default()(window).on('popstate', this._checkDeepLink);
+        __WEBPACK_IMPORTED_MODULE_0_jquery___default()(window).on('hashchange', this._checkDeepLink);
       }
     }
 
@@ -355,7 +376,7 @@ var Tabs = function (_Plugin) {
         });
 
         // handle keyboard event with keyboard util
-        __WEBPACK_IMPORTED_MODULE_1__foundation_util_keyboard__["Keyboard"].handleKey(e, 'Tabs', {
+        __WEBPACK_IMPORTED_MODULE_2__foundation_util_keyboard__["Keyboard"].handleKey(e, 'Tabs', {
           open: function () {
             $element.find('[role="tab"]').focus();
             _this._handleTabChange($element);
@@ -471,7 +492,7 @@ var Tabs = function (_Plugin) {
       var $target_anchor = $target.removeClass('' + this.options.linkActiveClass).find('[role="tab"]').attr({
         'aria-selected': 'false',
         'tabindex': -1
-      });
+      }).blur(); // blur to make sure tab loses focus state on deepLink hashchange
 
       __WEBPACK_IMPORTED_MODULE_0_jquery___default()('#' + $target_anchor.attr('aria-controls')).removeClass('' + this.options.panelActiveClass).attr({ 'aria-hidden': 'true' });
     }
@@ -486,7 +507,7 @@ var Tabs = function (_Plugin) {
   }, {
     key: 'selectTab',
     value: function selectTab(elem, historyHandled) {
-      var idStr;
+      var idStr, hashIdStr;
 
       if (typeof elem === 'object') {
         idStr = elem[0].id;
@@ -495,10 +516,13 @@ var Tabs = function (_Plugin) {
       }
 
       if (idStr.indexOf('#') < 0) {
-        idStr = '#' + idStr;
+        hashIdStr = '#' + idStr;
+      } else {
+        hashIdStr = idStr;
+        idStr = idStr.slice(1);
       }
 
-      var $target = this.$tabTitles.find('[href$="' + idStr + '"]').parent('.' + this.options.linkClass);
+      var $target = this.$tabTitles.find('[href$="' + hashIdStr + '"],[data-tabs-target="' + idStr + '"]').first().parent('.' + this.options.linkClass);
 
       this._handleTabChange($target, historyHandled);
     }
@@ -556,13 +580,15 @@ var Tabs = function (_Plugin) {
       }
 
       if (this.options.deepLink) {
-        __WEBPACK_IMPORTED_MODULE_0_jquery___default()(window).off('popstate', this._checkDeepLink);
+        __WEBPACK_IMPORTED_MODULE_0_jquery___default()(window).off('hashchange', this._checkDeepLink);
       }
+
+      __WEBPACK_IMPORTED_MODULE_0_jquery___default()(window).off(this.onLoadListener);
     }
   }]);
 
   return Tabs;
-}(__WEBPACK_IMPORTED_MODULE_3__foundation_plugin__["Plugin"]);
+}(__WEBPACK_IMPORTED_MODULE_4__foundation_plugin__["Plugin"]);
 
 Tabs.defaults = {
   /**
@@ -647,6 +673,15 @@ Tabs.defaults = {
   linkActiveClass: 'is-active',
 
   /**
+   * Class applied to the default `li` in tab link list.
+   * Used for when deepLink is true
+   * @option
+   * @type {string}
+   * @default 'is-default'
+   */
+  linkDefaultClass: 'is-default',
+
+  /**
    * Class applied to the content containers.
    * @option
    * @type {string}
@@ -665,14 +700,7 @@ Tabs.defaults = {
 
 
 
-/***/ }),
-
-/***/ 97:
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports = __webpack_require__(31);
-
-
 /***/ })
 
 /******/ });
+//# sourceMappingURL=foundation.tabs.js.map

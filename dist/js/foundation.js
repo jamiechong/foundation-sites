@@ -33,9 +33,6 @@
 /******/ 	// expose the module cache
 /******/ 	__webpack_require__.c = installedModules;
 /******/
-/******/ 	// identity function for calling harmony imports with the correct context
-/******/ 	__webpack_require__.i = function(value) { return value; };
-/******/
 /******/ 	// define getter function for harmony exports
 /******/ 	__webpack_require__.d = function(exports, name, getter) {
 /******/ 		if(!__webpack_require__.o(exports, name)) {
@@ -63,7 +60,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 36);
+/******/ 	return __webpack_require__(__webpack_require__.s = 19);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -77,9 +74,12 @@ module.exports = jQuery;
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return rtl; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return GetYoDigits; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "c", function() { return transitionend; });
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "rtl", function() { return rtl; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "GetYoDigits", function() { return GetYoDigits; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "RegExpEscape", function() { return RegExpEscape; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "transitionend", function() { return transitionend; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "onLoad", function() { return onLoad; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_jquery__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_jquery___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_jquery__);
 
@@ -108,6 +108,18 @@ function GetYoDigits(length, namespace) {
   return Math.round(Math.pow(36, length + 1) - Math.random() * Math.pow(36, length)).toString(36).slice(1) + (namespace ? '-' + namespace : '');
 }
 
+/**
+ * Escape a string so it can be used as a regexp pattern
+ * @function
+ * @see https://stackoverflow.com/a/9310752/4317384
+ *
+ * @param {String} str - string to escape.
+ * @returns {String} - escaped string
+ */
+function RegExpEscape(str) {
+  return str.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
+}
+
 function transitionend($elem) {
   var transitions = {
     'transition': 'transitionend',
@@ -131,6 +143,34 @@ function transitionend($elem) {
     }, 1);
     return 'transitionend';
   }
+}
+
+/**
+ * Return an event type to listen for window load.
+ *
+ * If `$elem` is passed, an event will be triggered on `$elem`. If window is already loaded, the event will still be triggered.
+ * If `handler` is passed, attach it to the event on `$elem`.
+ * Calling `onLoad` without handler allows you to get the event type that will be triggered before attaching the handler by yourself.
+ * @function
+ *
+ * @param {Object} [] $elem - jQuery element on which the event will be triggered if passed.
+ * @param {Function} [] handler - function to attach to the event.
+ * @returns {String} - event type that should or will be triggered.
+ */
+function onLoad($elem, handler) {
+  var didLoad = document.readyState === 'complete';
+  var eventType = (didLoad ? '_didLoad' : 'load') + '.zf.util.onLoad';
+  var cb = function () {
+    return $elem.triggerHandler(eventType);
+  };
+
+  if ($elem) {
+    if (handler) $elem.one(eventType, handler);
+
+    if (didLoad) setTimeout(cb);else __WEBPACK_IMPORTED_MODULE_0_jquery___default()(window).one('load', cb);
+  }
+
+  return eventType;
 }
 
 
@@ -163,7 +203,7 @@ var Plugin = function () {
 
     this._setup(element, options);
     var pluginName = getPluginName(this);
-    this.uuid = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__foundation_util_core__["b" /* GetYoDigits */])(6, pluginName);
+    this.uuid = Object(__WEBPACK_IMPORTED_MODULE_1__foundation_util_core__["GetYoDigits"])(6, pluginName);
 
     if (!this.$element.attr('data-' + pluginName)) {
       this.$element.attr('data-' + pluginName, this.uuid);
@@ -218,187 +258,6 @@ function getPluginName(obj) {
 
 /***/ }),
 /* 3 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Keyboard; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_jquery__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_jquery___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_jquery__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__foundation_util_core__ = __webpack_require__(1);
-/*******************************************
- *                                         *
- * This util was created by Marius Olbertz *
- * Please thank Marius on GitHub /owlbertz *
- * or the web http://www.mariusolbertz.de/ *
- *                                         *
- ******************************************/
-
-
-
-
-
-
-var keyCodes = {
-  9: 'TAB',
-  13: 'ENTER',
-  27: 'ESCAPE',
-  32: 'SPACE',
-  35: 'END',
-  36: 'HOME',
-  37: 'ARROW_LEFT',
-  38: 'ARROW_UP',
-  39: 'ARROW_RIGHT',
-  40: 'ARROW_DOWN'
-};
-
-var commands = {};
-
-// Functions pulled out to be referenceable from internals
-function findFocusable($element) {
-  if (!$element) {
-    return false;
-  }
-  return $element.find('a[href], area[href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), button:not([disabled]), iframe, object, embed, *[tabindex], *[contenteditable]').filter(function () {
-    if (!__WEBPACK_IMPORTED_MODULE_0_jquery___default()(this).is(':visible') || __WEBPACK_IMPORTED_MODULE_0_jquery___default()(this).attr('tabindex') < 0) {
-      return false;
-    } //only have visible elements and those that have a tabindex greater or equal 0
-    return true;
-  });
-}
-
-function parseKey(event) {
-  var key = keyCodes[event.which || event.keyCode] || String.fromCharCode(event.which).toUpperCase();
-
-  // Remove un-printable characters, e.g. for `fromCharCode` calls for CTRL only events
-  key = key.replace(/\W+/, '');
-
-  if (event.shiftKey) key = 'SHIFT_' + key;
-  if (event.ctrlKey) key = 'CTRL_' + key;
-  if (event.altKey) key = 'ALT_' + key;
-
-  // Remove trailing underscore, in case only modifiers were used (e.g. only `CTRL_ALT`)
-  key = key.replace(/_$/, '');
-
-  return key;
-}
-
-var Keyboard = {
-  keys: getKeyCodes(keyCodes),
-
-  /**
-   * Parses the (keyboard) event and returns a String that represents its key
-   * Can be used like Foundation.parseKey(event) === Foundation.keys.SPACE
-   * @param {Event} event - the event generated by the event handler
-   * @return String key - String that represents the key pressed
-   */
-  parseKey: parseKey,
-
-  /**
-   * Handles the given (keyboard) event
-   * @param {Event} event - the event generated by the event handler
-   * @param {String} component - Foundation component's name, e.g. Slider or Reveal
-   * @param {Objects} functions - collection of functions that are to be executed
-   */
-  handleKey: function (event, component, functions) {
-    var commandList = commands[component],
-        keyCode = this.parseKey(event),
-        cmds,
-        command,
-        fn;
-
-    if (!commandList) return console.warn('Component not defined!');
-
-    if (typeof commandList.ltr === 'undefined') {
-      // this component does not differentiate between ltr and rtl
-      cmds = commandList; // use plain list
-    } else {
-      // merge ltr and rtl: if document is rtl, rtl overwrites ltr and vice versa
-      if (__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__foundation_util_core__["a" /* rtl */])()) cmds = __WEBPACK_IMPORTED_MODULE_0_jquery___default.a.extend({}, commandList.ltr, commandList.rtl);else cmds = __WEBPACK_IMPORTED_MODULE_0_jquery___default.a.extend({}, commandList.rtl, commandList.ltr);
-    }
-    command = cmds[keyCode];
-
-    fn = functions[command];
-    if (fn && typeof fn === 'function') {
-      // execute function  if exists
-      var returnValue = fn.apply();
-      if (functions.handled || typeof functions.handled === 'function') {
-        // execute function when event was handled
-        functions.handled(returnValue);
-      }
-    } else {
-      if (functions.unhandled || typeof functions.unhandled === 'function') {
-        // execute function when event was not handled
-        functions.unhandled();
-      }
-    }
-  },
-
-
-  /**
-   * Finds all focusable elements within the given `$element`
-   * @param {jQuery} $element - jQuery object to search within
-   * @return {jQuery} $focusable - all focusable elements within `$element`
-   */
-
-  findFocusable: findFocusable,
-
-  /**
-   * Returns the component name name
-   * @param {Object} component - Foundation component, e.g. Slider or Reveal
-   * @return String componentName
-   */
-
-  register: function (componentName, cmds) {
-    commands[componentName] = cmds;
-  },
-
-
-  // TODO9438: These references to Keyboard need to not require global. Will 'this' work in this context?
-  //
-  /**
-   * Traps the focus in the given element.
-   * @param  {jQuery} $element  jQuery object to trap the foucs into.
-   */
-  trapFocus: function ($element) {
-    var $focusable = findFocusable($element),
-        $firstFocusable = $focusable.eq(0),
-        $lastFocusable = $focusable.eq(-1);
-
-    $element.on('keydown.zf.trapfocus', function (event) {
-      if (event.target === $lastFocusable[0] && parseKey(event) === 'TAB') {
-        event.preventDefault();
-        $firstFocusable.focus();
-      } else if (event.target === $firstFocusable[0] && parseKey(event) === 'SHIFT_TAB') {
-        event.preventDefault();
-        $lastFocusable.focus();
-      }
-    });
-  },
-
-  /**
-   * Releases the trapped focus from the given element.
-   * @param  {jQuery} $element  jQuery object to release the focus for.
-   */
-  releaseFocus: function ($element) {
-    $element.off('keydown.zf.trapfocus');
-  }
-};
-
-/*
- * Constants for easier comparing.
- * Can be used like Foundation.parseKey(event) === Foundation.keys.SPACE
- */
-function getKeyCodes(kcs) {
-  var k = {};
-  for (var kc in kcs) {
-    k[kcs[kc]] = kcs[kc];
-  }return k;
-}
-
-
-
-/***/ }),
-/* 4 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -642,6 +501,187 @@ function parseStyleToObject(str) {
 
 
 /***/ }),
+/* 4 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Keyboard; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_jquery__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_jquery___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_jquery__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__foundation_util_core__ = __webpack_require__(1);
+/*******************************************
+ *                                         *
+ * This util was created by Marius Olbertz *
+ * Please thank Marius on GitHub /owlbertz *
+ * or the web http://www.mariusolbertz.de/ *
+ *                                         *
+ ******************************************/
+
+
+
+
+
+
+var keyCodes = {
+  9: 'TAB',
+  13: 'ENTER',
+  27: 'ESCAPE',
+  32: 'SPACE',
+  35: 'END',
+  36: 'HOME',
+  37: 'ARROW_LEFT',
+  38: 'ARROW_UP',
+  39: 'ARROW_RIGHT',
+  40: 'ARROW_DOWN'
+};
+
+var commands = {};
+
+// Functions pulled out to be referenceable from internals
+function findFocusable($element) {
+  if (!$element) {
+    return false;
+  }
+  return $element.find('a[href], area[href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), button:not([disabled]), iframe, object, embed, *[tabindex], *[contenteditable]').filter(function () {
+    if (!__WEBPACK_IMPORTED_MODULE_0_jquery___default()(this).is(':visible') || __WEBPACK_IMPORTED_MODULE_0_jquery___default()(this).attr('tabindex') < 0) {
+      return false;
+    } //only have visible elements and those that have a tabindex greater or equal 0
+    return true;
+  });
+}
+
+function parseKey(event) {
+  var key = keyCodes[event.which || event.keyCode] || String.fromCharCode(event.which).toUpperCase();
+
+  // Remove un-printable characters, e.g. for `fromCharCode` calls for CTRL only events
+  key = key.replace(/\W+/, '');
+
+  if (event.shiftKey) key = 'SHIFT_' + key;
+  if (event.ctrlKey) key = 'CTRL_' + key;
+  if (event.altKey) key = 'ALT_' + key;
+
+  // Remove trailing underscore, in case only modifiers were used (e.g. only `CTRL_ALT`)
+  key = key.replace(/_$/, '');
+
+  return key;
+}
+
+var Keyboard = {
+  keys: getKeyCodes(keyCodes),
+
+  /**
+   * Parses the (keyboard) event and returns a String that represents its key
+   * Can be used like Foundation.parseKey(event) === Foundation.keys.SPACE
+   * @param {Event} event - the event generated by the event handler
+   * @return String key - String that represents the key pressed
+   */
+  parseKey: parseKey,
+
+  /**
+   * Handles the given (keyboard) event
+   * @param {Event} event - the event generated by the event handler
+   * @param {String} component - Foundation component's name, e.g. Slider or Reveal
+   * @param {Objects} functions - collection of functions that are to be executed
+   */
+  handleKey: function (event, component, functions) {
+    var commandList = commands[component],
+        keyCode = this.parseKey(event),
+        cmds,
+        command,
+        fn;
+
+    if (!commandList) return console.warn('Component not defined!');
+
+    if (typeof commandList.ltr === 'undefined') {
+      // this component does not differentiate between ltr and rtl
+      cmds = commandList; // use plain list
+    } else {
+      // merge ltr and rtl: if document is rtl, rtl overwrites ltr and vice versa
+      if (Object(__WEBPACK_IMPORTED_MODULE_1__foundation_util_core__["rtl"])()) cmds = __WEBPACK_IMPORTED_MODULE_0_jquery___default.a.extend({}, commandList.ltr, commandList.rtl);else cmds = __WEBPACK_IMPORTED_MODULE_0_jquery___default.a.extend({}, commandList.rtl, commandList.ltr);
+    }
+    command = cmds[keyCode];
+
+    fn = functions[command];
+    if (fn && typeof fn === 'function') {
+      // execute function  if exists
+      var returnValue = fn.apply();
+      if (functions.handled || typeof functions.handled === 'function') {
+        // execute function when event was handled
+        functions.handled(returnValue);
+      }
+    } else {
+      if (functions.unhandled || typeof functions.unhandled === 'function') {
+        // execute function when event was not handled
+        functions.unhandled();
+      }
+    }
+  },
+
+
+  /**
+   * Finds all focusable elements within the given `$element`
+   * @param {jQuery} $element - jQuery object to search within
+   * @return {jQuery} $focusable - all focusable elements within `$element`
+   */
+
+  findFocusable: findFocusable,
+
+  /**
+   * Returns the component name name
+   * @param {Object} component - Foundation component, e.g. Slider or Reveal
+   * @return String componentName
+   */
+
+  register: function (componentName, cmds) {
+    commands[componentName] = cmds;
+  },
+
+
+  // TODO9438: These references to Keyboard need to not require global. Will 'this' work in this context?
+  //
+  /**
+   * Traps the focus in the given element.
+   * @param  {jQuery} $element  jQuery object to trap the foucs into.
+   */
+  trapFocus: function ($element) {
+    var $focusable = findFocusable($element),
+        $firstFocusable = $focusable.eq(0),
+        $lastFocusable = $focusable.eq(-1);
+
+    $element.on('keydown.zf.trapfocus', function (event) {
+      if (event.target === $lastFocusable[0] && parseKey(event) === 'TAB') {
+        event.preventDefault();
+        $firstFocusable.focus();
+      } else if (event.target === $firstFocusable[0] && parseKey(event) === 'SHIFT_TAB') {
+        event.preventDefault();
+        $lastFocusable.focus();
+      }
+    });
+  },
+
+  /**
+   * Releases the trapped focus from the given element.
+   * @param  {jQuery} $element  jQuery object to release the focus for.
+   */
+  releaseFocus: function ($element) {
+    $element.off('keydown.zf.trapfocus');
+  }
+};
+
+/*
+ * Constants for easier comparing.
+ * Can be used like Foundation.parseKey(event) === Foundation.keys.SPACE
+ */
+function getKeyCodes(kcs) {
+  var k = {};
+  for (var kc in kcs) {
+    k[kcs[kc]] = kcs[kc];
+  }return k;
+}
+
+
+
+/***/ }),
 /* 5 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -649,7 +689,9 @@ function parseStyleToObject(str) {
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Triggers; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_jquery__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_jquery___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_jquery__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__foundation_util_motion__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__foundation_util_core__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__foundation_util_motion__ = __webpack_require__(6);
+
 
 
 
@@ -704,7 +746,7 @@ Triggers.Listeners.Basic = {
     var animation = __WEBPACK_IMPORTED_MODULE_0_jquery___default()(this).data('closable');
 
     if (animation !== '') {
-      __WEBPACK_IMPORTED_MODULE_1__foundation_util_motion__["a" /* Motion */].animateOut(__WEBPACK_IMPORTED_MODULE_0_jquery___default()(this), animation, function () {
+      __WEBPACK_IMPORTED_MODULE_2__foundation_util_motion__["a" /* Motion */].animateOut(__WEBPACK_IMPORTED_MODULE_0_jquery___default()(this), animation, function () {
         __WEBPACK_IMPORTED_MODULE_0_jquery___default()(this).trigger('closed.zf');
       });
     } else {
@@ -897,15 +939,10 @@ Triggers.init = function ($, Foundation) {
   if (typeof $.triggersInitialized === 'undefined') {
     var $document = $(document);
 
-    if (document.readyState === "complete") {
+    Object(__WEBPACK_IMPORTED_MODULE_1__foundation_util_core__["onLoad"])($(window), function () {
       Triggers.Initializers.addSimpleListeners();
       Triggers.Initializers.addGlobalListeners();
-    } else {
-      $(window).on('load', function () {
-        Triggers.Initializers.addSimpleListeners();
-        Triggers.Initializers.addGlobalListeners();
-      });
-    }
+    });
 
     $.triggersInitialized = true;
   }
@@ -1014,7 +1051,7 @@ function animate(isIn, element, animation, cb) {
   });
 
   // Clean up the animation when it finishes
-  element.one(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__foundation_util_core__["c" /* transitionend */])(element), finish);
+  element.one(Object(__WEBPACK_IMPORTED_MODULE_1__foundation_util_core__["transitionend"])(element), finish);
 
   // Hides the element (for out animations), resets the element, and runs a callback
   function finish() {
@@ -1164,9 +1201,9 @@ function GetOffsets(element, anchor, position, vOffset, hOffset, isOverflow) {
   console.log("NOTE: GetOffsets is deprecated in favor of GetExplicitOffsets and will be removed in 6.5");
   switch (position) {
     case 'top':
-      return __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__foundation_util_core__["a" /* rtl */])() ? GetExplicitOffsets(element, anchor, 'top', 'left', vOffset, hOffset, isOverflow) : GetExplicitOffsets(element, anchor, 'top', 'right', vOffset, hOffset, isOverflow);
+      return Object(__WEBPACK_IMPORTED_MODULE_0__foundation_util_core__["rtl"])() ? GetExplicitOffsets(element, anchor, 'top', 'left', vOffset, hOffset, isOverflow) : GetExplicitOffsets(element, anchor, 'top', 'right', vOffset, hOffset, isOverflow);
     case 'bottom':
-      return __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__foundation_util_core__["a" /* rtl */])() ? GetExplicitOffsets(element, anchor, 'bottom', 'left', vOffset, hOffset, isOverflow) : GetExplicitOffsets(element, anchor, 'bottom', 'right', vOffset, hOffset, isOverflow);
+      return Object(__WEBPACK_IMPORTED_MODULE_0__foundation_util_core__["rtl"])() ? GetExplicitOffsets(element, anchor, 'bottom', 'left', vOffset, hOffset, isOverflow) : GetExplicitOffsets(element, anchor, 'bottom', 'right', vOffset, hOffset, isOverflow);
     case 'center top':
       return GetExplicitOffsets(element, anchor, 'top', 'center', vOffset, hOffset, isOverflow);
     case 'center bottom':
@@ -1199,7 +1236,7 @@ function GetOffsets(element, anchor, position, vOffset, hOffset, isOverflow) {
       break;
     default:
       return {
-        left: __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__foundation_util_core__["a" /* rtl */])() ? $anchorDims.offset.left - $eleDims.width + $anchorDims.width - hOffset : $anchorDims.offset.left + hOffset,
+        left: Object(__WEBPACK_IMPORTED_MODULE_0__foundation_util_core__["rtl"])() ? $anchorDims.offset.left - $eleDims.width + $anchorDims.width - hOffset : $anchorDims.offset.left + hOffset,
         top: $anchorDims.offset.top + $anchorDims.height + vOffset
       };
 
@@ -1383,7 +1420,7 @@ var Nest = {
         subItemClass = subMenuClass + '-item',
         hasSubClass = 'is-' + type + '-submenu-parent';
 
-    menu.find('>li, .menu, .menu > li').removeClass(subMenuClass + ' ' + subItemClass + ' ' + hasSubClass + ' is-submenu-item submenu is-active').removeAttr('data-submenu').css('display', '');
+    menu.find('>li, > li > ul, .menu, .menu > li').removeClass(subMenuClass + ' ' + subItemClass + ' ' + hasSubClass + ' is-submenu-item submenu is-active').removeAttr('data-submenu').css('display', '');
   }
 };
 
@@ -1514,7 +1551,7 @@ Touch.setupSpotSwipe = function ($) {
 Touch.setupTouchHandler = function ($) {
   $.fn.addTouch = function () {
     this.each(function (i, el) {
-      $(el).bind('touchstart touchmove touchend touchcancel', function () {
+      $(el).bind('touchstart touchmove touchend touchcancel', function (event) {
         //we pass the original event object because the jQuery event
         //object is normalized to w3c specs and does not provide the TouchList
         handleTouch(event);
@@ -1564,11 +1601,71 @@ Touch.init = function ($) {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Timer; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_jquery__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_jquery___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_jquery__);
+
+
+
+
+function Timer(elem, options, cb) {
+  var _this = this,
+      duration = options.duration,
+      //options is an object for easily adding features later.
+  nameSpace = Object.keys(elem.data())[0] || 'timer',
+      remain = -1,
+      start,
+      timer;
+
+  this.isPaused = false;
+
+  this.restart = function () {
+    remain = -1;
+    clearTimeout(timer);
+    this.start();
+  };
+
+  this.start = function () {
+    this.isPaused = false;
+    // if(!elem.data('paused')){ return false; }//maybe implement this sanity check if used for other things.
+    clearTimeout(timer);
+    remain = remain <= 0 ? duration : remain;
+    elem.data('paused', false);
+    start = Date.now();
+    timer = setTimeout(function () {
+      if (options.infinite) {
+        _this.restart(); //rerun the timer.
+      }
+      if (cb && typeof cb === 'function') {
+        cb();
+      }
+    }, remain);
+    elem.trigger('timerstart.zf.' + nameSpace);
+  };
+
+  this.pause = function () {
+    this.isPaused = true;
+    //if(elem.data('paused')){ return false; }//maybe implement this sanity check if used for other things.
+    clearTimeout(timer);
+    elem.data('paused', true);
+    var end = Date.now();
+    remain = remain - (end - start);
+    elem.trigger('timerpaused.zf.' + nameSpace);
+  };
+}
+
+
+
+/***/ }),
+/* 12 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Accordion; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_jquery__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_jquery___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_jquery__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__foundation_util_keyboard__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__foundation_util_core__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__foundation_util_core__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__foundation_util_keyboard__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__foundation_plugin__ = __webpack_require__(2);
 
 
@@ -1618,7 +1715,7 @@ var Accordion = function (_Plugin) {
       this.className = 'Accordion'; // ie9 back compat
       this._init();
 
-      __WEBPACK_IMPORTED_MODULE_1__foundation_util_keyboard__["a" /* Keyboard */].register('Accordion', {
+      __WEBPACK_IMPORTED_MODULE_2__foundation_util_keyboard__["a" /* Keyboard */].register('Accordion', {
         'ENTER': 'toggle',
         'SPACE': 'toggle',
         'ARROW_DOWN': 'next',
@@ -1642,8 +1739,8 @@ var Accordion = function (_Plugin) {
       this.$tabs.each(function (idx, el) {
         var $el = __WEBPACK_IMPORTED_MODULE_0_jquery___default()(el),
             $content = $el.children('[data-tab-content]'),
-            id = $content[0].id || __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__foundation_util_core__["b" /* GetYoDigits */])(6, 'accordion'),
-            linkId = el.id || id + '-label';
+            id = $content[0].id || Object(__WEBPACK_IMPORTED_MODULE_1__foundation_util_core__["GetYoDigits"])(6, 'accordion'),
+            linkId = el.id ? el.id + '-label' : id + '-label';
 
         $el.find('a:first').attr({
           'aria-controls': id,
@@ -1678,7 +1775,7 @@ var Accordion = function (_Plugin) {
             //roll up a little to show the titles
             if (_this3.options.deepLinkSmudge) {
               var _this = _this3;
-              __WEBPACK_IMPORTED_MODULE_0_jquery___default()(window).load(function () {
+              Object(__WEBPACK_IMPORTED_MODULE_1__foundation_util_core__["onLoad"])(__WEBPACK_IMPORTED_MODULE_0_jquery___default()(window), function () {
                 var offset = _this.$element.offset();
                 __WEBPACK_IMPORTED_MODULE_0_jquery___default()('html, body').animate({ scrollTop: offset.top }, _this.options.deepLinkSmudgeDelay);
               });
@@ -1719,7 +1816,7 @@ var Accordion = function (_Plugin) {
             e.preventDefault();
             _this.toggle($tabContent);
           }).on('keydown.zf.accordion', function (e) {
-            __WEBPACK_IMPORTED_MODULE_1__foundation_util_keyboard__["a" /* Keyboard */].handleKey(e, 'Accordion', {
+            __WEBPACK_IMPORTED_MODULE_2__foundation_util_keyboard__["a" /* Keyboard */].handleKey(e, 'Accordion', {
               toggle: function () {
                 _this.toggle($tabContent);
               },
@@ -1744,7 +1841,7 @@ var Accordion = function (_Plugin) {
         }
       });
       if (this.options.deepLink) {
-        __WEBPACK_IMPORTED_MODULE_0_jquery___default()(window).on('popstate', this._checkDeepLink);
+        __WEBPACK_IMPORTED_MODULE_0_jquery___default()(window).on('hashchange', this._checkDeepLink);
       }
     }
 
@@ -1872,7 +1969,7 @@ var Accordion = function (_Plugin) {
       this.$element.find('[data-tab-content]').stop(true).slideUp(0).css('display', '');
       this.$element.find('a').off('.zf.accordion');
       if (this.options.deepLink) {
-        __WEBPACK_IMPORTED_MODULE_0_jquery___default()(window).off('popstate', this._checkDeepLink);
+        __WEBPACK_IMPORTED_MODULE_0_jquery___default()(window).off('hashchange', this._checkDeepLink);
       }
     }
   }]);
@@ -1938,14 +2035,14 @@ Accordion.defaults = {
 
 
 /***/ }),
-/* 12 */
+/* 13 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return AccordionMenu; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_jquery__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_jquery___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_jquery__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__foundation_util_keyboard__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__foundation_util_keyboard__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__foundation_util_nest__ = __webpack_require__(9);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__foundation_util_core__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__foundation_plugin__ = __webpack_require__(2);
@@ -2030,11 +2127,16 @@ var AccordionMenu = function (_Plugin) {
 
       this.$menuLinks = this.$element.find('.is-accordion-submenu-parent');
       this.$menuLinks.each(function () {
-        var linkId = this.id || __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__foundation_util_core__["b" /* GetYoDigits */])(6, 'acc-menu-link'),
+        var linkId = this.id || Object(__WEBPACK_IMPORTED_MODULE_3__foundation_util_core__["GetYoDigits"])(6, 'acc-menu-link'),
             $elem = __WEBPACK_IMPORTED_MODULE_0_jquery___default()(this),
             $sub = $elem.children('[data-submenu]'),
-            subId = $sub[0].id || __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__foundation_util_core__["b" /* GetYoDigits */])(6, 'acc-menu'),
+            subId = $sub[0].id || Object(__WEBPACK_IMPORTED_MODULE_3__foundation_util_core__["GetYoDigits"])(6, 'acc-menu'),
             isActive = $sub.hasClass('is-active');
+
+        if (_this.options.parentLink) {
+          var $anchor = $elem.children('a');
+          $anchor.clone().prependTo($sub).wrap('<li data-is-parent-link class="is-submenu-parent-item is-submenu-item is-accordion-submenu-item"></li>');
+        }
 
         if (_this.options.submenuToggle) {
           $elem.addClass('has-submenu-toggle');
@@ -2279,6 +2381,7 @@ var AccordionMenu = function (_Plugin) {
     value: function _destroy() {
       this.$element.find('[data-submenu]').slideDown(0).css('display', '');
       this.$element.find('a').off('click.zf.accordionMenu');
+      this.$element.find('[data-is-parent-link]').detach();
 
       if (this.options.submenuToggle) {
         this.$element.find('.has-submenu-toggle').removeClass('has-submenu-toggle');
@@ -2293,6 +2396,13 @@ var AccordionMenu = function (_Plugin) {
 }(__WEBPACK_IMPORTED_MODULE_4__foundation_plugin__["a" /* Plugin */]);
 
 AccordionMenu.defaults = {
+  /**
+   * Adds the parent link to the submenu.
+   * @option
+   * @type {boolean}
+   * @default false
+   */
+  parentLink: false,
   /**
    * Amount of time to animate the opening of a submenu in ms.
    * @option
@@ -2324,14 +2434,14 @@ AccordionMenu.defaults = {
 
 
 /***/ }),
-/* 13 */
+/* 14 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Drilldown; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_jquery__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_jquery___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_jquery__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__foundation_util_keyboard__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__foundation_util_keyboard__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__foundation_util_nest__ = __webpack_require__(9);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__foundation_util_core__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__foundation_util_box__ = __webpack_require__(7);
@@ -2421,7 +2531,7 @@ var Drilldown = function (_Plugin) {
       this.$submenuAnchors = this.$element.find('li.is-drilldown-submenu-parent').children('a');
       this.$submenus = this.$submenuAnchors.parent('li').children('[data-submenu]').attr('role', 'group');
       this.$menuItems = this.$element.find('li').not('.js-drilldown-back').attr('role', 'treeitem').find('a');
-      this.$element.attr('data-mutate', this.$element.attr('data-drilldown') || __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__foundation_util_core__["b" /* GetYoDigits */])(6, 'drilldown'));
+      this.$element.attr('data-mutate', this.$element.attr('data-drilldown') || Object(__WEBPACK_IMPORTED_MODULE_3__foundation_util_core__["GetYoDigits"])(6, 'drilldown'));
 
       this._prepareMenu();
       this._registerEvents();
@@ -2448,7 +2558,7 @@ var Drilldown = function (_Plugin) {
         var $link = __WEBPACK_IMPORTED_MODULE_0_jquery___default()(this);
         var $sub = $link.parent();
         if (_this.options.parentLink) {
-          $link.clone().prependTo($sub.children('[data-submenu]')).wrap('<li class="is-submenu-parent-item is-submenu-item is-drilldown-submenu-item" role="menuitem"></li>');
+          $link.clone().prependTo($sub.children('[data-submenu]')).wrap('<li data-is-parent-link class="is-submenu-parent-item is-submenu-item is-drilldown-submenu-item" role="menuitem"></li>');
         }
         $link.data('savedHref', $link.attr('href')).removeAttr('href').attr('tabindex', 0);
         $link.children('[data-submenu]').attr({
@@ -2601,15 +2711,15 @@ var Drilldown = function (_Plugin) {
           next: function () {
             if ($element.is(_this.$submenuAnchors)) {
               _this._show($element.parent('li'));
-              $element.parent('li').one(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__foundation_util_core__["c" /* transitionend */])($element), function () {
-                $element.parent('li').find('ul li a').filter(_this.$menuItems).first().focus();
+              $element.parent('li').one(Object(__WEBPACK_IMPORTED_MODULE_3__foundation_util_core__["transitionend"])($element), function () {
+                $element.parent('li').find('ul li a').not('.js-drilldown-back a').first().focus();
               });
               return true;
             }
           },
           previous: function () {
             _this._hide($element.parent('li').parent('ul'));
-            $element.parent('li').parent('ul').one(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__foundation_util_core__["c" /* transitionend */])($element), function () {
+            $element.parent('li').parent('ul').one(Object(__WEBPACK_IMPORTED_MODULE_3__foundation_util_core__["transitionend"])($element), function () {
               setTimeout(function () {
                 $element.parent('li').parent('ul').parent('li').children('a').first().focus();
               }, 1);
@@ -2634,19 +2744,23 @@ var Drilldown = function (_Plugin) {
             }
           },
           open: function () {
-            if (!$element.is(_this.$menuItems)) {
+            if (_this.options.parentLink && $element.attr('href')) {
+              // Link with href
+              return false;
+            } else if (!$element.is(_this.$menuItems)) {
               // not menu item means back button
               _this._hide($element.parent('li').parent('ul'));
-              $element.parent('li').parent('ul').one(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__foundation_util_core__["c" /* transitionend */])($element), function () {
+              $element.parent('li').parent('ul').one(Object(__WEBPACK_IMPORTED_MODULE_3__foundation_util_core__["transitionend"])($element), function () {
                 setTimeout(function () {
                   $element.parent('li').parent('ul').parent('li').children('a').first().focus();
                 }, 1);
               });
               return true;
             } else if ($element.is(_this.$submenuAnchors)) {
+              // Sub menu item
               _this._show($element.parent('li'));
-              $element.parent('li').one(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__foundation_util_core__["c" /* transitionend */])($element), function () {
-                $element.parent('li').find('ul li a').filter(_this.$menuItems).first().focus();
+              $element.parent('li').one(Object(__WEBPACK_IMPORTED_MODULE_3__foundation_util_core__["transitionend"])($element), function () {
+                $element.parent('li').find('ul li a').not('.js-drilldown-back a').first().focus();
               });
               return true;
             }
@@ -2672,7 +2786,7 @@ var Drilldown = function (_Plugin) {
     value: function _hideAll() {
       var $elem = this.$element.find('.is-drilldown-submenu.is-active').addClass('is-closing');
       if (this.options.autoHeight) this.$wrapper.css({ height: $elem.parent().closest('ul').data('calcHeight') });
-      $elem.one(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__foundation_util_core__["c" /* transitionend */])($elem), function (e) {
+      $elem.one(Object(__WEBPACK_IMPORTED_MODULE_3__foundation_util_core__["transitionend"])($elem), function (e) {
         $elem.removeClass('is-active is-closing');
       });
       /**
@@ -2726,6 +2840,97 @@ var Drilldown = function (_Plugin) {
     }
 
     /**
+     * Sets the CSS classes for submenu to show it.
+     * @function
+     * @private
+     * @param {jQuery} $elem - the target submenu (`ul` tag)
+     * @param {boolean} trigger - trigger drilldown event
+     */
+
+  }, {
+    key: '_setShowSubMenuClasses',
+    value: function _setShowSubMenuClasses($elem, trigger) {
+      $elem.addClass('is-active').removeClass('invisible').attr('aria-hidden', false);
+      $elem.parent('li').attr('aria-expanded', true);
+      if (trigger === true) {
+        this.$element.trigger('open.zf.drilldown', [$elem]);
+      }
+    }
+
+    /**
+     * Sets the CSS classes for submenu to hide it.
+     * @function
+     * @private
+     * @param {jQuery} $elem - the target submenu (`ul` tag)
+     * @param {boolean} trigger - trigger drilldown event
+     */
+
+  }, {
+    key: '_setHideSubMenuClasses',
+    value: function _setHideSubMenuClasses($elem, trigger) {
+      $elem.removeClass('is-active').addClass('invisible').attr('aria-hidden', true);
+      $elem.parent('li').attr('aria-expanded', false);
+      if (trigger === true) {
+        $elem.trigger('hide.zf.drilldown', [$elem]);
+      }
+    }
+
+    /**
+     * Opens a specific drilldown (sub)menu no matter which (sub)menu in it is currently visible.
+     * Compared to _show() this lets you jump into any submenu without clicking through every submenu on the way to it.
+     * @function
+     * @fires Drilldown#open
+     * @param {jQuery} $elem - the target (sub)menu (`ul` tag)
+     * @param {boolean} autoFocus - if true the first link in the target (sub)menu gets auto focused
+     */
+
+  }, {
+    key: '_showMenu',
+    value: function _showMenu($elem, autoFocus) {
+
+      var _this = this;
+
+      // Reset drilldown
+      var $expandedSubmenus = this.$element.find('li[aria-expanded="true"] > ul[data-submenu]');
+      $expandedSubmenus.each(function (index) {
+        _this._setHideSubMenuClasses(__WEBPACK_IMPORTED_MODULE_0_jquery___default()(this));
+      });
+
+      // If target menu is root, focus first link & exit
+      if ($elem.is('[data-drilldown]')) {
+        if (autoFocus === true) $elem.find('li[role="treeitem"] > a').first().focus();
+        if (this.options.autoHeight) this.$wrapper.css('height', $elem.data('calcHeight'));
+        return;
+      }
+
+      // Find all submenus on way to root incl. the element itself
+      var $submenus = $elem.children().first().parentsUntil('[data-drilldown]', '[data-submenu]');
+
+      // Open target menu and all submenus on its way to root
+      $submenus.each(function (index) {
+
+        // Update height of first child (target menu) if autoHeight option true
+        if (index === 0 && _this.options.autoHeight) {
+          _this.$wrapper.css('height', __WEBPACK_IMPORTED_MODULE_0_jquery___default()(this).data('calcHeight'));
+        }
+
+        var isLastChild = index == $submenus.length - 1;
+
+        // Add transitionsend listener to last child (root due to reverse order) to open target menu's first link
+        // Last child makes sure the event gets always triggered even if going through several menus
+        if (isLastChild === true) {
+          __WEBPACK_IMPORTED_MODULE_0_jquery___default()(this).one(Object(__WEBPACK_IMPORTED_MODULE_3__foundation_util_core__["transitionend"])(__WEBPACK_IMPORTED_MODULE_0_jquery___default()(this)), function () {
+            if (autoFocus === true) {
+              $elem.find('li[role="treeitem"] > a').first().focus();
+            }
+          });
+        }
+
+        _this._setShowSubMenuClasses(__WEBPACK_IMPORTED_MODULE_0_jquery___default()(this), isLastChild);
+      });
+    }
+
+    /**
      * Opens a submenu.
      * @function
      * @fires Drilldown#open
@@ -2744,9 +2949,6 @@ var Drilldown = function (_Plugin) {
        */
       this.$element.trigger('open.zf.drilldown', [$elem]);
     }
-  }, {
-    key: '_hide',
-
 
     /**
      * Hides a submenu
@@ -2754,12 +2956,15 @@ var Drilldown = function (_Plugin) {
      * @fires Drilldown#hide
      * @param {jQuery} $elem - the current sub-menu to hide, i.e. the `ul` tag.
      */
+
+  }, {
+    key: '_hide',
     value: function _hide($elem) {
       if (this.options.autoHeight) this.$wrapper.css({ height: $elem.parent().closest('ul').data('calcHeight') });
       var _this = this;
       $elem.parent('li').attr('aria-expanded', false);
-      $elem.attr('aria-hidden', true).addClass('is-closing');
-      $elem.addClass('is-closing').one(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__foundation_util_core__["c" /* transitionend */])($elem), function () {
+      $elem.attr('aria-hidden', true);
+      $elem.addClass('is-closing').one(Object(__WEBPACK_IMPORTED_MODULE_3__foundation_util_core__["transitionend"])($elem), function () {
         $elem.removeClass('is-active is-closing');
         $elem.blur().addClass('invisible');
       });
@@ -2817,6 +3022,7 @@ var Drilldown = function (_Plugin) {
         __WEBPACK_IMPORTED_MODULE_0_jquery___default()(this).off('.zf.drilldown');
       });
 
+      this.$element.find('[data-is-parent-link]').detach();
       this.$submenus.removeClass('drilldown-submenu-cover-previous invisible');
 
       this.$element.find('a').each(function () {
@@ -2934,14 +3140,273 @@ Drilldown.defaults = {
 
 
 /***/ }),
-/* 14 */
+/* 15 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Positionable; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__foundation_util_box__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__foundation_plugin__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__foundation_util_core__ = __webpack_require__(1);
+
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+
+
+
+
+var POSITIONS = ['left', 'right', 'top', 'bottom'];
+var VERTICAL_ALIGNMENTS = ['top', 'bottom', 'center'];
+var HORIZONTAL_ALIGNMENTS = ['left', 'right', 'center'];
+
+var ALIGNMENTS = {
+  'left': VERTICAL_ALIGNMENTS,
+  'right': VERTICAL_ALIGNMENTS,
+  'top': HORIZONTAL_ALIGNMENTS,
+  'bottom': HORIZONTAL_ALIGNMENTS
+};
+
+function nextItem(item, array) {
+  var currentIdx = array.indexOf(item);
+  if (currentIdx === array.length - 1) {
+    return array[0];
+  } else {
+    return array[currentIdx + 1];
+  }
+}
+
+var Positionable = function (_Plugin) {
+  _inherits(Positionable, _Plugin);
+
+  function Positionable() {
+    _classCallCheck(this, Positionable);
+
+    return _possibleConstructorReturn(this, (Positionable.__proto__ || Object.getPrototypeOf(Positionable)).apply(this, arguments));
+  }
+
+  _createClass(Positionable, [{
+    key: '_init',
+
+    /**
+     * Abstract class encapsulating the tether-like explicit positioning logic
+     * including repositioning based on overlap.
+     * Expects classes to define defaults for vOffset, hOffset, position,
+     * alignment, allowOverlap, and allowBottomOverlap. They can do this by
+     * extending the defaults, or (for now recommended due to the way docs are
+     * generated) by explicitly declaring them.
+     *
+     **/
+
+    value: function _init() {
+      this.triedPositions = {};
+      this.position = this.options.position === 'auto' ? this._getDefaultPosition() : this.options.position;
+      this.alignment = this.options.alignment === 'auto' ? this._getDefaultAlignment() : this.options.alignment;
+      this.originalPosition = this.position;
+      this.originalAlignment = this.alignment;
+    }
+  }, {
+    key: '_getDefaultPosition',
+    value: function _getDefaultPosition() {
+      return 'bottom';
+    }
+  }, {
+    key: '_getDefaultAlignment',
+    value: function _getDefaultAlignment() {
+      switch (this.position) {
+        case 'bottom':
+        case 'top':
+          return Object(__WEBPACK_IMPORTED_MODULE_2__foundation_util_core__["rtl"])() ? 'right' : 'left';
+        case 'left':
+        case 'right':
+          return 'bottom';
+      }
+    }
+
+    /**
+     * Adjusts the positionable possible positions by iterating through alignments
+     * and positions.
+     * @function
+     * @private
+     */
+
+  }, {
+    key: '_reposition',
+    value: function _reposition() {
+      if (this._alignmentsExhausted(this.position)) {
+        this.position = nextItem(this.position, POSITIONS);
+        this.alignment = ALIGNMENTS[this.position][0];
+      } else {
+        this._realign();
+      }
+    }
+
+    /**
+     * Adjusts the dropdown pane possible positions by iterating through alignments
+     * on the current position.
+     * @function
+     * @private
+     */
+
+  }, {
+    key: '_realign',
+    value: function _realign() {
+      this._addTriedPosition(this.position, this.alignment);
+      this.alignment = nextItem(this.alignment, ALIGNMENTS[this.position]);
+    }
+  }, {
+    key: '_addTriedPosition',
+    value: function _addTriedPosition(position, alignment) {
+      this.triedPositions[position] = this.triedPositions[position] || [];
+      this.triedPositions[position].push(alignment);
+    }
+  }, {
+    key: '_positionsExhausted',
+    value: function _positionsExhausted() {
+      var isExhausted = true;
+      for (var i = 0; i < POSITIONS.length; i++) {
+        isExhausted = isExhausted && this._alignmentsExhausted(POSITIONS[i]);
+      }
+      return isExhausted;
+    }
+  }, {
+    key: '_alignmentsExhausted',
+    value: function _alignmentsExhausted(position) {
+      return this.triedPositions[position] && this.triedPositions[position].length == ALIGNMENTS[position].length;
+    }
+
+    // When we're trying to center, we don't want to apply offset that's going to
+    // take us just off center, so wrap around to return 0 for the appropriate
+    // offset in those alignments.  TODO: Figure out if we want to make this
+    // configurable behavior... it feels more intuitive, especially for tooltips, but
+    // it's possible someone might actually want to start from center and then nudge
+    // slightly off.
+
+  }, {
+    key: '_getVOffset',
+    value: function _getVOffset() {
+      return this.options.vOffset;
+    }
+  }, {
+    key: '_getHOffset',
+    value: function _getHOffset() {
+      return this.options.hOffset;
+    }
+  }, {
+    key: '_setPosition',
+    value: function _setPosition($anchor, $element, $parent) {
+      if ($anchor.attr('aria-expanded') === 'false') {
+        return false;
+      }
+      var $eleDims = __WEBPACK_IMPORTED_MODULE_0__foundation_util_box__["a" /* Box */].GetDimensions($element),
+          $anchorDims = __WEBPACK_IMPORTED_MODULE_0__foundation_util_box__["a" /* Box */].GetDimensions($anchor);
+
+      if (!this.options.allowOverlap) {
+        // restore original position & alignment before checking overlap
+        this.position = this.originalPosition;
+        this.alignment = this.originalAlignment;
+      }
+
+      $element.offset(__WEBPACK_IMPORTED_MODULE_0__foundation_util_box__["a" /* Box */].GetExplicitOffsets($element, $anchor, this.position, this.alignment, this._getVOffset(), this._getHOffset()));
+
+      if (!this.options.allowOverlap) {
+        var overlaps = {};
+        var minOverlap = 100000000;
+        // default coordinates to how we start, in case we can't figure out better
+        var minCoordinates = { position: this.position, alignment: this.alignment };
+        while (!this._positionsExhausted()) {
+          var overlap = __WEBPACK_IMPORTED_MODULE_0__foundation_util_box__["a" /* Box */].OverlapArea($element, $parent, false, false, this.options.allowBottomOverlap);
+          if (overlap === 0) {
+            return;
+          }
+
+          if (overlap < minOverlap) {
+            minOverlap = overlap;
+            minCoordinates = { position: this.position, alignment: this.alignment };
+          }
+
+          this._reposition();
+
+          $element.offset(__WEBPACK_IMPORTED_MODULE_0__foundation_util_box__["a" /* Box */].GetExplicitOffsets($element, $anchor, this.position, this.alignment, this._getVOffset(), this._getHOffset()));
+        }
+        // If we get through the entire loop, there was no non-overlapping
+        // position available. Pick the version with least overlap.
+        this.position = minCoordinates.position;
+        this.alignment = minCoordinates.alignment;
+        $element.offset(__WEBPACK_IMPORTED_MODULE_0__foundation_util_box__["a" /* Box */].GetExplicitOffsets($element, $anchor, this.position, this.alignment, this._getVOffset(), this._getHOffset()));
+      }
+    }
+  }]);
+
+  return Positionable;
+}(__WEBPACK_IMPORTED_MODULE_1__foundation_plugin__["a" /* Plugin */]);
+
+Positionable.defaults = {
+  /**
+   * Position of positionable relative to anchor. Can be left, right, bottom, top, or auto.
+   * @option
+   * @type {string}
+   * @default 'auto'
+   */
+  position: 'auto',
+  /**
+   * Alignment of positionable relative to anchor. Can be left, right, bottom, top, center, or auto.
+   * @option
+   * @type {string}
+   * @default 'auto'
+   */
+  alignment: 'auto',
+  /**
+   * Allow overlap of container/window. If false, dropdown positionable first
+   * try to position as defined by data-position and data-alignment, but
+   * reposition if it would cause an overflow.
+   * @option
+   * @type {boolean}
+   * @default false
+   */
+  allowOverlap: false,
+  /**
+   * Allow overlap of only the bottom of the container. This is the most common
+   * behavior for dropdowns, allowing the dropdown to extend the bottom of the
+   * screen but not otherwise influence or break out of the container.
+   * @option
+   * @type {boolean}
+   * @default true
+   */
+  allowBottomOverlap: true,
+  /**
+   * Number of pixels the positionable should be separated vertically from anchor
+   * @option
+   * @type {number}
+   * @default 0
+   */
+  vOffset: 0,
+  /**
+   * Number of pixels the positionable should be separated horizontally from anchor
+   * @option
+   * @type {number}
+   * @default 0
+   */
+  hOffset: 0
+};
+
+
+
+/***/ }),
+/* 16 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return DropdownMenu; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_jquery__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_jquery___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_jquery__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__foundation_util_keyboard__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__foundation_util_keyboard__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__foundation_util_nest__ = __webpack_require__(9);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__foundation_util_box__ = __webpack_require__(7);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__foundation_util_core__ = __webpack_require__(1);
@@ -2965,7 +3430,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 /**
  * DropdownMenu module.
- * @module foundation.dropdown-menu
+ * @module foundation.dropdownMenu
  * @requires foundation.util.keyboard
  * @requires foundation.util.box
  * @requires foundation.util.nest
@@ -3028,7 +3493,7 @@ var DropdownMenu = function (_Plugin) {
       this.$tabs.find('ul.is-dropdown-submenu').addClass(this.options.verticalClass);
 
       if (this.options.alignment === 'auto') {
-        if (this.$element.hasClass(this.options.rightClass) || __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__foundation_util_core__["a" /* rtl */])() || this.$element.parents('.top-bar-right').is('*')) {
+        if (this.$element.hasClass(this.options.rightClass) || Object(__WEBPACK_IMPORTED_MODULE_4__foundation_util_core__["rtl"])() || this.$element.parents('.top-bar-right').is('*')) {
           this.options.alignment = 'right';
           subs.addClass('opens-left');
         } else {
@@ -3053,7 +3518,7 @@ var DropdownMenu = function (_Plugin) {
   }, {
     key: '_isRtl',
     value: function _isRtl() {
-      return this.$element.hasClass('align-right') || __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__foundation_util_core__["a" /* rtl */])() && !this.$element.hasClass('align-left');
+      return this.$element.hasClass('align-right') || Object(__WEBPACK_IMPORTED_MODULE_4__foundation_util_core__["rtl"])() && !this.$element.hasClass('align-left');
     }
 
     /**
@@ -3095,12 +3560,12 @@ var DropdownMenu = function (_Plugin) {
       };
 
       if (this.options.clickOpen || hasTouch) {
-        this.$menuItems.on('click.zf.dropdownmenu touchstart.zf.dropdownmenu', handleClickFn);
+        this.$menuItems.on('click.zf.dropdownMenu touchstart.zf.dropdownMenu', handleClickFn);
       }
 
       // Handle Leaf element Clicks
       if (_this.options.closeOnClickInside) {
-        this.$menuItems.on('click.zf.dropdownmenu', function (e) {
+        this.$menuItems.on('click.zf.dropdownMenu', function (e) {
           var $elem = __WEBPACK_IMPORTED_MODULE_0_jquery___default()(this),
               hasSub = $elem.hasClass(parClass);
           if (!hasSub) {
@@ -3110,7 +3575,7 @@ var DropdownMenu = function (_Plugin) {
       }
 
       if (!this.options.disableHover) {
-        this.$menuItems.on('mouseenter.zf.dropdownmenu', function (e) {
+        this.$menuItems.on('mouseenter.zf.dropdownMenu', function (e) {
           var $elem = __WEBPACK_IMPORTED_MODULE_0_jquery___default()(this),
               hasSub = $elem.hasClass(parClass);
 
@@ -3120,7 +3585,7 @@ var DropdownMenu = function (_Plugin) {
               _this._show($elem.children('.is-dropdown-submenu'));
             }, _this.options.hoverDelay));
           }
-        }).on('mouseleave.zf.dropdownmenu', function (e) {
+        }).on('mouseleave.zf.dropdownMenu', function (e) {
           var $elem = __WEBPACK_IMPORTED_MODULE_0_jquery___default()(this),
               hasSub = $elem.hasClass(parClass);
           if (hasSub && _this.options.autoclose) {
@@ -3135,7 +3600,7 @@ var DropdownMenu = function (_Plugin) {
           }
         });
       }
-      this.$menuItems.on('keydown.zf.dropdownmenu', function (e) {
+      this.$menuItems.on('keydown.zf.dropdownMenu', function (e) {
         var $element = __WEBPACK_IMPORTED_MODULE_0_jquery___default()(e.target).parentsUntil('ul', '[role="menuitem"]'),
             isTab = _this.$tabs.index($element) > -1,
             $elements = isTab ? _this.$tabs : $element.siblings('li').add($element),
@@ -3263,14 +3728,14 @@ var DropdownMenu = function (_Plugin) {
     value: function _addBodyHandler() {
       var $body = __WEBPACK_IMPORTED_MODULE_0_jquery___default()(document.body),
           _this = this;
-      $body.off('mouseup.zf.dropdownmenu touchend.zf.dropdownmenu').on('mouseup.zf.dropdownmenu touchend.zf.dropdownmenu', function (e) {
+      $body.off('mouseup.zf.dropdownMenu touchend.zf.dropdownMenu').on('mouseup.zf.dropdownMenu touchend.zf.dropdownMenu', function (e) {
         var $link = _this.$element.find(e.target);
         if ($link.length) {
           return;
         }
 
         _this._hide();
-        $body.off('mouseup.zf.dropdownmenu touchend.zf.dropdownmenu');
+        $body.off('mouseup.zf.dropdownMenu touchend.zf.dropdownMenu');
       });
     }
 
@@ -3310,7 +3775,7 @@ var DropdownMenu = function (_Plugin) {
        * Fires when the new dropdown pane is visible.
        * @event DropdownMenu#show
        */
-      this.$element.trigger('show.zf.dropdownmenu', [$sub]);
+      this.$element.trigger('show.zf.dropdownMenu', [$sub]);
     }
 
     /**
@@ -3352,7 +3817,7 @@ var DropdownMenu = function (_Plugin) {
          * Fires when the open menus are closed.
          * @event DropdownMenu#hide
          */
-        this.$element.trigger('hide.zf.dropdownmenu', [$toClose]);
+        this.$element.trigger('hide.zf.dropdownMenu', [$toClose]);
       }
     }
 
@@ -3364,8 +3829,8 @@ var DropdownMenu = function (_Plugin) {
   }, {
     key: '_destroy',
     value: function _destroy() {
-      this.$menuItems.off('.zf.dropdownmenu').removeAttr('data-is-click').removeClass('is-right-arrow is-left-arrow is-down-arrow opens-right opens-left opens-inner');
-      __WEBPACK_IMPORTED_MODULE_0_jquery___default()(document.body).off('.zf.dropdownmenu');
+      this.$menuItems.off('.zf.dropdownMenu').removeAttr('data-is-click').removeClass('is-right-arrow is-left-arrow is-down-arrow opens-right opens-left opens-inner');
+      __WEBPACK_IMPORTED_MODULE_0_jquery___default()(document.body).off('.zf.dropdownMenu');
       __WEBPACK_IMPORTED_MODULE_2__foundation_util_nest__["a" /* Nest */].Burn(this.$element, 'dropdown');
     }
   }]);
@@ -3462,258 +3927,7 @@ DropdownMenu.defaults = {
 
 
 /***/ }),
-/* 15 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Positionable; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__foundation_util_box__ = __webpack_require__(7);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__foundation_plugin__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__foundation_util_core__ = __webpack_require__(1);
-
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-
-
-
-
-var POSITIONS = ['left', 'right', 'top', 'bottom'];
-var VERTICAL_ALIGNMENTS = ['top', 'bottom', 'center'];
-var HORIZONTAL_ALIGNMENTS = ['left', 'right', 'center'];
-
-var ALIGNMENTS = {
-  'left': VERTICAL_ALIGNMENTS,
-  'right': VERTICAL_ALIGNMENTS,
-  'top': HORIZONTAL_ALIGNMENTS,
-  'bottom': HORIZONTAL_ALIGNMENTS
-};
-
-function nextItem(item, array) {
-  var currentIdx = array.indexOf(item);
-  if (currentIdx === array.length - 1) {
-    return array[0];
-  } else {
-    return array[currentIdx + 1];
-  }
-}
-
-var Positionable = function (_Plugin) {
-  _inherits(Positionable, _Plugin);
-
-  function Positionable() {
-    _classCallCheck(this, Positionable);
-
-    return _possibleConstructorReturn(this, (Positionable.__proto__ || Object.getPrototypeOf(Positionable)).apply(this, arguments));
-  }
-
-  _createClass(Positionable, [{
-    key: '_init',
-
-    /**
-     * Abstract class encapsulating the tether-like explicit positioning logic
-     * including repositioning based on overlap.
-     * Expects classes to define defaults for vOffset, hOffset, position,
-     * alignment, allowOverlap, and allowBottomOverlap. They can do this by
-     * extending the defaults, or (for now recommended due to the way docs are
-     * generated) by explicitly declaring them.
-     *
-     **/
-
-    value: function _init() {
-      this.triedPositions = {};
-      this.position = this.options.position === 'auto' ? this._getDefaultPosition() : this.options.position;
-      this.alignment = this.options.alignment === 'auto' ? this._getDefaultAlignment() : this.options.alignment;
-    }
-  }, {
-    key: '_getDefaultPosition',
-    value: function _getDefaultPosition() {
-      return 'bottom';
-    }
-  }, {
-    key: '_getDefaultAlignment',
-    value: function _getDefaultAlignment() {
-      switch (this.position) {
-        case 'bottom':
-        case 'top':
-          return __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__foundation_util_core__["a" /* rtl */])() ? 'right' : 'left';
-        case 'left':
-        case 'right':
-          return 'bottom';
-      }
-    }
-
-    /**
-     * Adjusts the positionable possible positions by iterating through alignments
-     * and positions.
-     * @function
-     * @private
-     */
-
-  }, {
-    key: '_reposition',
-    value: function _reposition() {
-      if (this._alignmentsExhausted(this.position)) {
-        this.position = nextItem(this.position, POSITIONS);
-        this.alignment = ALIGNMENTS[this.position][0];
-      } else {
-        this._realign();
-      }
-    }
-
-    /**
-     * Adjusts the dropdown pane possible positions by iterating through alignments
-     * on the current position.
-     * @function
-     * @private
-     */
-
-  }, {
-    key: '_realign',
-    value: function _realign() {
-      this._addTriedPosition(this.position, this.alignment);
-      this.alignment = nextItem(this.alignment, ALIGNMENTS[this.position]);
-    }
-  }, {
-    key: '_addTriedPosition',
-    value: function _addTriedPosition(position, alignment) {
-      this.triedPositions[position] = this.triedPositions[position] || [];
-      this.triedPositions[position].push(alignment);
-    }
-  }, {
-    key: '_positionsExhausted',
-    value: function _positionsExhausted() {
-      var isExhausted = true;
-      for (var i = 0; i < POSITIONS.length; i++) {
-        isExhausted = isExhausted && this._alignmentsExhausted(POSITIONS[i]);
-      }
-      return isExhausted;
-    }
-  }, {
-    key: '_alignmentsExhausted',
-    value: function _alignmentsExhausted(position) {
-      return this.triedPositions[position] && this.triedPositions[position].length == ALIGNMENTS[position].length;
-    }
-
-    // When we're trying to center, we don't want to apply offset that's going to
-    // take us just off center, so wrap around to return 0 for the appropriate
-    // offset in those alignments.  TODO: Figure out if we want to make this
-    // configurable behavior... it feels more intuitive, especially for tooltips, but
-    // it's possible someone might actually want to start from center and then nudge
-    // slightly off.
-
-  }, {
-    key: '_getVOffset',
-    value: function _getVOffset() {
-      return this.options.vOffset;
-    }
-  }, {
-    key: '_getHOffset',
-    value: function _getHOffset() {
-      return this.options.hOffset;
-    }
-  }, {
-    key: '_setPosition',
-    value: function _setPosition($anchor, $element, $parent) {
-      if ($anchor.attr('aria-expanded') === 'false') {
-        return false;
-      }
-      var $eleDims = __WEBPACK_IMPORTED_MODULE_0__foundation_util_box__["a" /* Box */].GetDimensions($element),
-          $anchorDims = __WEBPACK_IMPORTED_MODULE_0__foundation_util_box__["a" /* Box */].GetDimensions($anchor);
-
-      $element.offset(__WEBPACK_IMPORTED_MODULE_0__foundation_util_box__["a" /* Box */].GetExplicitOffsets($element, $anchor, this.position, this.alignment, this._getVOffset(), this._getHOffset()));
-
-      if (!this.options.allowOverlap) {
-        var overlaps = {};
-        var minOverlap = 100000000;
-        // default coordinates to how we start, in case we can't figure out better
-        var minCoordinates = { position: this.position, alignment: this.alignment };
-        while (!this._positionsExhausted()) {
-          var overlap = __WEBPACK_IMPORTED_MODULE_0__foundation_util_box__["a" /* Box */].OverlapArea($element, $parent, false, false, this.options.allowBottomOverlap);
-          if (overlap === 0) {
-            return;
-          }
-
-          if (overlap < minOverlap) {
-            minOverlap = overlap;
-            minCoordinates = { position: this.position, alignment: this.alignment };
-          }
-
-          this._reposition();
-
-          $element.offset(__WEBPACK_IMPORTED_MODULE_0__foundation_util_box__["a" /* Box */].GetExplicitOffsets($element, $anchor, this.position, this.alignment, this._getVOffset(), this._getHOffset()));
-        }
-        // If we get through the entire loop, there was no non-overlapping
-        // position available. Pick the version with least overlap.
-        this.position = minCoordinates.position;
-        this.alignment = minCoordinates.alignment;
-        $element.offset(__WEBPACK_IMPORTED_MODULE_0__foundation_util_box__["a" /* Box */].GetExplicitOffsets($element, $anchor, this.position, this.alignment, this._getVOffset(), this._getHOffset()));
-      }
-    }
-  }]);
-
-  return Positionable;
-}(__WEBPACK_IMPORTED_MODULE_1__foundation_plugin__["a" /* Plugin */]);
-
-Positionable.defaults = {
-  /**
-   * Position of positionable relative to anchor. Can be left, right, bottom, top, or auto.
-   * @option
-   * @type {string}
-   * @default 'auto'
-   */
-  position: 'auto',
-  /**
-   * Alignment of positionable relative to anchor. Can be left, right, bottom, top, center, or auto.
-   * @option
-   * @type {string}
-   * @default 'auto'
-   */
-  alignment: 'auto',
-  /**
-   * Allow overlap of container/window. If false, dropdown positionable first
-   * try to position as defined by data-position and data-alignment, but
-   * reposition if it would cause an overflow.
-   * @option
-   * @type {boolean}
-   * @default false
-   */
-  allowOverlap: false,
-  /**
-   * Allow overlap of only the bottom of the container. This is the most common
-   * behavior for dropdowns, allowing the dropdown to extend the bottom of the
-   * screen but not otherwise influence or break out of the container.
-   * @option
-   * @type {boolean}
-   * @default true
-   */
-  allowBottomOverlap: true,
-  /**
-   * Number of pixels the positionable should be separated vertically from anchor
-   * @option
-   * @type {number}
-   * @default 0
-   */
-  vOffset: 0,
-  /**
-   * Number of pixels the positionable should be separated horizontally from anchor
-   * @option
-   * @type {number}
-   * @default 0
-   */
-  hOffset: 0
-};
-
-
-
-/***/ }),
-/* 16 */
+/* 17 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3738,7 +3952,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 /**
  * SmoothScroll module.
- * @module foundation.smooth-scroll
+ * @module foundation.smoothScroll
  */
 
 var SmoothScroll = function (_Plugin) {
@@ -3777,7 +3991,7 @@ var SmoothScroll = function (_Plugin) {
     }, {
         key: '_init',
         value: function _init() {
-            var id = this.$element[0].id || __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__foundation_util_core__["b" /* GetYoDigits */])(6, 'smooth-scroll');
+            var id = this.$element[0].id || Object(__WEBPACK_IMPORTED_MODULE_1__foundation_util_core__["GetYoDigits"])(6, 'smooth-scroll');
             var _this = this;
             this.$element.attr({
                 'id': id
@@ -3891,16 +4105,17 @@ SmoothScroll.defaults = {
 
 
 /***/ }),
-/* 17 */
+/* 18 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Tabs; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_jquery__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_jquery___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_jquery__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__foundation_util_keyboard__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__foundation_util_imageLoader__ = __webpack_require__(8);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__foundation_plugin__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__foundation_util_core__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__foundation_util_keyboard__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__foundation_util_imageLoader__ = __webpack_require__(8);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__foundation_plugin__ = __webpack_require__(2);
 
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -3910,6 +4125,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
 
 
 
@@ -3948,7 +4164,7 @@ var Tabs = function (_Plugin) {
       this.className = 'Tabs'; // ie9 back compat
 
       this._init();
-      __WEBPACK_IMPORTED_MODULE_1__foundation_util_keyboard__["a" /* Keyboard */].register('Tabs', {
+      __WEBPACK_IMPORTED_MODULE_2__foundation_util_keyboard__["a" /* Keyboard */].register('Tabs', {
         'ENTER': 'open',
         'SPACE': 'open',
         'ARROW_RIGHT': 'next',
@@ -4004,7 +4220,7 @@ var Tabs = function (_Plugin) {
         }
 
         if (isActive && _this.options.autoFocus) {
-          __WEBPACK_IMPORTED_MODULE_0_jquery___default()(window).load(function () {
+          _this.onLoadListener = Object(__WEBPACK_IMPORTED_MODULE_1__foundation_util_core__["onLoad"])(__WEBPACK_IMPORTED_MODULE_0_jquery___default()(window), function () {
             __WEBPACK_IMPORTED_MODULE_0_jquery___default()('html, body').animate({ scrollTop: $elem.offset().top }, _this.options.deepLinkSmudgeDelay, function () {
               $link.focus();
             });
@@ -4015,18 +4231,24 @@ var Tabs = function (_Plugin) {
         var $images = this.$tabContent.find('img');
 
         if ($images.length) {
-          __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__foundation_util_imageLoader__["a" /* onImagesLoaded */])($images, this._setHeight.bind(this));
+          Object(__WEBPACK_IMPORTED_MODULE_3__foundation_util_imageLoader__["a" /* onImagesLoaded */])($images, this._setHeight.bind(this));
         } else {
           this._setHeight();
         }
       }
 
-      //current context-bound function to open tabs on page load or history popstate
-      this._checkDeepLink = function () {
+      //current context-bound function to open tabs on page load or history hashchange
+      this._checkDeepLink = function (useDefaultTabIfNoHash) {
         var anchor = window.location.hash;
+
+        if (!anchor.length && useDefaultTabIfNoHash !== false) {
+          anchor = _this3.$element.find('.' + _this3.options.linkDefaultClass + ' a').attr('href') || '';
+        }
+
         //need a hash and a relevant anchor in this tabset
         if (anchor.length) {
-          var $link = _this3.$element.find('[href$="' + anchor + '"]');
+          var anchorNoHash = anchor.indexOf('#') >= 0 ? anchor.slice(1) : anchor;
+          var $link = _this3.$element.find('[href$="' + anchor + '"],[data-tabs-target="' + anchorNoHash + '"]').first();
           if ($link.length) {
             _this3.selectTab(__WEBPACK_IMPORTED_MODULE_0_jquery___default()(anchor), true);
 
@@ -4047,7 +4269,7 @@ var Tabs = function (_Plugin) {
 
       //use browser to open a tab, if it exists in this tabset
       if (this.options.deepLink) {
-        this._checkDeepLink();
+        this._checkDeepLink(false); // do not useDefaultTabIfNoHash on init
       }
 
       this._events();
@@ -4072,7 +4294,7 @@ var Tabs = function (_Plugin) {
       }
 
       if (this.options.deepLink) {
-        __WEBPACK_IMPORTED_MODULE_0_jquery___default()(window).on('popstate', this._checkDeepLink);
+        __WEBPACK_IMPORTED_MODULE_0_jquery___default()(window).on('hashchange', this._checkDeepLink);
       }
     }
 
@@ -4125,7 +4347,7 @@ var Tabs = function (_Plugin) {
         });
 
         // handle keyboard event with keyboard util
-        __WEBPACK_IMPORTED_MODULE_1__foundation_util_keyboard__["a" /* Keyboard */].handleKey(e, 'Tabs', {
+        __WEBPACK_IMPORTED_MODULE_2__foundation_util_keyboard__["a" /* Keyboard */].handleKey(e, 'Tabs', {
           open: function () {
             $element.find('[role="tab"]').focus();
             _this._handleTabChange($element);
@@ -4241,7 +4463,7 @@ var Tabs = function (_Plugin) {
       var $target_anchor = $target.removeClass('' + this.options.linkActiveClass).find('[role="tab"]').attr({
         'aria-selected': 'false',
         'tabindex': -1
-      });
+      }).blur(); // blur to make sure tab loses focus state on deepLink hashchange
 
       __WEBPACK_IMPORTED_MODULE_0_jquery___default()('#' + $target_anchor.attr('aria-controls')).removeClass('' + this.options.panelActiveClass).attr({ 'aria-hidden': 'true' });
     }
@@ -4256,7 +4478,7 @@ var Tabs = function (_Plugin) {
   }, {
     key: 'selectTab',
     value: function selectTab(elem, historyHandled) {
-      var idStr;
+      var idStr, hashIdStr;
 
       if (typeof elem === 'object') {
         idStr = elem[0].id;
@@ -4265,10 +4487,13 @@ var Tabs = function (_Plugin) {
       }
 
       if (idStr.indexOf('#') < 0) {
-        idStr = '#' + idStr;
+        hashIdStr = '#' + idStr;
+      } else {
+        hashIdStr = idStr;
+        idStr = idStr.slice(1);
       }
 
-      var $target = this.$tabTitles.find('[href$="' + idStr + '"]').parent('.' + this.options.linkClass);
+      var $target = this.$tabTitles.find('[href$="' + hashIdStr + '"],[data-tabs-target="' + idStr + '"]').first().parent('.' + this.options.linkClass);
 
       this._handleTabChange($target, historyHandled);
     }
@@ -4326,13 +4551,15 @@ var Tabs = function (_Plugin) {
       }
 
       if (this.options.deepLink) {
-        __WEBPACK_IMPORTED_MODULE_0_jquery___default()(window).off('popstate', this._checkDeepLink);
+        __WEBPACK_IMPORTED_MODULE_0_jquery___default()(window).off('hashchange', this._checkDeepLink);
       }
+
+      __WEBPACK_IMPORTED_MODULE_0_jquery___default()(window).off(this.onLoadListener);
     }
   }]);
 
   return Tabs;
-}(__WEBPACK_IMPORTED_MODULE_3__foundation_plugin__["a" /* Plugin */]);
+}(__WEBPACK_IMPORTED_MODULE_4__foundation_plugin__["a" /* Plugin */]);
 
 Tabs.defaults = {
   /**
@@ -4417,6 +4644,15 @@ Tabs.defaults = {
   linkActiveClass: 'is-active',
 
   /**
+   * Class applied to the default `li` in tab link list.
+   * Used for when deepLink is true
+   * @option
+   * @type {string}
+   * @default 'is-default'
+   */
+  linkDefaultClass: 'is-default',
+
+  /**
    * Class applied to the content containers.
    * @option
    * @type {string}
@@ -4436,67 +4672,14 @@ Tabs.defaults = {
 
 
 /***/ }),
-/* 18 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/* 19 */
+/***/ (function(module, exports, __webpack_require__) {
 
-"use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Timer; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_jquery__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_jquery___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_jquery__);
-
-
-
-
-function Timer(elem, options, cb) {
-  var _this = this,
-      duration = options.duration,
-      //options is an object for easily adding features later.
-  nameSpace = Object.keys(elem.data())[0] || 'timer',
-      remain = -1,
-      start,
-      timer;
-
-  this.isPaused = false;
-
-  this.restart = function () {
-    remain = -1;
-    clearTimeout(timer);
-    this.start();
-  };
-
-  this.start = function () {
-    this.isPaused = false;
-    // if(!elem.data('paused')){ return false; }//maybe implement this sanity check if used for other things.
-    clearTimeout(timer);
-    remain = remain <= 0 ? duration : remain;
-    elem.data('paused', false);
-    start = Date.now();
-    timer = setTimeout(function () {
-      if (options.infinite) {
-        _this.restart(); //rerun the timer.
-      }
-      if (cb && typeof cb === 'function') {
-        cb();
-      }
-    }, remain);
-    elem.trigger('timerstart.zf.' + nameSpace);
-  };
-
-  this.pause = function () {
-    this.isPaused = true;
-    //if(elem.data('paused')){ return false; }//maybe implement this sanity check if used for other things.
-    clearTimeout(timer);
-    elem.data('paused', true);
-    var end = Date.now();
-    remain = remain - (end - start);
-    elem.trigger('timerpaused.zf.' + nameSpace);
-  };
-}
-
+module.exports = __webpack_require__(20);
 
 
 /***/ }),
-/* 19 */
+/* 20 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -4507,34 +4690,98 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__foundation_util_core__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__foundation_util_box__ = __webpack_require__(7);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__foundation_util_imageLoader__ = __webpack_require__(8);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__foundation_util_keyboard__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__foundation_util_mediaQuery__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__foundation_util_keyboard__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__foundation_util_mediaQuery__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__foundation_util_motion__ = __webpack_require__(6);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__foundation_util_nest__ = __webpack_require__(9);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__foundation_util_timer__ = __webpack_require__(18);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__foundation_util_timer__ = __webpack_require__(11);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__foundation_util_touch__ = __webpack_require__(10);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__foundation_util_triggers__ = __webpack_require__(5);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__foundation_abide__ = __webpack_require__(20);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__foundation_accordion__ = __webpack_require__(11);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_14__foundation_accordionMenu__ = __webpack_require__(12);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_15__foundation_drilldown__ = __webpack_require__(13);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_16__foundation_dropdown__ = __webpack_require__(22);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_17__foundation_dropdownMenu__ = __webpack_require__(14);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_18__foundation_equalizer__ = __webpack_require__(23);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_19__foundation_interchange__ = __webpack_require__(24);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_20__foundation_magellan__ = __webpack_require__(25);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_21__foundation_offcanvas__ = __webpack_require__(26);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_22__foundation_orbit__ = __webpack_require__(27);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__foundation_abide__ = __webpack_require__(22);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__foundation_accordion__ = __webpack_require__(12);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_14__foundation_accordionMenu__ = __webpack_require__(13);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_15__foundation_drilldown__ = __webpack_require__(14);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_16__foundation_dropdown__ = __webpack_require__(23);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_17__foundation_dropdownMenu__ = __webpack_require__(16);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_18__foundation_equalizer__ = __webpack_require__(24);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_19__foundation_interchange__ = __webpack_require__(25);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_20__foundation_magellan__ = __webpack_require__(26);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_21__foundation_offcanvas__ = __webpack_require__(27);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_22__foundation_orbit__ = __webpack_require__(28);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_23__foundation_responsiveMenu__ = __webpack_require__(29);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_24__foundation_responsiveToggle__ = __webpack_require__(30);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_25__foundation_reveal__ = __webpack_require__(31);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_26__foundation_slider__ = __webpack_require__(32);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_27__foundation_smoothScroll__ = __webpack_require__(16);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_27__foundation_smoothScroll__ = __webpack_require__(17);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_28__foundation_sticky__ = __webpack_require__(33);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_29__foundation_tabs__ = __webpack_require__(17);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_29__foundation_tabs__ = __webpack_require__(18);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_30__foundation_toggler__ = __webpack_require__(34);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_31__foundation_tooltip__ = __webpack_require__(35);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_32__foundation_responsiveAccordionTabs__ = __webpack_require__(28);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_32__foundation_responsiveAccordionTabs__ = __webpack_require__(36);
+/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "Foundation", function() { return __WEBPACK_IMPORTED_MODULE_1__foundation_core__["a"]; });
+/* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "CoreUtils", function() { return __WEBPACK_IMPORTED_MODULE_2__foundation_util_core__; });
+/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "Box", function() { return __WEBPACK_IMPORTED_MODULE_3__foundation_util_box__["a"]; });
+/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "onImagesLoaded", function() { return __WEBPACK_IMPORTED_MODULE_4__foundation_util_imageLoader__["a"]; });
+/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "Keyboard", function() { return __WEBPACK_IMPORTED_MODULE_5__foundation_util_keyboard__["a"]; });
+/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "MediaQuery", function() { return __WEBPACK_IMPORTED_MODULE_6__foundation_util_mediaQuery__["a"]; });
+/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "Motion", function() { return __WEBPACK_IMPORTED_MODULE_7__foundation_util_motion__["a"]; });
+/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "Nest", function() { return __WEBPACK_IMPORTED_MODULE_8__foundation_util_nest__["a"]; });
+/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "Timer", function() { return __WEBPACK_IMPORTED_MODULE_9__foundation_util_timer__["a"]; });
+/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "Touch", function() { return __WEBPACK_IMPORTED_MODULE_10__foundation_util_touch__["a"]; });
+/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "Triggers", function() { return __WEBPACK_IMPORTED_MODULE_11__foundation_util_triggers__["a"]; });
+/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "Abide", function() { return __WEBPACK_IMPORTED_MODULE_12__foundation_abide__["a"]; });
+/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "Accordion", function() { return __WEBPACK_IMPORTED_MODULE_13__foundation_accordion__["a"]; });
+/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "AccordionMenu", function() { return __WEBPACK_IMPORTED_MODULE_14__foundation_accordionMenu__["a"]; });
+/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "Drilldown", function() { return __WEBPACK_IMPORTED_MODULE_15__foundation_drilldown__["a"]; });
+/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "Dropdown", function() { return __WEBPACK_IMPORTED_MODULE_16__foundation_dropdown__["a"]; });
+/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "DropdownMenu", function() { return __WEBPACK_IMPORTED_MODULE_17__foundation_dropdownMenu__["a"]; });
+/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "Equalizer", function() { return __WEBPACK_IMPORTED_MODULE_18__foundation_equalizer__["a"]; });
+/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "Interchange", function() { return __WEBPACK_IMPORTED_MODULE_19__foundation_interchange__["a"]; });
+/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "Magellan", function() { return __WEBPACK_IMPORTED_MODULE_20__foundation_magellan__["a"]; });
+/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "OffCanvas", function() { return __WEBPACK_IMPORTED_MODULE_21__foundation_offcanvas__["a"]; });
+/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "Orbit", function() { return __WEBPACK_IMPORTED_MODULE_22__foundation_orbit__["a"]; });
+/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "ResponsiveMenu", function() { return __WEBPACK_IMPORTED_MODULE_23__foundation_responsiveMenu__["a"]; });
+/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "ResponsiveToggle", function() { return __WEBPACK_IMPORTED_MODULE_24__foundation_responsiveToggle__["a"]; });
+/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "Reveal", function() { return __WEBPACK_IMPORTED_MODULE_25__foundation_reveal__["a"]; });
+/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "Slider", function() { return __WEBPACK_IMPORTED_MODULE_26__foundation_slider__["a"]; });
+/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "SmoothScroll", function() { return __WEBPACK_IMPORTED_MODULE_27__foundation_smoothScroll__["a"]; });
+/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "Sticky", function() { return __WEBPACK_IMPORTED_MODULE_28__foundation_sticky__["a"]; });
+/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "Tabs", function() { return __WEBPACK_IMPORTED_MODULE_29__foundation_tabs__["a"]; });
+/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "Toggler", function() { return __WEBPACK_IMPORTED_MODULE_30__foundation_toggler__["a"]; });
+/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "Tooltip", function() { return __WEBPACK_IMPORTED_MODULE_31__foundation_tooltip__["a"]; });
+/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "ResponsiveAccordionTabs", function() { return __WEBPACK_IMPORTED_MODULE_32__foundation_responsiveAccordionTabs__["a"]; });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -4542,19 +4789,11 @@ __WEBPACK_IMPORTED_MODULE_1__foundation_core__["a" /* Foundation */].addToJquery
 
 // Add Foundation Utils to Foundation global namespace for backwards
 // compatibility.
-
-
-__WEBPACK_IMPORTED_MODULE_1__foundation_core__["a" /* Foundation */].rtl = __WEBPACK_IMPORTED_MODULE_2__foundation_util_core__["a" /* rtl */];
-__WEBPACK_IMPORTED_MODULE_1__foundation_core__["a" /* Foundation */].GetYoDigits = __WEBPACK_IMPORTED_MODULE_2__foundation_util_core__["b" /* GetYoDigits */];
-__WEBPACK_IMPORTED_MODULE_1__foundation_core__["a" /* Foundation */].transitionend = __WEBPACK_IMPORTED_MODULE_2__foundation_util_core__["c" /* transitionend */];
-
-
-
-
-
-
-
-
+__WEBPACK_IMPORTED_MODULE_1__foundation_core__["a" /* Foundation */].rtl = __WEBPACK_IMPORTED_MODULE_2__foundation_util_core__["rtl"];
+__WEBPACK_IMPORTED_MODULE_1__foundation_core__["a" /* Foundation */].GetYoDigits = __WEBPACK_IMPORTED_MODULE_2__foundation_util_core__["GetYoDigits"];
+__WEBPACK_IMPORTED_MODULE_1__foundation_core__["a" /* Foundation */].transitionend = __WEBPACK_IMPORTED_MODULE_2__foundation_util_core__["transitionend"];
+__WEBPACK_IMPORTED_MODULE_1__foundation_core__["a" /* Foundation */].RegExpEscape = __WEBPACK_IMPORTED_MODULE_2__foundation_util_core__["RegExpEscape"];
+__WEBPACK_IMPORTED_MODULE_1__foundation_core__["a" /* Foundation */].onLoad = __WEBPACK_IMPORTED_MODULE_2__foundation_util_core__["onLoad"];
 
 __WEBPACK_IMPORTED_MODULE_1__foundation_core__["a" /* Foundation */].Box = __WEBPACK_IMPORTED_MODULE_3__foundation_util_box__["a" /* Box */];
 __WEBPACK_IMPORTED_MODULE_1__foundation_core__["a" /* Foundation */].onImagesLoaded = __WEBPACK_IMPORTED_MODULE_4__foundation_util_imageLoader__["a" /* onImagesLoaded */];
@@ -4566,740 +4805,35 @@ __WEBPACK_IMPORTED_MODULE_1__foundation_core__["a" /* Foundation */].Nest = __WE
 __WEBPACK_IMPORTED_MODULE_1__foundation_core__["a" /* Foundation */].Timer = __WEBPACK_IMPORTED_MODULE_9__foundation_util_timer__["a" /* Timer */];
 
 // Touch and Triggers previously were almost purely sede effect driven,
-// so no // need to add it to Foundation, just init them.
-
-
+// so no need to add it to Foundation, just init them.
 __WEBPACK_IMPORTED_MODULE_10__foundation_util_touch__["a" /* Touch */].init(__WEBPACK_IMPORTED_MODULE_0_jquery___default.a);
-
-
 __WEBPACK_IMPORTED_MODULE_11__foundation_util_triggers__["a" /* Triggers */].init(__WEBPACK_IMPORTED_MODULE_0_jquery___default.a, __WEBPACK_IMPORTED_MODULE_1__foundation_core__["a" /* Foundation */]);
 
-
 __WEBPACK_IMPORTED_MODULE_1__foundation_core__["a" /* Foundation */].plugin(__WEBPACK_IMPORTED_MODULE_12__foundation_abide__["a" /* Abide */], 'Abide');
-
-
 __WEBPACK_IMPORTED_MODULE_1__foundation_core__["a" /* Foundation */].plugin(__WEBPACK_IMPORTED_MODULE_13__foundation_accordion__["a" /* Accordion */], 'Accordion');
-
-
 __WEBPACK_IMPORTED_MODULE_1__foundation_core__["a" /* Foundation */].plugin(__WEBPACK_IMPORTED_MODULE_14__foundation_accordionMenu__["a" /* AccordionMenu */], 'AccordionMenu');
-
-
 __WEBPACK_IMPORTED_MODULE_1__foundation_core__["a" /* Foundation */].plugin(__WEBPACK_IMPORTED_MODULE_15__foundation_drilldown__["a" /* Drilldown */], 'Drilldown');
-
-
 __WEBPACK_IMPORTED_MODULE_1__foundation_core__["a" /* Foundation */].plugin(__WEBPACK_IMPORTED_MODULE_16__foundation_dropdown__["a" /* Dropdown */], 'Dropdown');
-
-
 __WEBPACK_IMPORTED_MODULE_1__foundation_core__["a" /* Foundation */].plugin(__WEBPACK_IMPORTED_MODULE_17__foundation_dropdownMenu__["a" /* DropdownMenu */], 'DropdownMenu');
-
-
 __WEBPACK_IMPORTED_MODULE_1__foundation_core__["a" /* Foundation */].plugin(__WEBPACK_IMPORTED_MODULE_18__foundation_equalizer__["a" /* Equalizer */], 'Equalizer');
-
-
 __WEBPACK_IMPORTED_MODULE_1__foundation_core__["a" /* Foundation */].plugin(__WEBPACK_IMPORTED_MODULE_19__foundation_interchange__["a" /* Interchange */], 'Interchange');
-
-
 __WEBPACK_IMPORTED_MODULE_1__foundation_core__["a" /* Foundation */].plugin(__WEBPACK_IMPORTED_MODULE_20__foundation_magellan__["a" /* Magellan */], 'Magellan');
-
-
 __WEBPACK_IMPORTED_MODULE_1__foundation_core__["a" /* Foundation */].plugin(__WEBPACK_IMPORTED_MODULE_21__foundation_offcanvas__["a" /* OffCanvas */], 'OffCanvas');
-
-
 __WEBPACK_IMPORTED_MODULE_1__foundation_core__["a" /* Foundation */].plugin(__WEBPACK_IMPORTED_MODULE_22__foundation_orbit__["a" /* Orbit */], 'Orbit');
-
-
 __WEBPACK_IMPORTED_MODULE_1__foundation_core__["a" /* Foundation */].plugin(__WEBPACK_IMPORTED_MODULE_23__foundation_responsiveMenu__["a" /* ResponsiveMenu */], 'ResponsiveMenu');
-
-
 __WEBPACK_IMPORTED_MODULE_1__foundation_core__["a" /* Foundation */].plugin(__WEBPACK_IMPORTED_MODULE_24__foundation_responsiveToggle__["a" /* ResponsiveToggle */], 'ResponsiveToggle');
-
-
 __WEBPACK_IMPORTED_MODULE_1__foundation_core__["a" /* Foundation */].plugin(__WEBPACK_IMPORTED_MODULE_25__foundation_reveal__["a" /* Reveal */], 'Reveal');
-
-
 __WEBPACK_IMPORTED_MODULE_1__foundation_core__["a" /* Foundation */].plugin(__WEBPACK_IMPORTED_MODULE_26__foundation_slider__["a" /* Slider */], 'Slider');
-
-
 __WEBPACK_IMPORTED_MODULE_1__foundation_core__["a" /* Foundation */].plugin(__WEBPACK_IMPORTED_MODULE_27__foundation_smoothScroll__["a" /* SmoothScroll */], 'SmoothScroll');
-
-
 __WEBPACK_IMPORTED_MODULE_1__foundation_core__["a" /* Foundation */].plugin(__WEBPACK_IMPORTED_MODULE_28__foundation_sticky__["a" /* Sticky */], 'Sticky');
-
-
 __WEBPACK_IMPORTED_MODULE_1__foundation_core__["a" /* Foundation */].plugin(__WEBPACK_IMPORTED_MODULE_29__foundation_tabs__["a" /* Tabs */], 'Tabs');
-
-
 __WEBPACK_IMPORTED_MODULE_1__foundation_core__["a" /* Foundation */].plugin(__WEBPACK_IMPORTED_MODULE_30__foundation_toggler__["a" /* Toggler */], 'Toggler');
-
-
 __WEBPACK_IMPORTED_MODULE_1__foundation_core__["a" /* Foundation */].plugin(__WEBPACK_IMPORTED_MODULE_31__foundation_tooltip__["a" /* Tooltip */], 'Tooltip');
-
-
 __WEBPACK_IMPORTED_MODULE_1__foundation_core__["a" /* Foundation */].plugin(__WEBPACK_IMPORTED_MODULE_32__foundation_responsiveAccordionTabs__["a" /* ResponsiveAccordionTabs */], 'ResponsiveAccordionTabs');
 
-/***/ }),
-/* 20 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
-"use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Abide; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_jquery__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_jquery___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_jquery__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__foundation_plugin__ = __webpack_require__(2);
 
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-
-
-
-/**
- * Abide module.
- * @module foundation.abide
- */
-
-var Abide = function (_Plugin) {
-  _inherits(Abide, _Plugin);
-
-  function Abide() {
-    _classCallCheck(this, Abide);
-
-    return _possibleConstructorReturn(this, (Abide.__proto__ || Object.getPrototypeOf(Abide)).apply(this, arguments));
-  }
-
-  _createClass(Abide, [{
-    key: '_setup',
-
-    /**
-     * Creates a new instance of Abide.
-     * @class
-     * @name Abide
-     * @fires Abide#init
-     * @param {Object} element - jQuery object to add the trigger to.
-     * @param {Object} options - Overrides to the default plugin settings.
-     */
-    value: function _setup(element) {
-      var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
-      this.$element = element;
-      this.options = __WEBPACK_IMPORTED_MODULE_0_jquery___default.a.extend(true, {}, Abide.defaults, this.$element.data(), options);
-
-      this.className = 'Abide'; // ie9 back compat
-      this._init();
-    }
-
-    /**
-     * Initializes the Abide plugin and calls functions to get Abide functioning on load.
-     * @private
-     */
-
-  }, {
-    key: '_init',
-    value: function _init() {
-      this.$inputs = this.$element.find('input, textarea, select');
-
-      this._events();
-    }
-
-    /**
-     * Initializes events for Abide.
-     * @private
-     */
-
-  }, {
-    key: '_events',
-    value: function _events() {
-      var _this3 = this;
-
-      this.$element.off('.abide').on('reset.zf.abide', function () {
-        _this3.resetForm();
-      }).on('submit.zf.abide', function () {
-        return _this3.validateForm();
-      });
-
-      if (this.options.validateOn === 'fieldChange') {
-        this.$inputs.off('change.zf.abide').on('change.zf.abide', function (e) {
-          _this3.validateInput(__WEBPACK_IMPORTED_MODULE_0_jquery___default()(e.target));
-        });
-      }
-
-      if (this.options.liveValidate) {
-        this.$inputs.off('input.zf.abide').on('input.zf.abide', function (e) {
-          _this3.validateInput(__WEBPACK_IMPORTED_MODULE_0_jquery___default()(e.target));
-        });
-      }
-
-      if (this.options.validateOnBlur) {
-        this.$inputs.off('blur.zf.abide').on('blur.zf.abide', function (e) {
-          _this3.validateInput(__WEBPACK_IMPORTED_MODULE_0_jquery___default()(e.target));
-        });
-      }
-    }
-
-    /**
-     * Calls necessary functions to update Abide upon DOM change
-     * @private
-     */
-
-  }, {
-    key: '_reflow',
-    value: function _reflow() {
-      this._init();
-    }
-
-    /**
-     * Checks whether or not a form element has the required attribute and if it's checked or not
-     * @param {Object} element - jQuery object to check for required attribute
-     * @returns {Boolean} Boolean value depends on whether or not attribute is checked or empty
-     */
-
-  }, {
-    key: 'requiredCheck',
-    value: function requiredCheck($el) {
-      if (!$el.attr('required')) return true;
-
-      var isGood = true;
-
-      switch ($el[0].type) {
-        case 'checkbox':
-          isGood = $el[0].checked;
-          break;
-
-        case 'select':
-        case 'select-one':
-        case 'select-multiple':
-          var opt = $el.find('option:selected');
-          if (!opt.length || !opt.val()) isGood = false;
-          break;
-
-        default:
-          if (!$el.val() || !$el.val().length) isGood = false;
-      }
-
-      return isGood;
-    }
-
-    /**
-     * Get:
-     * - Based on $el, the first element(s) corresponding to `formErrorSelector` in this order:
-     *   1. The element's direct sibling('s).
-     *   2. The element's parent's children.
-     * - Element(s) with the attribute `[data-form-error-for]` set with the element's id.
-     *
-     * This allows for multiple form errors per input, though if none are found, no form errors will be shown.
-     *
-     * @param {Object} $el - jQuery object to use as reference to find the form error selector.
-     * @returns {Object} jQuery object with the selector.
-     */
-
-  }, {
-    key: 'findFormError',
-    value: function findFormError($el) {
-      var id = $el[0].id;
-      var $error = $el.siblings(this.options.formErrorSelector);
-
-      if (!$error.length) {
-        $error = $el.parent().find(this.options.formErrorSelector);
-      }
-
-      $error = $error.add(this.$element.find('[data-form-error-for="' + id + '"]'));
-
-      return $error;
-    }
-
-    /**
-     * Get the first element in this order:
-     * 2. The <label> with the attribute `[for="someInputId"]`
-     * 3. The `.closest()` <label>
-     *
-     * @param {Object} $el - jQuery object to check for required attribute
-     * @returns {Boolean} Boolean value depends on whether or not attribute is checked or empty
-     */
-
-  }, {
-    key: 'findLabel',
-    value: function findLabel($el) {
-      var id = $el[0].id;
-      var $label = this.$element.find('label[for="' + id + '"]');
-
-      if (!$label.length) {
-        return $el.closest('label');
-      }
-
-      return $label;
-    }
-
-    /**
-     * Get the set of labels associated with a set of radio els in this order
-     * 2. The <label> with the attribute `[for="someInputId"]`
-     * 3. The `.closest()` <label>
-     *
-     * @param {Object} $el - jQuery object to check for required attribute
-     * @returns {Boolean} Boolean value depends on whether or not attribute is checked or empty
-     */
-
-  }, {
-    key: 'findRadioLabels',
-    value: function findRadioLabels($els) {
-      var _this4 = this;
-
-      var labels = $els.map(function (i, el) {
-        var id = el.id;
-        var $label = _this4.$element.find('label[for="' + id + '"]');
-
-        if (!$label.length) {
-          $label = __WEBPACK_IMPORTED_MODULE_0_jquery___default()(el).closest('label');
-        }
-        return $label[0];
-      });
-
-      return __WEBPACK_IMPORTED_MODULE_0_jquery___default()(labels);
-    }
-
-    /**
-     * Adds the CSS error class as specified by the Abide settings to the label, input, and the form
-     * @param {Object} $el - jQuery object to add the class to
-     */
-
-  }, {
-    key: 'addErrorClasses',
-    value: function addErrorClasses($el) {
-      var $label = this.findLabel($el);
-      var $formError = this.findFormError($el);
-
-      if ($label.length) {
-        $label.addClass(this.options.labelErrorClass);
-      }
-
-      if ($formError.length) {
-        $formError.addClass(this.options.formErrorClass);
-      }
-
-      $el.addClass(this.options.inputErrorClass).attr('data-invalid', '');
-    }
-
-    /**
-     * Remove CSS error classes etc from an entire radio button group
-     * @param {String} groupName - A string that specifies the name of a radio button group
-     *
-     */
-
-  }, {
-    key: 'removeRadioErrorClasses',
-    value: function removeRadioErrorClasses(groupName) {
-      var $els = this.$element.find(':radio[name="' + groupName + '"]');
-      var $labels = this.findRadioLabels($els);
-      var $formErrors = this.findFormError($els);
-
-      if ($labels.length) {
-        $labels.removeClass(this.options.labelErrorClass);
-      }
-
-      if ($formErrors.length) {
-        $formErrors.removeClass(this.options.formErrorClass);
-      }
-
-      $els.removeClass(this.options.inputErrorClass).removeAttr('data-invalid');
-    }
-
-    /**
-     * Removes CSS error class as specified by the Abide settings from the label, input, and the form
-     * @param {Object} $el - jQuery object to remove the class from
-     */
-
-  }, {
-    key: 'removeErrorClasses',
-    value: function removeErrorClasses($el) {
-      // radios need to clear all of the els
-      if ($el[0].type == 'radio') {
-        return this.removeRadioErrorClasses($el.attr('name'));
-      }
-
-      var $label = this.findLabel($el);
-      var $formError = this.findFormError($el);
-
-      if ($label.length) {
-        $label.removeClass(this.options.labelErrorClass);
-      }
-
-      if ($formError.length) {
-        $formError.removeClass(this.options.formErrorClass);
-      }
-
-      $el.removeClass(this.options.inputErrorClass).removeAttr('data-invalid');
-    }
-
-    /**
-     * Goes through a form to find inputs and proceeds to validate them in ways specific to their type.
-     * Ignores inputs with data-abide-ignore, type="hidden" or disabled attributes set
-     * @fires Abide#invalid
-     * @fires Abide#valid
-     * @param {Object} element - jQuery object to validate, should be an HTML input
-     * @returns {Boolean} goodToGo - If the input is valid or not.
-     */
-
-  }, {
-    key: 'validateInput',
-    value: function validateInput($el) {
-      var clearRequire = this.requiredCheck($el),
-          validated = false,
-          customValidator = true,
-          validator = $el.attr('data-validator'),
-          equalTo = true;
-
-      // don't validate ignored inputs or hidden inputs or disabled inputs
-      if ($el.is('[data-abide-ignore]') || $el.is('[type="hidden"]') || $el.is('[disabled]')) {
-        return true;
-      }
-
-      switch ($el[0].type) {
-        case 'radio':
-          validated = this.validateRadio($el.attr('name'));
-          break;
-
-        case 'checkbox':
-          validated = clearRequire;
-          break;
-
-        case 'select':
-        case 'select-one':
-        case 'select-multiple':
-          validated = clearRequire;
-          break;
-
-        default:
-          validated = this.validateText($el);
-      }
-
-      if (validator) {
-        customValidator = this.matchValidation($el, validator, $el.attr('required'));
-      }
-
-      if ($el.attr('data-equalto')) {
-        equalTo = this.options.validators.equalTo($el);
-      }
-
-      var goodToGo = [clearRequire, validated, customValidator, equalTo].indexOf(false) === -1;
-      var message = (goodToGo ? 'valid' : 'invalid') + '.zf.abide';
-
-      if (goodToGo) {
-        // Re-validate inputs that depend on this one with equalto
-        var dependentElements = this.$element.find('[data-equalto="' + $el.attr('id') + '"]');
-        if (dependentElements.length) {
-          var _this = this;
-          dependentElements.each(function () {
-            if (__WEBPACK_IMPORTED_MODULE_0_jquery___default()(this).val()) {
-              _this.validateInput(__WEBPACK_IMPORTED_MODULE_0_jquery___default()(this));
-            }
-          });
-        }
-      }
-
-      this[goodToGo ? 'removeErrorClasses' : 'addErrorClasses']($el);
-
-      /**
-       * Fires when the input is done checking for validation. Event trigger is either `valid.zf.abide` or `invalid.zf.abide`
-       * Trigger includes the DOM element of the input.
-       * @event Abide#valid
-       * @event Abide#invalid
-       */
-      $el.trigger(message, [$el]);
-
-      return goodToGo;
-    }
-
-    /**
-     * Goes through a form and if there are any invalid inputs, it will display the form error element
-     * @returns {Boolean} noError - true if no errors were detected...
-     * @fires Abide#formvalid
-     * @fires Abide#forminvalid
-     */
-
-  }, {
-    key: 'validateForm',
-    value: function validateForm() {
-      var acc = [];
-      var _this = this;
-
-      this.$inputs.each(function () {
-        acc.push(_this.validateInput(__WEBPACK_IMPORTED_MODULE_0_jquery___default()(this)));
-      });
-
-      var noError = acc.indexOf(false) === -1;
-
-      this.$element.find('[data-abide-error]').css('display', noError ? 'none' : 'block');
-
-      /**
-       * Fires when the form is finished validating. Event trigger is either `formvalid.zf.abide` or `forminvalid.zf.abide`.
-       * Trigger includes the element of the form.
-       * @event Abide#formvalid
-       * @event Abide#forminvalid
-       */
-      this.$element.trigger((noError ? 'formvalid' : 'forminvalid') + '.zf.abide', [this.$element]);
-
-      return noError;
-    }
-
-    /**
-     * Determines whether or a not a text input is valid based on the pattern specified in the attribute. If no matching pattern is found, returns true.
-     * @param {Object} $el - jQuery object to validate, should be a text input HTML element
-     * @param {String} pattern - string value of one of the RegEx patterns in Abide.options.patterns
-     * @returns {Boolean} Boolean value depends on whether or not the input value matches the pattern specified
-     */
-
-  }, {
-    key: 'validateText',
-    value: function validateText($el, pattern) {
-      // A pattern can be passed to this function, or it will be infered from the input's "pattern" attribute, or it's "type" attribute
-      pattern = pattern || $el.attr('pattern') || $el.attr('type');
-      var inputText = $el.val();
-      var valid = false;
-
-      if (inputText.length) {
-        // If the pattern attribute on the element is in Abide's list of patterns, then test that regexp
-        if (this.options.patterns.hasOwnProperty(pattern)) {
-          valid = this.options.patterns[pattern].test(inputText);
-        }
-        // If the pattern name isn't also the type attribute of the field, then test it as a regexp
-        else if (pattern !== $el.attr('type')) {
-            valid = new RegExp(pattern).test(inputText);
-          } else {
-            valid = true;
-          }
-      }
-      // An empty field is valid if it's not required
-      else if (!$el.prop('required')) {
-          valid = true;
-        }
-
-      return valid;
-    }
-
-    /**
-     * Determines whether or a not a radio input is valid based on whether or not it is required and selected. Although the function targets a single `<input>`, it validates by checking the `required` and `checked` properties of all radio buttons in its group.
-     * @param {String} groupName - A string that specifies the name of a radio button group
-     * @returns {Boolean} Boolean value depends on whether or not at least one radio input has been selected (if it's required)
-     */
-
-  }, {
-    key: 'validateRadio',
-    value: function validateRadio(groupName) {
-      // If at least one radio in the group has the `required` attribute, the group is considered required
-      // Per W3C spec, all radio buttons in a group should have `required`, but we're being nice
-      var $group = this.$element.find(':radio[name="' + groupName + '"]');
-      var valid = false,
-          required = false;
-
-      // For the group to be required, at least one radio needs to be required
-      $group.each(function (i, e) {
-        if (__WEBPACK_IMPORTED_MODULE_0_jquery___default()(e).attr('required')) {
-          required = true;
-        }
-      });
-      if (!required) valid = true;
-
-      if (!valid) {
-        // For the group to be valid, at least one radio needs to be checked
-        $group.each(function (i, e) {
-          if (__WEBPACK_IMPORTED_MODULE_0_jquery___default()(e).prop('checked')) {
-            valid = true;
-          }
-        });
-      };
-
-      return valid;
-    }
-
-    /**
-     * Determines if a selected input passes a custom validation function. Multiple validations can be used, if passed to the element with `data-validator="foo bar baz"` in a space separated listed.
-     * @param {Object} $el - jQuery input element.
-     * @param {String} validators - a string of function names matching functions in the Abide.options.validators object.
-     * @param {Boolean} required - self explanatory?
-     * @returns {Boolean} - true if validations passed.
-     */
-
-  }, {
-    key: 'matchValidation',
-    value: function matchValidation($el, validators, required) {
-      var _this5 = this;
-
-      required = required ? true : false;
-
-      var clear = validators.split(' ').map(function (v) {
-        return _this5.options.validators[v]($el, required, $el.parent());
-      });
-      return clear.indexOf(false) === -1;
-    }
-
-    /**
-     * Resets form inputs and styles
-     * @fires Abide#formreset
-     */
-
-  }, {
-    key: 'resetForm',
-    value: function resetForm() {
-      var $form = this.$element,
-          opts = this.options;
-
-      __WEBPACK_IMPORTED_MODULE_0_jquery___default()('.' + opts.labelErrorClass, $form).not('small').removeClass(opts.labelErrorClass);
-      __WEBPACK_IMPORTED_MODULE_0_jquery___default()('.' + opts.inputErrorClass, $form).not('small').removeClass(opts.inputErrorClass);
-      __WEBPACK_IMPORTED_MODULE_0_jquery___default()(opts.formErrorSelector + '.' + opts.formErrorClass).removeClass(opts.formErrorClass);
-      $form.find('[data-abide-error]').css('display', 'none');
-      __WEBPACK_IMPORTED_MODULE_0_jquery___default()(':input', $form).not(':button, :submit, :reset, :hidden, :radio, :checkbox, [data-abide-ignore]').val('').removeAttr('data-invalid');
-      __WEBPACK_IMPORTED_MODULE_0_jquery___default()(':input:radio', $form).not('[data-abide-ignore]').prop('checked', false).removeAttr('data-invalid');
-      __WEBPACK_IMPORTED_MODULE_0_jquery___default()(':input:checkbox', $form).not('[data-abide-ignore]').prop('checked', false).removeAttr('data-invalid');
-      /**
-       * Fires when the form has been reset.
-       * @event Abide#formreset
-       */
-      $form.trigger('formreset.zf.abide', [$form]);
-    }
-
-    /**
-     * Destroys an instance of Abide.
-     * Removes error styles and classes from elements, without resetting their values.
-     */
-
-  }, {
-    key: '_destroy',
-    value: function _destroy() {
-      var _this = this;
-      this.$element.off('.abide').find('[data-abide-error]').css('display', 'none');
-
-      this.$inputs.off('.abide').each(function () {
-        _this.removeErrorClasses(__WEBPACK_IMPORTED_MODULE_0_jquery___default()(this));
-      });
-    }
-  }]);
-
-  return Abide;
-}(__WEBPACK_IMPORTED_MODULE_1__foundation_plugin__["a" /* Plugin */]);
-
-/**
- * Default settings for plugin
- */
-
-
-Abide.defaults = {
-  /**
-   * The default event to validate inputs. Checkboxes and radios validate immediately.
-   * Remove or change this value for manual validation.
-   * @option
-   * @type {?string}
-   * @default 'fieldChange'
-   */
-  validateOn: 'fieldChange',
-
-  /**
-   * Class to be applied to input labels on failed validation.
-   * @option
-   * @type {string}
-   * @default 'is-invalid-label'
-   */
-  labelErrorClass: 'is-invalid-label',
-
-  /**
-   * Class to be applied to inputs on failed validation.
-   * @option
-   * @type {string}
-   * @default 'is-invalid-input'
-   */
-  inputErrorClass: 'is-invalid-input',
-
-  /**
-   * Class selector to use to target Form Errors for show/hide.
-   * @option
-   * @type {string}
-   * @default '.form-error'
-   */
-  formErrorSelector: '.form-error',
-
-  /**
-   * Class added to Form Errors on failed validation.
-   * @option
-   * @type {string}
-   * @default 'is-visible'
-   */
-  formErrorClass: 'is-visible',
-
-  /**
-   * Set to true to validate text inputs on any value change.
-   * @option
-   * @type {boolean}
-   * @default false
-   */
-  liveValidate: false,
-
-  /**
-   * Set to true to validate inputs on blur.
-   * @option
-   * @type {boolean}
-   * @default false
-   */
-  validateOnBlur: false,
-
-  patterns: {
-    alpha: /^[a-zA-Z]+$/,
-    alpha_numeric: /^[a-zA-Z0-9]+$/,
-    integer: /^[-+]?\d+$/,
-    number: /^[-+]?\d*(?:[\.\,]\d+)?$/,
-
-    // amex, visa, diners
-    card: /^(?:4[0-9]{12}(?:[0-9]{3})?|5[1-5][0-9]{14}|(?:222[1-9]|2[3-6][0-9]{2}|27[0-1][0-9]|2720)[0-9]{12}|6(?:011|5[0-9][0-9])[0-9]{12}|3[47][0-9]{13}|3(?:0[0-5]|[68][0-9])[0-9]{11}|(?:2131|1800|35\d{3})\d{11})$/,
-    cvv: /^([0-9]){3,4}$/,
-
-    // http://www.whatwg.org/specs/web-apps/current-work/multipage/states-of-the-type-attribute.html#valid-e-mail-address
-    email: /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+$/,
-
-    url: /^(https?|ftp|file|ssh):\/\/(((([a-zA-Z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:)*@)?(((\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5]))|((([a-zA-Z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-zA-Z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-zA-Z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-zA-Z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-zA-Z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-zA-Z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-zA-Z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-zA-Z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?)(:\d*)?)(\/((([a-zA-Z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)+(\/(([a-zA-Z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)*)*)?)?(\?((([a-zA-Z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|[\uE000-\uF8FF]|\/|\?)*)?(\#((([a-zA-Z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|\/|\?)*)?$/,
-    // abc.de
-    domain: /^([a-zA-Z0-9]([a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,8}$/,
-
-    datetime: /^([0-2][0-9]{3})\-([0-1][0-9])\-([0-3][0-9])T([0-5][0-9])\:([0-5][0-9])\:([0-5][0-9])(Z|([\-\+]([0-1][0-9])\:00))$/,
-    // YYYY-MM-DD
-    date: /(?:19|20)[0-9]{2}-(?:(?:0[1-9]|1[0-2])-(?:0[1-9]|1[0-9]|2[0-9])|(?:(?!02)(?:0[1-9]|1[0-2])-(?:30))|(?:(?:0[13578]|1[02])-31))$/,
-    // HH:MM:SS
-    time: /^(0[0-9]|1[0-9]|2[0-3])(:[0-5][0-9]){2}$/,
-    dateISO: /^\d{4}[\/\-]\d{1,2}[\/\-]\d{1,2}$/,
-    // MM/DD/YYYY
-    month_day_year: /^(0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])[- \/.]\d{4}$/,
-    // DD/MM/YYYY
-    day_month_year: /^(0[1-9]|[12][0-9]|3[01])[- \/.](0[1-9]|1[012])[- \/.]\d{4}$/,
-
-    // #FFF or #FFFFFF
-    color: /^#?([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$/,
-
-    // Domain || URL
-    website: {
-      test: function (text) {
-        return Abide.defaults.patterns['domain'].test(text) || Abide.defaults.patterns['url'].test(text);
-      }
-    }
-  },
-
-  /**
-   * Optional validation functions to be used. `equalTo` being the only default included function.
-   * Functions should return only a boolean if the input is valid or not. Functions are given the following arguments:
-   * el : The jQuery element to validate.
-   * required : Boolean value of the required attribute be present or not.
-   * parent : The direct parent of the input.
-   * @option
-   */
-  validators: {
-    equalTo: function (el, required, parent) {
-      return __WEBPACK_IMPORTED_MODULE_0_jquery___default()('#' + el.attr('data-equalto')).val() === el.val();
-    }
-  }
-};
-
-
+/* harmony default export */ __webpack_exports__["default"] = (__WEBPACK_IMPORTED_MODULE_1__foundation_core__["a" /* Foundation */]);
 
 /***/ }),
 /* 21 */
@@ -5310,14 +4844,14 @@ Abide.defaults = {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_jquery__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_jquery___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_jquery__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__foundation_util_core__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__foundation_util_mediaQuery__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__foundation_util_mediaQuery__ = __webpack_require__(3);
 
 
 
 
 
 
-var FOUNDATION_VERSION = '6.4.3';
+var FOUNDATION_VERSION = '';
 
 // Global Foundation object
 // This is attached to the window, or used as a module for AMD/Browserify
@@ -5360,7 +4894,7 @@ var Foundation = {
    */
   registerPlugin: function (plugin, name) {
     var pluginName = name ? hyphenate(name) : functionName(plugin.constructor).toLowerCase();
-    plugin.uuid = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__foundation_util_core__["b" /* GetYoDigits */])(6, pluginName);
+    plugin.uuid = Object(__WEBPACK_IMPORTED_MODULE_1__foundation_util_core__["GetYoDigits"])(6, pluginName);
 
     if (!plugin.$element.attr('data-' + pluginName)) {
       plugin.$element.attr('data-' + pluginName, plugin.uuid);
@@ -5663,10 +5197,795 @@ function hyphenate(str) {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Abide; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_jquery__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_jquery___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_jquery__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__foundation_plugin__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__foundation_util_core__ = __webpack_require__(1);
+
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+
+
+
+
+/**
+ * Abide module.
+ * @module foundation.abide
+ */
+
+var Abide = function (_Plugin) {
+  _inherits(Abide, _Plugin);
+
+  function Abide() {
+    _classCallCheck(this, Abide);
+
+    return _possibleConstructorReturn(this, (Abide.__proto__ || Object.getPrototypeOf(Abide)).apply(this, arguments));
+  }
+
+  _createClass(Abide, [{
+    key: '_setup',
+
+    /**
+     * Creates a new instance of Abide.
+     * @class
+     * @name Abide
+     * @fires Abide#init
+     * @param {Object} element - jQuery object to add the trigger to.
+     * @param {Object} options - Overrides to the default plugin settings.
+     */
+    value: function _setup(element) {
+      var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+      this.$element = element;
+      this.options = __WEBPACK_IMPORTED_MODULE_0_jquery___default.a.extend(true, {}, Abide.defaults, this.$element.data(), options);
+
+      this.className = 'Abide'; // ie9 back compat
+      this._init();
+    }
+
+    /**
+     * Initializes the Abide plugin and calls functions to get Abide functioning on load.
+     * @private
+     */
+
+  }, {
+    key: '_init',
+    value: function _init() {
+      var _this3 = this;
+
+      this.$inputs = this.$element.find('input, textarea, select');
+      var $globalErrors = this.$element.find('[data-abide-error]');
+
+      // Add a11y attributes to all fields
+      if (this.options.a11yAttributes) {
+        this.$inputs.each(function (i, input) {
+          return _this3.addA11yAttributes(__WEBPACK_IMPORTED_MODULE_0_jquery___default()(input));
+        });
+        $globalErrors.each(function (i, error) {
+          return _this3.addGlobalErrorA11yAttributes(__WEBPACK_IMPORTED_MODULE_0_jquery___default()(error));
+        });
+      }
+
+      this._events();
+    }
+
+    /**
+     * Initializes events for Abide.
+     * @private
+     */
+
+  }, {
+    key: '_events',
+    value: function _events() {
+      var _this4 = this;
+
+      this.$element.off('.abide').on('reset.zf.abide', function () {
+        _this4.resetForm();
+      }).on('submit.zf.abide', function () {
+        return _this4.validateForm();
+      });
+
+      if (this.options.validateOn === 'fieldChange') {
+        this.$inputs.off('change.zf.abide').on('change.zf.abide', function (e) {
+          _this4.validateInput(__WEBPACK_IMPORTED_MODULE_0_jquery___default()(e.target));
+        });
+      }
+
+      if (this.options.liveValidate) {
+        this.$inputs.off('input.zf.abide').on('input.zf.abide', function (e) {
+          _this4.validateInput(__WEBPACK_IMPORTED_MODULE_0_jquery___default()(e.target));
+        });
+      }
+
+      if (this.options.validateOnBlur) {
+        this.$inputs.off('blur.zf.abide').on('blur.zf.abide', function (e) {
+          _this4.validateInput(__WEBPACK_IMPORTED_MODULE_0_jquery___default()(e.target));
+        });
+      }
+    }
+
+    /**
+     * Calls necessary functions to update Abide upon DOM change
+     * @private
+     */
+
+  }, {
+    key: '_reflow',
+    value: function _reflow() {
+      this._init();
+    }
+
+    /**
+     * Checks whether or not a form element has the required attribute and if it's checked or not
+     * @param {Object} element - jQuery object to check for required attribute
+     * @returns {Boolean} Boolean value depends on whether or not attribute is checked or empty
+     */
+
+  }, {
+    key: 'requiredCheck',
+    value: function requiredCheck($el) {
+      if (!$el.attr('required')) return true;
+
+      var isGood = true;
+
+      switch ($el[0].type) {
+        case 'checkbox':
+          isGood = $el[0].checked;
+          break;
+
+        case 'select':
+        case 'select-one':
+        case 'select-multiple':
+          var opt = $el.find('option:selected');
+          if (!opt.length || !opt.val()) isGood = false;
+          break;
+
+        default:
+          if (!$el.val() || !$el.val().length) isGood = false;
+      }
+
+      return isGood;
+    }
+
+    /**
+     * Get:
+     * - Based on $el, the first element(s) corresponding to `formErrorSelector` in this order:
+     *   1. The element's direct sibling('s).
+     *   2. The element's parent's children.
+     * - Element(s) with the attribute `[data-form-error-for]` set with the element's id.
+     *
+     * This allows for multiple form errors per input, though if none are found, no form errors will be shown.
+     *
+     * @param {Object} $el - jQuery object to use as reference to find the form error selector.
+     * @returns {Object} jQuery object with the selector.
+     */
+
+  }, {
+    key: 'findFormError',
+    value: function findFormError($el) {
+      var id = $el[0].id;
+      var $error = $el.siblings(this.options.formErrorSelector);
+
+      if (!$error.length) {
+        $error = $el.parent().find(this.options.formErrorSelector);
+      }
+
+      $error = $error.add(this.$element.find('[data-form-error-for="' + id + '"]'));
+
+      return $error;
+    }
+
+    /**
+     * Get the first element in this order:
+     * 2. The <label> with the attribute `[for="someInputId"]`
+     * 3. The `.closest()` <label>
+     *
+     * @param {Object} $el - jQuery object to check for required attribute
+     * @returns {Boolean} Boolean value depends on whether or not attribute is checked or empty
+     */
+
+  }, {
+    key: 'findLabel',
+    value: function findLabel($el) {
+      var id = $el[0].id;
+      var $label = this.$element.find('label[for="' + id + '"]');
+
+      if (!$label.length) {
+        return $el.closest('label');
+      }
+
+      return $label;
+    }
+
+    /**
+     * Get the set of labels associated with a set of radio els in this order
+     * 2. The <label> with the attribute `[for="someInputId"]`
+     * 3. The `.closest()` <label>
+     *
+     * @param {Object} $el - jQuery object to check for required attribute
+     * @returns {Boolean} Boolean value depends on whether or not attribute is checked or empty
+     */
+
+  }, {
+    key: 'findRadioLabels',
+    value: function findRadioLabels($els) {
+      var _this5 = this;
+
+      var labels = $els.map(function (i, el) {
+        var id = el.id;
+        var $label = _this5.$element.find('label[for="' + id + '"]');
+
+        if (!$label.length) {
+          $label = __WEBPACK_IMPORTED_MODULE_0_jquery___default()(el).closest('label');
+        }
+        return $label[0];
+      });
+
+      return __WEBPACK_IMPORTED_MODULE_0_jquery___default()(labels);
+    }
+
+    /**
+     * Adds the CSS error class as specified by the Abide settings to the label, input, and the form
+     * @param {Object} $el - jQuery object to add the class to
+     */
+
+  }, {
+    key: 'addErrorClasses',
+    value: function addErrorClasses($el) {
+      var $label = this.findLabel($el);
+      var $formError = this.findFormError($el);
+
+      if ($label.length) {
+        $label.addClass(this.options.labelErrorClass);
+      }
+
+      if ($formError.length) {
+        $formError.addClass(this.options.formErrorClass);
+      }
+
+      $el.addClass(this.options.inputErrorClass).attr({
+        'data-invalid': '',
+        'aria-invalid': true
+      });
+    }
+
+    /**
+     * Adds [for] and [role=alert] attributes to all form error targetting $el,
+     * and [aria-describedby] attribute to $el toward the first form error.
+     * @param {Object} $el - jQuery object
+     */
+
+  }, {
+    key: 'addA11yAttributes',
+    value: function addA11yAttributes($el) {
+      var $errors = this.findFormError($el);
+      var $labels = $errors.filter('label');
+      var $error = $errors.first();
+      if (!$errors.length) return;
+
+      // Set [aria-describedby] on the input toward the first form error if it is not set
+      if (typeof $el.attr('aria-describedby') === 'undefined') {
+        // Get the first error ID or create one
+        var errorId = $error.attr('id');
+        if (typeof errorId === 'undefined') {
+          errorId = Object(__WEBPACK_IMPORTED_MODULE_2__foundation_util_core__["GetYoDigits"])(6, 'abide-error');
+          $error.attr('id', errorId);
+        };
+
+        $el.attr('aria-describedby', errorId);
+      }
+
+      if ($labels.filter('[for]').length < $labels.length) {
+        // Get the input ID or create one
+        var elemId = $el.attr('id');
+        if (typeof elemId === 'undefined') {
+          elemId = Object(__WEBPACK_IMPORTED_MODULE_2__foundation_util_core__["GetYoDigits"])(6, 'abide-input');
+          $el.attr('id', elemId);
+        };
+
+        // For each label targeting $el, set [for] if it is not set.
+        $labels.each(function (i, label) {
+          var $label = __WEBPACK_IMPORTED_MODULE_0_jquery___default()(label);
+          if (typeof $label.attr('for') === 'undefined') $label.attr('for', elemId);
+        });
+      }
+
+      // For each error targeting $el, set [role=alert] if it is not set.
+      $errors.each(function (i, label) {
+        var $label = __WEBPACK_IMPORTED_MODULE_0_jquery___default()(label);
+        if (typeof $label.attr('role') === 'undefined') $label.attr('role', 'alert');
+      }).end();
+    }
+
+    /**
+     * Adds [aria-live] attribute to the given global form error $el.
+     * @param {Object} $el - jQuery object to add the attribute to
+     */
+
+  }, {
+    key: 'addGlobalErrorA11yAttributes',
+    value: function addGlobalErrorA11yAttributes($el) {
+      if (typeof $el.attr('aria-live') === 'undefined') $el.attr('aria-live', this.options.a11yErrorLevel);
+    }
+
+    /**
+     * Remove CSS error classes etc from an entire radio button group
+     * @param {String} groupName - A string that specifies the name of a radio button group
+     *
+     */
+
+  }, {
+    key: 'removeRadioErrorClasses',
+    value: function removeRadioErrorClasses(groupName) {
+      var $els = this.$element.find(':radio[name="' + groupName + '"]');
+      var $labels = this.findRadioLabels($els);
+      var $formErrors = this.findFormError($els);
+
+      if ($labels.length) {
+        $labels.removeClass(this.options.labelErrorClass);
+      }
+
+      if ($formErrors.length) {
+        $formErrors.removeClass(this.options.formErrorClass);
+      }
+
+      $els.removeClass(this.options.inputErrorClass).attr({
+        'data-invalid': null,
+        'aria-invalid': null
+      });
+    }
+
+    /**
+     * Removes CSS error class as specified by the Abide settings from the label, input, and the form
+     * @param {Object} $el - jQuery object to remove the class from
+     */
+
+  }, {
+    key: 'removeErrorClasses',
+    value: function removeErrorClasses($el) {
+      // radios need to clear all of the els
+      if ($el[0].type == 'radio') {
+        return this.removeRadioErrorClasses($el.attr('name'));
+      }
+
+      var $label = this.findLabel($el);
+      var $formError = this.findFormError($el);
+
+      if ($label.length) {
+        $label.removeClass(this.options.labelErrorClass);
+      }
+
+      if ($formError.length) {
+        $formError.removeClass(this.options.formErrorClass);
+      }
+
+      $el.removeClass(this.options.inputErrorClass).attr({
+        'data-invalid': null,
+        'aria-invalid': null
+      });
+    }
+
+    /**
+     * Goes through a form to find inputs and proceeds to validate them in ways specific to their type.
+     * Ignores inputs with data-abide-ignore, type="hidden" or disabled attributes set
+     * @fires Abide#invalid
+     * @fires Abide#valid
+     * @param {Object} element - jQuery object to validate, should be an HTML input
+     * @returns {Boolean} goodToGo - If the input is valid or not.
+     */
+
+  }, {
+    key: 'validateInput',
+    value: function validateInput($el) {
+      var clearRequire = this.requiredCheck($el),
+          validated = false,
+          customValidator = true,
+          validator = $el.attr('data-validator'),
+          equalTo = true;
+
+      // don't validate ignored inputs or hidden inputs or disabled inputs
+      if ($el.is('[data-abide-ignore]') || $el.is('[type="hidden"]') || $el.is('[disabled]')) {
+        return true;
+      }
+
+      switch ($el[0].type) {
+        case 'radio':
+          validated = this.validateRadio($el.attr('name'));
+          break;
+
+        case 'checkbox':
+          validated = clearRequire;
+          break;
+
+        case 'select':
+        case 'select-one':
+        case 'select-multiple':
+          validated = clearRequire;
+          break;
+
+        default:
+          validated = this.validateText($el);
+      }
+
+      if (validator) {
+        customValidator = this.matchValidation($el, validator, $el.attr('required'));
+      }
+
+      if ($el.attr('data-equalto')) {
+        equalTo = this.options.validators.equalTo($el);
+      }
+
+      var goodToGo = [clearRequire, validated, customValidator, equalTo].indexOf(false) === -1;
+      var message = (goodToGo ? 'valid' : 'invalid') + '.zf.abide';
+
+      if (goodToGo) {
+        // Re-validate inputs that depend on this one with equalto
+        var dependentElements = this.$element.find('[data-equalto="' + $el.attr('id') + '"]');
+        if (dependentElements.length) {
+          var _this = this;
+          dependentElements.each(function () {
+            if (__WEBPACK_IMPORTED_MODULE_0_jquery___default()(this).val()) {
+              _this.validateInput(__WEBPACK_IMPORTED_MODULE_0_jquery___default()(this));
+            }
+          });
+        }
+      }
+
+      this[goodToGo ? 'removeErrorClasses' : 'addErrorClasses']($el);
+
+      /**
+       * Fires when the input is done checking for validation. Event trigger is either `valid.zf.abide` or `invalid.zf.abide`
+       * Trigger includes the DOM element of the input.
+       * @event Abide#valid
+       * @event Abide#invalid
+       */
+      $el.trigger(message, [$el]);
+
+      return goodToGo;
+    }
+
+    /**
+     * Goes through a form and if there are any invalid inputs, it will display the form error element
+     * @returns {Boolean} noError - true if no errors were detected...
+     * @fires Abide#formvalid
+     * @fires Abide#forminvalid
+     */
+
+  }, {
+    key: 'validateForm',
+    value: function validateForm() {
+      var _this6 = this;
+
+      var acc = [];
+      var _this = this;
+
+      this.$inputs.each(function () {
+        acc.push(_this.validateInput(__WEBPACK_IMPORTED_MODULE_0_jquery___default()(this)));
+      });
+
+      var noError = acc.indexOf(false) === -1;
+
+      this.$element.find('[data-abide-error]').each(function (i, elem) {
+        var $elem = __WEBPACK_IMPORTED_MODULE_0_jquery___default()(elem);
+        // Ensure a11y attributes are set
+        if (_this6.options.a11yAttributes) _this6.addGlobalErrorA11yAttributes($elem);
+        // Show or hide the error
+        $elem.css('display', noError ? 'none' : 'block');
+      });
+
+      /**
+       * Fires when the form is finished validating. Event trigger is either `formvalid.zf.abide` or `forminvalid.zf.abide`.
+       * Trigger includes the element of the form.
+       * @event Abide#formvalid
+       * @event Abide#forminvalid
+       */
+      this.$element.trigger((noError ? 'formvalid' : 'forminvalid') + '.zf.abide', [this.$element]);
+
+      return noError;
+    }
+
+    /**
+     * Determines whether or a not a text input is valid based on the pattern specified in the attribute. If no matching pattern is found, returns true.
+     * @param {Object} $el - jQuery object to validate, should be a text input HTML element
+     * @param {String} pattern - string value of one of the RegEx patterns in Abide.options.patterns
+     * @returns {Boolean} Boolean value depends on whether or not the input value matches the pattern specified
+     */
+
+  }, {
+    key: 'validateText',
+    value: function validateText($el, pattern) {
+      // A pattern can be passed to this function, or it will be infered from the input's "pattern" attribute, or it's "type" attribute
+      pattern = pattern || $el.attr('pattern') || $el.attr('type');
+      var inputText = $el.val();
+      var valid = false;
+
+      if (inputText.length) {
+        // If the pattern attribute on the element is in Abide's list of patterns, then test that regexp
+        if (this.options.patterns.hasOwnProperty(pattern)) {
+          valid = this.options.patterns[pattern].test(inputText);
+        }
+        // If the pattern name isn't also the type attribute of the field, then test it as a regexp
+        else if (pattern !== $el.attr('type')) {
+            valid = new RegExp(pattern).test(inputText);
+          } else {
+            valid = true;
+          }
+      }
+      // An empty field is valid if it's not required
+      else if (!$el.prop('required')) {
+          valid = true;
+        }
+
+      return valid;
+    }
+
+    /**
+     * Determines whether or a not a radio input is valid based on whether or not it is required and selected. Although the function targets a single `<input>`, it validates by checking the `required` and `checked` properties of all radio buttons in its group.
+     * @param {String} groupName - A string that specifies the name of a radio button group
+     * @returns {Boolean} Boolean value depends on whether or not at least one radio input has been selected (if it's required)
+     */
+
+  }, {
+    key: 'validateRadio',
+    value: function validateRadio(groupName) {
+      // If at least one radio in the group has the `required` attribute, the group is considered required
+      // Per W3C spec, all radio buttons in a group should have `required`, but we're being nice
+      var $group = this.$element.find(':radio[name="' + groupName + '"]');
+      var valid = false,
+          required = false;
+
+      // For the group to be required, at least one radio needs to be required
+      $group.each(function (i, e) {
+        if (__WEBPACK_IMPORTED_MODULE_0_jquery___default()(e).attr('required')) {
+          required = true;
+        }
+      });
+      if (!required) valid = true;
+
+      if (!valid) {
+        // For the group to be valid, at least one radio needs to be checked
+        $group.each(function (i, e) {
+          if (__WEBPACK_IMPORTED_MODULE_0_jquery___default()(e).prop('checked')) {
+            valid = true;
+          }
+        });
+      };
+
+      return valid;
+    }
+
+    /**
+     * Determines if a selected input passes a custom validation function. Multiple validations can be used, if passed to the element with `data-validator="foo bar baz"` in a space separated listed.
+     * @param {Object} $el - jQuery input element.
+     * @param {String} validators - a string of function names matching functions in the Abide.options.validators object.
+     * @param {Boolean} required - self explanatory?
+     * @returns {Boolean} - true if validations passed.
+     */
+
+  }, {
+    key: 'matchValidation',
+    value: function matchValidation($el, validators, required) {
+      var _this7 = this;
+
+      required = required ? true : false;
+
+      var clear = validators.split(' ').map(function (v) {
+        return _this7.options.validators[v]($el, required, $el.parent());
+      });
+      return clear.indexOf(false) === -1;
+    }
+
+    /**
+     * Resets form inputs and styles
+     * @fires Abide#formreset
+     */
+
+  }, {
+    key: 'resetForm',
+    value: function resetForm() {
+      var $form = this.$element,
+          opts = this.options;
+
+      __WEBPACK_IMPORTED_MODULE_0_jquery___default()('.' + opts.labelErrorClass, $form).not('small').removeClass(opts.labelErrorClass);
+      __WEBPACK_IMPORTED_MODULE_0_jquery___default()('.' + opts.inputErrorClass, $form).not('small').removeClass(opts.inputErrorClass);
+      __WEBPACK_IMPORTED_MODULE_0_jquery___default()(opts.formErrorSelector + '.' + opts.formErrorClass).removeClass(opts.formErrorClass);
+      $form.find('[data-abide-error]').css('display', 'none');
+      __WEBPACK_IMPORTED_MODULE_0_jquery___default()(':input', $form).not(':button, :submit, :reset, :hidden, :radio, :checkbox, [data-abide-ignore]').val('').attr({
+        'data-invalid': null,
+        'aria-invalid': null
+      });
+      __WEBPACK_IMPORTED_MODULE_0_jquery___default()(':input:radio', $form).not('[data-abide-ignore]').prop('checked', false).attr({
+        'data-invalid': null,
+        'aria-invalid': null
+      });
+      __WEBPACK_IMPORTED_MODULE_0_jquery___default()(':input:checkbox', $form).not('[data-abide-ignore]').prop('checked', false).attr({
+        'data-invalid': null,
+        'aria-invalid': null
+      });
+      /**
+       * Fires when the form has been reset.
+       * @event Abide#formreset
+       */
+      $form.trigger('formreset.zf.abide', [$form]);
+    }
+
+    /**
+     * Destroys an instance of Abide.
+     * Removes error styles and classes from elements, without resetting their values.
+     */
+
+  }, {
+    key: '_destroy',
+    value: function _destroy() {
+      var _this = this;
+      this.$element.off('.abide').find('[data-abide-error]').css('display', 'none');
+
+      this.$inputs.off('.abide').each(function () {
+        _this.removeErrorClasses(__WEBPACK_IMPORTED_MODULE_0_jquery___default()(this));
+      });
+    }
+  }]);
+
+  return Abide;
+}(__WEBPACK_IMPORTED_MODULE_1__foundation_plugin__["a" /* Plugin */]);
+
+/**
+ * Default settings for plugin
+ */
+
+
+Abide.defaults = {
+  /**
+   * The default event to validate inputs. Checkboxes and radios validate immediately.
+   * Remove or change this value for manual validation.
+   * @option
+   * @type {?string}
+   * @default 'fieldChange'
+   */
+  validateOn: 'fieldChange',
+
+  /**
+   * Class to be applied to input labels on failed validation.
+   * @option
+   * @type {string}
+   * @default 'is-invalid-label'
+   */
+  labelErrorClass: 'is-invalid-label',
+
+  /**
+   * Class to be applied to inputs on failed validation.
+   * @option
+   * @type {string}
+   * @default 'is-invalid-input'
+   */
+  inputErrorClass: 'is-invalid-input',
+
+  /**
+   * Class selector to use to target Form Errors for show/hide.
+   * @option
+   * @type {string}
+   * @default '.form-error'
+   */
+  formErrorSelector: '.form-error',
+
+  /**
+   * Class added to Form Errors on failed validation.
+   * @option
+   * @type {string}
+   * @default 'is-visible'
+   */
+  formErrorClass: 'is-visible',
+
+  /**
+   * If true, automatically insert when possible:
+   * - `[aria-describedby]` on fields
+   * - `[role=alert]` on form errors and `[for]` on form error labels
+   * - `[aria-live]` on global errors `[data-abide-error]` (see option `a11yErrorLevel`).
+   * @option
+   * @type {boolean}
+   * @default true
+   */
+  a11yAttributes: true,
+
+  /**
+   * [aria-live] attribute value to be applied on global errors `[data-abide-error]`.
+   * Options are: 'assertive', 'polite' and 'off'/null
+   * @option
+   * @see https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/ARIA_Live_Regions
+   * @type {string}
+   * @default 'assertive'
+   */
+  a11yErrorLevel: 'assertive',
+
+  /**
+   * Set to true to validate text inputs on any value change.
+   * @option
+   * @type {boolean}
+   * @default false
+   */
+  liveValidate: false,
+
+  /**
+   * Set to true to validate inputs on blur.
+   * @option
+   * @type {boolean}
+   * @default false
+   */
+  validateOnBlur: false,
+
+  patterns: {
+    alpha: /^[a-zA-Z]+$/,
+    alpha_numeric: /^[a-zA-Z0-9]+$/,
+    integer: /^[-+]?\d+$/,
+    number: /^[-+]?\d*(?:[\.\,]\d+)?$/,
+
+    // amex, visa, diners
+    card: /^(?:4[0-9]{12}(?:[0-9]{3})?|5[1-5][0-9]{14}|(?:222[1-9]|2[3-6][0-9]{2}|27[0-1][0-9]|2720)[0-9]{12}|6(?:011|5[0-9][0-9])[0-9]{12}|3[47][0-9]{13}|3(?:0[0-5]|[68][0-9])[0-9]{11}|(?:2131|1800|35\d{3})\d{11})$/,
+    cvv: /^([0-9]){3,4}$/,
+
+    // http://www.whatwg.org/specs/web-apps/current-work/multipage/states-of-the-type-attribute.html#valid-e-mail-address
+    email: /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+$/,
+
+    url: /^(https?|ftp|file|ssh):\/\/(((([a-zA-Z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:)*@)?(((\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5]))|((([a-zA-Z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-zA-Z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-zA-Z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-zA-Z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-zA-Z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-zA-Z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-zA-Z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-zA-Z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?)(:\d*)?)(\/((([a-zA-Z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)+(\/(([a-zA-Z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)*)*)?)?(\?((([a-zA-Z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|[\uE000-\uF8FF]|\/|\?)*)?(\#((([a-zA-Z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|\/|\?)*)?$/,
+    // abc.de
+    domain: /^([a-zA-Z0-9]([a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,8}$/,
+
+    datetime: /^([0-2][0-9]{3})\-([0-1][0-9])\-([0-3][0-9])T([0-5][0-9])\:([0-5][0-9])\:([0-5][0-9])(Z|([\-\+]([0-1][0-9])\:00))$/,
+    // YYYY-MM-DD
+    date: /(?:19|20)[0-9]{2}-(?:(?:0[1-9]|1[0-2])-(?:0[1-9]|1[0-9]|2[0-9])|(?:(?!02)(?:0[1-9]|1[0-2])-(?:30))|(?:(?:0[13578]|1[02])-31))$/,
+    // HH:MM:SS
+    time: /^(0[0-9]|1[0-9]|2[0-3])(:[0-5][0-9]){2}$/,
+    dateISO: /^\d{4}[\/\-]\d{1,2}[\/\-]\d{1,2}$/,
+    // MM/DD/YYYY
+    month_day_year: /^(0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])[- \/.]\d{4}$/,
+    // DD/MM/YYYY
+    day_month_year: /^(0[1-9]|[12][0-9]|3[01])[- \/.](0[1-9]|1[012])[- \/.]\d{4}$/,
+
+    // #FFF or #FFFFFF
+    color: /^#?([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$/,
+
+    // Domain || URL
+    website: {
+      test: function (text) {
+        return Abide.defaults.patterns['domain'].test(text) || Abide.defaults.patterns['url'].test(text);
+      }
+    }
+  },
+
+  /**
+   * Optional validation functions to be used. `equalTo` being the only default included function.
+   * Functions should return only a boolean if the input is valid or not. Functions are given the following arguments:
+   * el : The jQuery element to validate.
+   * required : Boolean value of the required attribute be present or not.
+   * parent : The direct parent of the input.
+   * @option
+   */
+  validators: {
+    equalTo: function (el, required, parent) {
+      return __WEBPACK_IMPORTED_MODULE_0_jquery___default()('#' + el.attr('data-equalto')).val() === el.val();
+    }
+  }
+};
+
+
+
+/***/ }),
+/* 23 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Dropdown; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_jquery__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_jquery___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_jquery__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__foundation_util_keyboard__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__foundation_util_keyboard__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__foundation_util_core__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__foundation_positionable__ = __webpack_require__(15);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__foundation_util_triggers__ = __webpack_require__(5);
@@ -5762,12 +6081,16 @@ var Dropdown = function (_Positionable) {
         this.$parent = null;
       }
 
+      // Do not change the `labelledby` if it is defined
+      var labelledby = this.$element.attr('aria-labelledby') || this.$currentAnchor.attr('id') || Object(__WEBPACK_IMPORTED_MODULE_2__foundation_util_core__["GetYoDigits"])(6, 'dd-anchor');
+
       this.$element.attr({
         'aria-hidden': 'true',
         'data-yeti-box': $id,
         'data-resize': $id,
-        'aria-labelledby': this.$currentAnchor.id || __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__foundation_util_core__["b" /* GetYoDigits */])(6, 'dd-anchor')
+        'aria-labelledby': labelledby
       });
+
       _get(Dropdown.prototype.__proto__ || Object.getPrototypeOf(Dropdown.prototype), '_init', this).call(this);
       this._events();
     }
@@ -5786,7 +6109,7 @@ var Dropdown = function (_Positionable) {
     key: '_getDefaultAlignment',
     value: function _getDefaultAlignment() {
       // handle legacy float approach
-      var horizontalPosition = /float-(\S+)/.exec(this.$currentAnchor.className);
+      var horizontalPosition = /float-(\S+)/.exec(this.$currentAnchor.attr('class'));
       if (horizontalPosition) {
         return horizontalPosition[1];
       }
@@ -5804,7 +6127,9 @@ var Dropdown = function (_Positionable) {
   }, {
     key: '_setPosition',
     value: function _setPosition() {
+      this.$element.removeClass('has-position-' + this.position + ' has-alignment-' + this.alignment);
       _get(Dropdown.prototype.__proto__ || Object.getPrototypeOf(Dropdown.prototype), '_setPosition', this).call(this, this.$currentAnchor, this.$element, this.$parent);
+      this.$element.addClass('has-position-' + this.position + ' has-alignment-' + this.alignment);
     }
 
     /**
@@ -5830,7 +6155,9 @@ var Dropdown = function (_Positionable) {
   }, {
     key: '_events',
     value: function _events() {
-      var _this = this;
+      var _this = this,
+          hasTouch = 'ontouchstart' in window || typeof window.ontouchstart !== 'undefined';
+
       this.$element.on({
         'open.zf.trigger': this.open.bind(this),
         'close.zf.trigger': this.close.bind(this),
@@ -5838,8 +6165,17 @@ var Dropdown = function (_Positionable) {
         'resizeme.zf.trigger': this._setPosition.bind(this)
       });
 
-      this.$anchors.off('click.zf.trigger').on('click.zf.trigger', function () {
+      this.$anchors.off('click.zf.trigger').on('click.zf.trigger', function (e) {
         _this._setCurrentAnchor(this);
+
+        if (_this.options.forceFollow === false) {
+          // if forceFollow false, always prevent default action
+          e.preventDefault();
+        } else if (hasTouch && _this.options.hover && _this.$element.hasClass('is-open') === false) {
+          // if forceFollow true and hover option true, only prevent default action on 1st click
+          // on 2nd click (dropown opened) the default action (e.g. follow a href) gets executed
+          e.preventDefault();
+        }
       });
 
       if (this.options.hover) {
@@ -5880,7 +6216,7 @@ var Dropdown = function (_Positionable) {
 
         __WEBPACK_IMPORTED_MODULE_1__foundation_util_keyboard__["a" /* Keyboard */].handleKey(e, 'Dropdown', {
           open: function () {
-            if ($target.is(_this.$anchors)) {
+            if ($target.is(_this.$anchors) && !$target.is('input, textarea')) {
               _this.open();
               _this.$element.attr('tabindex', -1).focus();
               e.preventDefault();
@@ -5909,7 +6245,7 @@ var Dropdown = function (_Positionable) {
         if (_this.$anchors.is(e.target) || _this.$anchors.find(e.target).length) {
           return;
         }
-        if (_this.$element.find(e.target).length) {
+        if (_this.$element.is(e.target) || _this.$element.find(e.target).length) {
           return;
         }
         _this.close();
@@ -6072,7 +6408,6 @@ Dropdown.defaults = {
    * @default ''
    */
   positionClass: '',
-
   /**
    * Position of dropdown. Can be left, right, bottom, top, or auto.
    * @option
@@ -6123,20 +6458,27 @@ Dropdown.defaults = {
    * @type {boolean}
    * @default false
    */
-  closeOnClick: false
+  closeOnClick: false,
+  /**
+   * If true the default action of the toggle (e.g. follow a link with href) gets executed on click. If hover option is also true the default action gets prevented on first click for mobile / touch devices and executed on second click. 
+   * @option
+   * @type {boolean}
+   * @default true
+   */
+  forceFollow: true
 };
 
 
 
 /***/ }),
-/* 23 */
+/* 24 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Equalizer; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_jquery__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_jquery___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_jquery__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__foundation_util_mediaQuery__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__foundation_util_mediaQuery__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__foundation_util_imageLoader__ = __webpack_require__(8);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__foundation_util_core__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__foundation_plugin__ = __webpack_require__(2);
@@ -6205,8 +6547,8 @@ var Equalizer = function (_Plugin) {
       __WEBPACK_IMPORTED_MODULE_1__foundation_util_mediaQuery__["a" /* MediaQuery */]._init();
 
       this.$watched = $watched.length ? $watched : this.$element.find('[data-equalizer-watch]');
-      this.$element.attr('data-resize', eqId || __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__foundation_util_core__["b" /* GetYoDigits */])(6, 'eq'));
-      this.$element.attr('data-mutate', eqId || __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__foundation_util_core__["b" /* GetYoDigits */])(6, 'eq'));
+      this.$element.attr('data-resize', eqId || Object(__WEBPACK_IMPORTED_MODULE_3__foundation_util_core__["GetYoDigits"])(6, 'eq'));
+      this.$element.attr('data-mutate', eqId || Object(__WEBPACK_IMPORTED_MODULE_3__foundation_util_core__["GetYoDigits"])(6, 'eq'));
 
       this.hasNested = this.$element.find('[data-equalizer]').length > 0;
       this.isNested = this.$element.parentsUntil(document.body, '[data-equalizer]').length > 0;
@@ -6226,7 +6568,7 @@ var Equalizer = function (_Plugin) {
       }
       if (tooSmall !== undefined && tooSmall === false || tooSmall === undefined) {
         if (imgs.length) {
-          __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__foundation_util_imageLoader__["a" /* onImagesLoaded */])(imgs, this._reflow.bind(this));
+          Object(__WEBPACK_IMPORTED_MODULE_2__foundation_util_imageLoader__["a" /* onImagesLoaded */])(imgs, this._reflow.bind(this));
         } else {
           this._reflow();
         }
@@ -6530,14 +6872,14 @@ Equalizer.defaults = {
 
 
 /***/ }),
-/* 24 */
+/* 25 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Interchange; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_jquery__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_jquery___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_jquery__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__foundation_util_mediaQuery__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__foundation_util_mediaQuery__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__foundation_plugin__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__foundation_util_core__ = __webpack_require__(1);
 
@@ -6603,7 +6945,7 @@ var Interchange = function (_Plugin) {
     value: function _init() {
       __WEBPACK_IMPORTED_MODULE_1__foundation_util_mediaQuery__["a" /* MediaQuery */]._init();
 
-      var id = this.$element[0].id || __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__foundation_util_core__["b" /* GetYoDigits */])(6, 'interchange');
+      var id = this.$element[0].id || Object(__WEBPACK_IMPORTED_MODULE_3__foundation_util_core__["GetYoDigits"])(6, 'interchange');
       this.$element.attr({
         'data-resize': id,
         'id': id
@@ -6796,7 +7138,7 @@ Interchange.SPECIAL_QUERIES = {
 
 
 /***/ }),
-/* 25 */
+/* 26 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -6805,7 +7147,7 @@ Interchange.SPECIAL_QUERIES = {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_jquery___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_jquery__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__foundation_util_core__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__foundation_plugin__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__foundation_smoothScroll__ = __webpack_require__(16);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__foundation_smoothScroll__ = __webpack_require__(17);
 
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -6864,7 +7206,7 @@ var Magellan = function (_Plugin) {
   }, {
     key: '_init',
     value: function _init() {
-      var id = this.$element[0].id || __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__foundation_util_core__["b" /* GetYoDigits */])(6, 'magellan');
+      var id = this.$element[0].id || Object(__WEBPACK_IMPORTED_MODULE_1__foundation_util_core__["GetYoDigits"])(6, 'magellan');
       var _this = this;
       this.$targets = __WEBPACK_IMPORTED_MODULE_0_jquery___default()('[data-magellan-target]');
       this.$links = this.$element.find('a');
@@ -6918,6 +7260,7 @@ var Magellan = function (_Plugin) {
         duration: _this.options.animationDuration,
         easing: _this.options.animationEasing
       };
+
       __WEBPACK_IMPORTED_MODULE_0_jquery___default()(window).one('load', function () {
         if (_this.options.deepLinking) {
           if (location.hash) {
@@ -6928,13 +7271,15 @@ var Magellan = function (_Plugin) {
         _this._updateActive();
       });
 
-      this.$element.on({
-        'resizeme.zf.trigger': this.reflow.bind(this),
-        'scrollme.zf.trigger': this._updateActive.bind(this)
-      }).on('click.zf.magellan', 'a[href^="#"]', function (e) {
-        e.preventDefault();
-        var arrival = this.getAttribute('href');
-        _this.scrollToLoc(arrival);
+      _this.onLoadListener = Object(__WEBPACK_IMPORTED_MODULE_1__foundation_util_core__["onLoad"])(__WEBPACK_IMPORTED_MODULE_0_jquery___default()(window), function () {
+        _this.$element.on({
+          'resizeme.zf.trigger': _this.reflow.bind(_this),
+          'scrollme.zf.trigger': _this._updateActive.bind(_this)
+        }).on('click.zf.magellan', 'a[href^="#"]', function (e) {
+          e.preventDefault();
+          var arrival = this.getAttribute('href');
+          _this.scrollToLoc(arrival);
+        });
       });
 
       this._deepLinkScroll = function (e) {
@@ -6943,7 +7288,7 @@ var Magellan = function (_Plugin) {
         }
       };
 
-      __WEBPACK_IMPORTED_MODULE_0_jquery___default()(window).on('popstate', this._deepLinkScroll);
+      __WEBPACK_IMPORTED_MODULE_0_jquery___default()(window).on('hashchange', this._deepLinkScroll);
     }
 
     /**
@@ -6967,7 +7312,6 @@ var Magellan = function (_Plugin) {
 
       __WEBPACK_IMPORTED_MODULE_3__foundation_smoothScroll__["a" /* SmoothScroll */].scrollToLoc(loc, options, function () {
         _this._inTransition = false;
-        _this._updateActive();
       });
     }
 
@@ -6993,48 +7337,69 @@ var Magellan = function (_Plugin) {
   }, {
     key: '_updateActive',
     value: function _updateActive() /*evt, elem, scrollPos*/{
-      if (this._inTransition) {
-        return;
-      }
-      var winPos = /*scrollPos ||*/parseInt(window.pageYOffset, 10),
-          curIdx;
+      var _this3 = this;
 
-      if (winPos + this.winHeight === this.docHeight) {
-        curIdx = this.points.length - 1;
-      } else if (winPos < this.points[0]) {
-        curIdx = undefined;
-      } else {
-        var isDown = this.scrollPos < winPos,
-            _this = this,
-            curVisible = this.points.filter(function (p, i) {
-          return isDown ? p - _this.options.offset <= winPos : p - _this.options.offset - _this.options.threshold <= winPos;
-        });
-        curIdx = curVisible.length ? curVisible.length - 1 : 0;
-      }
+      if (this._inTransition) return;
 
-      this.$active.removeClass(this.options.activeClass);
-      this.$active = this.$links.filter('[href="#' + this.$targets.eq(curIdx).data('magellan-target') + '"]').addClass(this.options.activeClass);
+      var newScrollPos = parseInt(window.pageYOffset, 10);
+      var isScrollingUp = this.scrollPos > newScrollPos;
+      this.scrollPos = newScrollPos;
 
-      if (this.options.deepLinking) {
-        var hash = "";
-        if (curIdx != undefined) {
-          hash = this.$active[0].getAttribute('href');
+      var activeIdx = void 0;
+      // Before the first point: no link
+      if (newScrollPos < this.points[0]) {} /* do nothing */
+      // At the bottom of the page: last link
+      else if (newScrollPos + this.winHeight === this.docHeight) {
+          activeIdx = this.points.length - 1;
         }
-        if (hash !== window.location.hash) {
-          if (window.history.pushState) {
-            window.history.pushState(null, null, hash);
-          } else {
-            window.location.hash = hash;
+        // Otherwhise, use the last visible link
+        else {
+            var visibleLinks = this.points.filter(function (p, i) {
+              return p - _this3.options.offset - (isScrollingUp ? _this3.options.threshold : 0) <= newScrollPos;
+            });
+            activeIdx = visibleLinks.length ? visibleLinks.length - 1 : 0;
           }
+
+      // Get the new active link
+      var $oldActive = this.$active;
+      var activeHash = '';
+      if (activeIdx !== undefined) {
+        this.$active = this.$links.filter('[href="#' + this.$targets.eq(activeIdx).data('magellan-target') + '"]');
+        activeHash = this.$active[0].getAttribute('href');
+      } else {
+        this.$active = __WEBPACK_IMPORTED_MODULE_0_jquery___default()();
+      }
+      var isNewActive = !(!this.$active.length && !$oldActive.length) && !this.$active.is($oldActive);
+      var isNewHash = activeHash !== window.location.hash;
+
+      // Update the active link element
+      if (isNewActive) {
+        $oldActive.removeClass(this.options.activeClass);
+        this.$active.addClass(this.options.activeClass);
+      }
+
+      // Update the hash (it may have changed with the same active link)
+      if (this.options.deepLinking && isNewHash) {
+        if (window.history.pushState) {
+          // Set or remove the hash (see: https://stackoverflow.com/a/5298684/4317384
+          var url = activeHash ? activeHash : window.location.pathname + window.location.search;
+          if (this.options.updateHistory) {
+            window.history.pushState({}, '', url);
+          } else {
+            window.history.replaceState({}, '', url);
+          }
+        } else {
+          window.location.hash = activeHash;
         }
       }
 
-      this.scrollPos = winPos;
-      /**
-       * Fires when magellan is finished updating to the new active element.
-       * @event Magellan#update
-       */
-      this.$element.trigger('update.zf.magellan', [this.$active]);
+      if (isNewActive) {
+        /**
+         * Fires when magellan is finished updating to the new active element.
+         * @event Magellan#update
+         */
+        this.$element.trigger('update.zf.magellan', [this.$active]);
+      }
     }
 
     /**
@@ -7051,7 +7416,8 @@ var Magellan = function (_Plugin) {
         var hash = this.$active[0].getAttribute('href');
         window.location.hash.replace(hash, '');
       }
-      __WEBPACK_IMPORTED_MODULE_0_jquery___default()(window).off('popstate', this._deepLinkScroll);
+
+      __WEBPACK_IMPORTED_MODULE_0_jquery___default()(window).off('hashchange', this._deepLinkScroll).off(this.onLoadListener);
     }
   }]);
 
@@ -7101,6 +7467,13 @@ Magellan.defaults = {
    */
   deepLinking: false,
   /**
+   * Update the browser history with the active link, if deep linking is enabled.
+   * @option
+   * @type {boolean}
+   * @default false
+   */
+  updateHistory: false,
+  /**
    * Number of pixels to offset the scroll of the page on item click if using a sticky nav bar.
    * @option
    * @type {number}
@@ -7112,16 +7485,16 @@ Magellan.defaults = {
 
 
 /***/ }),
-/* 26 */
+/* 27 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return OffCanvas; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_jquery__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_jquery___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_jquery__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__foundation_util_keyboard__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__foundation_util_mediaQuery__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__foundation_util_core__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__foundation_util_core__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__foundation_util_keyboard__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__foundation_util_mediaQuery__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__foundation_plugin__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__foundation_util_triggers__ = __webpack_require__(5);
 
@@ -7144,7 +7517,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 /**
  * OffCanvas module.
- * @module foundation.offcanvas
+ * @module foundation.offCanvas
  * @requires foundation.util.keyboard
  * @requires foundation.util.mediaQuery
  * @requires foundation.util.triggers
@@ -7194,12 +7567,12 @@ var OffCanvas = function (_Plugin) {
 
       // Triggers init is idempotent, just need to make sure it is initialized
       __WEBPACK_IMPORTED_MODULE_5__foundation_util_triggers__["a" /* Triggers */].init(__WEBPACK_IMPORTED_MODULE_0_jquery___default.a);
-      __WEBPACK_IMPORTED_MODULE_2__foundation_util_mediaQuery__["a" /* MediaQuery */]._init();
+      __WEBPACK_IMPORTED_MODULE_3__foundation_util_mediaQuery__["a" /* MediaQuery */]._init();
 
       this._init();
       this._events();
 
-      __WEBPACK_IMPORTED_MODULE_1__foundation_util_keyboard__["a" /* Keyboard */].register('OffCanvas', {
+      __WEBPACK_IMPORTED_MODULE_2__foundation_util_keyboard__["a" /* Keyboard */].register('OffCanvas', {
         'ESCAPE': 'close'
       });
     }
@@ -7263,10 +7636,17 @@ var OffCanvas = function (_Plugin) {
         }
       }
 
-      this.options.isRevealed = this.options.isRevealed || new RegExp(this.options.revealClass, 'g').test(this.$element[0].className);
+      // Get the revealOn option from the class.
+      var revealOnRegExp = new RegExp(Object(__WEBPACK_IMPORTED_MODULE_1__foundation_util_core__["RegExpEscape"])(this.options.revealClass) + '([^\\s]+)', 'g');
+      var revealOnClass = revealOnRegExp.exec(this.$element[0].className);
+      if (revealOnClass) {
+        this.options.isRevealed = true;
+        this.options.revealOn = this.options.revealOn || revealOnClass[1];
+      }
 
-      if (this.options.isRevealed === true) {
-        this.options.revealOn = this.options.revealOn || this.$element[0].className.match(/(reveal-for-medium|reveal-for-large)/g)[0].split('-')[2];
+      // Ensure the `reveal-on-*` class is set.
+      if (this.options.isRevealed === true && this.options.revealOn) {
+        this.$element.first().addClass('' + this.options.revealClass + this.options.revealOn);
         this._setMQChecker();
       }
 
@@ -7287,16 +7667,16 @@ var OffCanvas = function (_Plugin) {
   }, {
     key: '_events',
     value: function _events() {
-      this.$element.off('.zf.trigger .zf.offcanvas').on({
+      this.$element.off('.zf.trigger .zf.offCanvas').on({
         'open.zf.trigger': this.open.bind(this),
         'close.zf.trigger': this.close.bind(this),
         'toggle.zf.trigger': this.toggle.bind(this),
-        'keydown.zf.offcanvas': this._handleKeyboard.bind(this)
+        'keydown.zf.offCanvas': this._handleKeyboard.bind(this)
       });
 
       if (this.options.closeOnClick === true) {
         var $target = this.options.contentOverlay ? this.$overlay : this.$content;
-        $target.on({ 'click.zf.offcanvas': this.close.bind(this) });
+        $target.on({ 'click.zf.offCanvas': this.close.bind(this) });
       }
     }
 
@@ -7310,15 +7690,17 @@ var OffCanvas = function (_Plugin) {
     value: function _setMQChecker() {
       var _this = this;
 
+      this.onLoadListener = Object(__WEBPACK_IMPORTED_MODULE_1__foundation_util_core__["onLoad"])(__WEBPACK_IMPORTED_MODULE_0_jquery___default()(window), function () {
+        if (__WEBPACK_IMPORTED_MODULE_3__foundation_util_mediaQuery__["a" /* MediaQuery */].atLeast(_this.options.revealOn)) {
+          _this.reveal(true);
+        }
+      });
+
       __WEBPACK_IMPORTED_MODULE_0_jquery___default()(window).on('changed.zf.mediaquery', function () {
-        if (__WEBPACK_IMPORTED_MODULE_2__foundation_util_mediaQuery__["a" /* MediaQuery */].atLeast(_this.options.revealOn)) {
+        if (__WEBPACK_IMPORTED_MODULE_3__foundation_util_mediaQuery__["a" /* MediaQuery */].atLeast(_this.options.revealOn)) {
           _this.reveal(true);
         } else {
           _this.reveal(false);
-        }
-      }).one('load.zf.offcanvas', function () {
-        if (__WEBPACK_IMPORTED_MODULE_2__foundation_util_mediaQuery__["a" /* MediaQuery */].atLeast(_this.options.revealOn)) {
-          _this.reveal(true);
         }
       });
     }
@@ -7386,7 +7768,7 @@ var OffCanvas = function (_Plugin) {
     }
 
     /**
-     * Stops scrolling of the body when offcanvas is open on mobile Safari and other troublesome browsers.
+     * Stops scrolling of the body when OffCanvas is open on mobile Safari and other troublesome browsers.
      * @private
      */
 
@@ -7440,6 +7822,7 @@ var OffCanvas = function (_Plugin) {
      * @param {Object} event - Event object passed from listener.
      * @param {jQuery} trigger - element that triggered the off-canvas to open.
      * @fires OffCanvas#opened
+     * @todo also trigger 'open' event?
      */
 
   }, {
@@ -7466,14 +7849,10 @@ var OffCanvas = function (_Plugin) {
         this.$element.siblings('[data-off-canvas-content]').css('transition-duration', '');
       }
 
-      /**
-       * Fires when the off-canvas menu opens.
-       * @event OffCanvas#opened
-       */
       this.$element.addClass('is-open').removeClass('is-closed');
 
       this.$triggers.attr('aria-expanded', 'true');
-      this.$element.attr('aria-hidden', 'false').trigger('opened.zf.offcanvas');
+      this.$element.attr('aria-hidden', 'false');
 
       this.$content.addClass('is-open-' + this.position);
 
@@ -7493,7 +7872,7 @@ var OffCanvas = function (_Plugin) {
       }
 
       if (this.options.autoFocus === true) {
-        this.$element.one(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__foundation_util_core__["c" /* transitionend */])(this.$element), function () {
+        this.$element.one(Object(__WEBPACK_IMPORTED_MODULE_1__foundation_util_core__["transitionend"])(this.$element), function () {
           if (!_this.$element.hasClass('is-open')) {
             return; // exit if prematurely closed
           }
@@ -7508,10 +7887,16 @@ var OffCanvas = function (_Plugin) {
 
       if (this.options.trapFocus === true) {
         this.$content.attr('tabindex', '-1');
-        __WEBPACK_IMPORTED_MODULE_1__foundation_util_keyboard__["a" /* Keyboard */].trapFocus(this.$element);
+        __WEBPACK_IMPORTED_MODULE_2__foundation_util_keyboard__["a" /* Keyboard */].trapFocus(this.$element);
       }
 
       this._addContentClasses();
+
+      /**
+       * Fires when the off-canvas menu opens.
+       * @event OffCanvas#opened
+       */
+      this.$element.trigger('opened.zf.offCanvas');
     }
 
     /**
@@ -7537,7 +7922,7 @@ var OffCanvas = function (_Plugin) {
        * Fires when the off-canvas menu opens.
        * @event OffCanvas#closed
        */
-      .trigger('closed.zf.offcanvas');
+      .trigger('closed.zf.offCanvas');
 
       this.$content.removeClass('is-open-left is-open-top is-open-right is-open-bottom');
 
@@ -7560,11 +7945,11 @@ var OffCanvas = function (_Plugin) {
 
       if (this.options.trapFocus === true) {
         this.$content.removeAttr('tabindex');
-        __WEBPACK_IMPORTED_MODULE_1__foundation_util_keyboard__["a" /* Keyboard */].releaseFocus(this.$element);
+        __WEBPACK_IMPORTED_MODULE_2__foundation_util_keyboard__["a" /* Keyboard */].releaseFocus(this.$element);
       }
 
       // Listen to transitionEnd and add class when done.
-      this.$element.one(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__foundation_util_core__["c" /* transitionend */])(this.$element), function (e) {
+      this.$element.one(Object(__WEBPACK_IMPORTED_MODULE_1__foundation_util_core__["transitionend"])(this.$element), function (e) {
         _this.$element.addClass('is-closed');
         _this._removeContentClasses();
       });
@@ -7598,7 +7983,7 @@ var OffCanvas = function (_Plugin) {
     value: function _handleKeyboard(e) {
       var _this4 = this;
 
-      __WEBPACK_IMPORTED_MODULE_1__foundation_util_keyboard__["a" /* Keyboard */].handleKey(e, 'OffCanvas', {
+      __WEBPACK_IMPORTED_MODULE_2__foundation_util_keyboard__["a" /* Keyboard */].handleKey(e, 'OffCanvas', {
         close: function () {
           _this4.close();
           _this4.$lastTrigger.focus();
@@ -7612,7 +7997,7 @@ var OffCanvas = function (_Plugin) {
     }
 
     /**
-     * Destroys the offcanvas plugin.
+     * Destroys the OffCanvas plugin.
      * @function
      */
 
@@ -7620,8 +8005,9 @@ var OffCanvas = function (_Plugin) {
     key: '_destroy',
     value: function _destroy() {
       this.close();
-      this.$element.off('.zf.trigger .zf.offcanvas');
-      this.$overlay.off('.zf.offcanvas');
+      this.$element.off('.zf.trigger .zf.offCanvas');
+      this.$overlay.off('.zf.offCanvas');
+      __WEBPACK_IMPORTED_MODULE_0_jquery___default()(window).off(this.onLoadListener);
     }
   }]);
 
@@ -7678,7 +8064,7 @@ OffCanvas.defaults = {
   transitionTime: null,
 
   /**
-   * Type of transition for the offcanvas menu. Options are 'push', 'detached' or 'slide'.
+   * Type of transition for the OffCanvas menu. Options are 'push', 'detached' or 'slide'.
    * @option
    * @type {string}
    * @default push
@@ -7694,7 +8080,7 @@ OffCanvas.defaults = {
   forceTo: null,
 
   /**
-   * Allow the offcanvas to remain open for certain breakpoints.
+   * Allow the OffCanvas to remain open for certain breakpoints.
    * @option
    * @type {boolean}
    * @default false
@@ -7710,7 +8096,7 @@ OffCanvas.defaults = {
   revealOn: null,
 
   /**
-   * Force focus to the offcanvas on open. If true, will focus the opening trigger on close.
+   * Force focus to the OffCanvas on open. If true, will focus the opening trigger on close.
    * @option
    * @type {boolean}
    * @default true
@@ -7718,7 +8104,7 @@ OffCanvas.defaults = {
   autoFocus: true,
 
   /**
-   * Class used to force an offcanvas to remain open. Foundation defaults for this are `reveal-for-large` & `reveal-for-medium`.
+   * Class used to force an OffCanvas to remain open. Foundation defaults for this are `reveal-for-large` & `reveal-for-medium`.
    * @option
    * @type {string}
    * @default reveal-for-
@@ -7727,7 +8113,7 @@ OffCanvas.defaults = {
   revealClass: 'reveal-for-',
 
   /**
-   * Triggers optional focus trapping when opening an offcanvas. Sets tabindex of [data-off-canvas-content] to -1 for accessibility purposes.
+   * Triggers optional focus trapping when opening an OffCanvas. Sets tabindex of [data-off-canvas-content] to -1 for accessibility purposes.
    * @option
    * @type {boolean}
    * @default false
@@ -7738,16 +8124,16 @@ OffCanvas.defaults = {
 
 
 /***/ }),
-/* 27 */
+/* 28 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Orbit; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_jquery__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_jquery___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_jquery__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__foundation_util_keyboard__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__foundation_util_keyboard__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__foundation_util_motion__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__foundation_util_timer__ = __webpack_require__(18);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__foundation_util_timer__ = __webpack_require__(11);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__foundation_util_imageLoader__ = __webpack_require__(8);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__foundation_util_core__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__foundation_plugin__ = __webpack_require__(2);
@@ -7838,7 +8224,7 @@ var Orbit = function (_Plugin) {
 
       var $images = this.$element.find('img'),
           initActive = this.$slides.filter('.is-active'),
-          id = this.$element[0].id || __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_5__foundation_util_core__["b" /* GetYoDigits */])(6, 'orbit');
+          id = this.$element[0].id || Object(__WEBPACK_IMPORTED_MODULE_5__foundation_util_core__["GetYoDigits"])(6, 'orbit');
 
       this.$element.attr({
         'data-resize': id,
@@ -7854,7 +8240,7 @@ var Orbit = function (_Plugin) {
       }
 
       if ($images.length) {
-        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__foundation_util_imageLoader__["a" /* onImagesLoaded */])($images, this._prepareForOrbit.bind(this));
+        Object(__WEBPACK_IMPORTED_MODULE_4__foundation_util_imageLoader__["a" /* onImagesLoaded */])($images, this._prepareForOrbit.bind(this));
       } else {
         this._prepareForOrbit(); //hehe
       }
@@ -8340,297 +8726,6 @@ Orbit.defaults = {
 
 
 /***/ }),
-/* 28 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return ResponsiveAccordionTabs; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_jquery__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_jquery___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_jquery__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__foundation_util_mediaQuery__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__foundation_util_core__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__foundation_plugin__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__foundation_accordion__ = __webpack_require__(11);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__foundation_tabs__ = __webpack_require__(17);
-
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-
-
-
-
-
-
-
-
-// The plugin matches the plugin classes with these plugin instances.
-var MenuPlugins = {
-  tabs: {
-    cssClass: 'tabs',
-    plugin: __WEBPACK_IMPORTED_MODULE_5__foundation_tabs__["a" /* Tabs */]
-  },
-  accordion: {
-    cssClass: 'accordion',
-    plugin: __WEBPACK_IMPORTED_MODULE_4__foundation_accordion__["a" /* Accordion */]
-  }
-};
-
-/**
- * ResponsiveAccordionTabs module.
- * @module foundation.responsiveAccordionTabs
- * @requires foundation.util.motion
- * @requires foundation.accordion
- * @requires foundation.tabs
- */
-
-var ResponsiveAccordionTabs = function (_Plugin) {
-  _inherits(ResponsiveAccordionTabs, _Plugin);
-
-  function ResponsiveAccordionTabs() {
-    _classCallCheck(this, ResponsiveAccordionTabs);
-
-    return _possibleConstructorReturn(this, (ResponsiveAccordionTabs.__proto__ || Object.getPrototypeOf(ResponsiveAccordionTabs)).apply(this, arguments));
-  }
-
-  _createClass(ResponsiveAccordionTabs, [{
-    key: '_setup',
-
-    /**
-     * Creates a new instance of a responsive accordion tabs.
-     * @class
-     * @name ResponsiveAccordionTabs
-     * @fires ResponsiveAccordionTabs#init
-     * @param {jQuery} element - jQuery object to make into Responsive Accordion Tabs.
-     * @param {Object} options - Overrides to the default plugin settings.
-     */
-    value: function _setup(element, options) {
-      this.$element = __WEBPACK_IMPORTED_MODULE_0_jquery___default()(element);
-      this.options = __WEBPACK_IMPORTED_MODULE_0_jquery___default.a.extend({}, this.$element.data(), options);
-      this.rules = this.$element.data('responsive-accordion-tabs');
-      this.currentMq = null;
-      this.currentPlugin = null;
-      this.className = 'ResponsiveAccordionTabs'; // ie9 back compat
-      if (!this.$element.attr('id')) {
-        this.$element.attr('id', __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__foundation_util_core__["b" /* GetYoDigits */])(6, 'responsiveaccordiontabs'));
-      };
-
-      this._init();
-      this._events();
-    }
-
-    /**
-     * Initializes the Menu by parsing the classes from the 'data-responsive-accordion-tabs' attribute on the element.
-     * @function
-     * @private
-     */
-
-  }, {
-    key: '_init',
-    value: function _init() {
-      __WEBPACK_IMPORTED_MODULE_1__foundation_util_mediaQuery__["a" /* MediaQuery */]._init();
-
-      // The first time an Interchange plugin is initialized, this.rules is converted from a string of "classes" to an object of rules
-      if (typeof this.rules === 'string') {
-        var rulesTree = {};
-
-        // Parse rules from "classes" pulled from data attribute
-        var rules = this.rules.split(' ');
-
-        // Iterate through every rule found
-        for (var i = 0; i < rules.length; i++) {
-          var rule = rules[i].split('-');
-          var ruleSize = rule.length > 1 ? rule[0] : 'small';
-          var rulePlugin = rule.length > 1 ? rule[1] : rule[0];
-
-          if (MenuPlugins[rulePlugin] !== null) {
-            rulesTree[ruleSize] = MenuPlugins[rulePlugin];
-          }
-        }
-
-        this.rules = rulesTree;
-      }
-
-      this._getAllOptions();
-
-      if (!__WEBPACK_IMPORTED_MODULE_0_jquery___default.a.isEmptyObject(this.rules)) {
-        this._checkMediaQueries();
-      }
-    }
-  }, {
-    key: '_getAllOptions',
-    value: function _getAllOptions() {
-      //get all defaults and options
-      var _this = this;
-      _this.allOptions = {};
-      for (var key in MenuPlugins) {
-        if (MenuPlugins.hasOwnProperty(key)) {
-          var obj = MenuPlugins[key];
-          try {
-            var dummyPlugin = __WEBPACK_IMPORTED_MODULE_0_jquery___default()('<ul></ul>');
-            var tmpPlugin = new obj.plugin(dummyPlugin, _this.options);
-            for (var keyKey in tmpPlugin.options) {
-              if (tmpPlugin.options.hasOwnProperty(keyKey) && keyKey !== 'zfPlugin') {
-                var objObj = tmpPlugin.options[keyKey];
-                _this.allOptions[keyKey] = objObj;
-              }
-            }
-            tmpPlugin.destroy();
-          } catch (e) {}
-        }
-      }
-    }
-
-    /**
-     * Initializes events for the Menu.
-     * @function
-     * @private
-     */
-
-  }, {
-    key: '_events',
-    value: function _events() {
-      var _this = this;
-
-      __WEBPACK_IMPORTED_MODULE_0_jquery___default()(window).on('changed.zf.mediaquery', function () {
-        _this._checkMediaQueries();
-      });
-    }
-
-    /**
-     * Checks the current screen width against available media queries. If the media query has changed, and the plugin needed has changed, the plugins will swap out.
-     * @function
-     * @private
-     */
-
-  }, {
-    key: '_checkMediaQueries',
-    value: function _checkMediaQueries() {
-      var matchedMq,
-          _this = this;
-      // Iterate through each rule and find the last matching rule
-      __WEBPACK_IMPORTED_MODULE_0_jquery___default.a.each(this.rules, function (key) {
-        if (__WEBPACK_IMPORTED_MODULE_1__foundation_util_mediaQuery__["a" /* MediaQuery */].atLeast(key)) {
-          matchedMq = key;
-        }
-      });
-
-      // No match? No dice
-      if (!matchedMq) return;
-
-      // Plugin already initialized? We good
-      if (this.currentPlugin instanceof this.rules[matchedMq].plugin) return;
-
-      // Remove existing plugin-specific CSS classes
-      __WEBPACK_IMPORTED_MODULE_0_jquery___default.a.each(MenuPlugins, function (key, value) {
-        _this.$element.removeClass(value.cssClass);
-      });
-
-      // Add the CSS class for the new plugin
-      this.$element.addClass(this.rules[matchedMq].cssClass);
-
-      // Create an instance of the new plugin
-      if (this.currentPlugin) {
-        //don't know why but on nested elements data zfPlugin get's lost
-        if (!this.currentPlugin.$element.data('zfPlugin') && this.storezfData) this.currentPlugin.$element.data('zfPlugin', this.storezfData);
-        this.currentPlugin.destroy();
-      }
-      this._handleMarkup(this.rules[matchedMq].cssClass);
-      this.currentPlugin = new this.rules[matchedMq].plugin(this.$element, {});
-      this.storezfData = this.currentPlugin.$element.data('zfPlugin');
-    }
-  }, {
-    key: '_handleMarkup',
-    value: function _handleMarkup(toSet) {
-      var _this = this,
-          fromString = 'accordion';
-      var $panels = __WEBPACK_IMPORTED_MODULE_0_jquery___default()('[data-tabs-content=' + this.$element.attr('id') + ']');
-      if ($panels.length) fromString = 'tabs';
-      if (fromString === toSet) {
-        return;
-      };
-
-      var tabsTitle = _this.allOptions.linkClass ? _this.allOptions.linkClass : 'tabs-title';
-      var tabsPanel = _this.allOptions.panelClass ? _this.allOptions.panelClass : 'tabs-panel';
-
-      this.$element.removeAttr('role');
-      var $liHeads = this.$element.children('.' + tabsTitle + ',[data-accordion-item]').removeClass(tabsTitle).removeClass('accordion-item').removeAttr('data-accordion-item');
-      var $liHeadsA = $liHeads.children('a').removeClass('accordion-title');
-
-      if (fromString === 'tabs') {
-        $panels = $panels.children('.' + tabsPanel).removeClass(tabsPanel).removeAttr('role').removeAttr('aria-hidden').removeAttr('aria-labelledby');
-        $panels.children('a').removeAttr('role').removeAttr('aria-controls').removeAttr('aria-selected');
-      } else {
-        $panels = $liHeads.children('[data-tab-content]').removeClass('accordion-content');
-      };
-
-      $panels.css({ display: '', visibility: '' });
-      $liHeads.css({ display: '', visibility: '' });
-      if (toSet === 'accordion') {
-        $panels.each(function (key, value) {
-          __WEBPACK_IMPORTED_MODULE_0_jquery___default()(value).appendTo($liHeads.get(key)).addClass('accordion-content').attr('data-tab-content', '').removeClass('is-active').css({ height: '' });
-          __WEBPACK_IMPORTED_MODULE_0_jquery___default()('[data-tabs-content=' + _this.$element.attr('id') + ']').after('<div id="tabs-placeholder-' + _this.$element.attr('id') + '"></div>').detach();
-          $liHeads.addClass('accordion-item').attr('data-accordion-item', '');
-          $liHeadsA.addClass('accordion-title');
-        });
-      } else if (toSet === 'tabs') {
-        var $tabsContent = __WEBPACK_IMPORTED_MODULE_0_jquery___default()('[data-tabs-content=' + _this.$element.attr('id') + ']');
-        var $placeholder = __WEBPACK_IMPORTED_MODULE_0_jquery___default()('#tabs-placeholder-' + _this.$element.attr('id'));
-        if ($placeholder.length) {
-          $tabsContent = __WEBPACK_IMPORTED_MODULE_0_jquery___default()('<div class="tabs-content"></div>').insertAfter($placeholder).attr('data-tabs-content', _this.$element.attr('id'));
-          $placeholder.remove();
-        } else {
-          $tabsContent = __WEBPACK_IMPORTED_MODULE_0_jquery___default()('<div class="tabs-content"></div>').insertAfter(_this.$element).attr('data-tabs-content', _this.$element.attr('id'));
-        };
-        $panels.each(function (key, value) {
-          var tempValue = __WEBPACK_IMPORTED_MODULE_0_jquery___default()(value).appendTo($tabsContent).addClass(tabsPanel);
-          var hash = $liHeadsA.get(key).hash.slice(1);
-          var id = __WEBPACK_IMPORTED_MODULE_0_jquery___default()(value).attr('id') || __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__foundation_util_core__["b" /* GetYoDigits */])(6, 'accordion');
-          if (hash !== id) {
-            if (hash !== '') {
-              __WEBPACK_IMPORTED_MODULE_0_jquery___default()(value).attr('id', hash);
-            } else {
-              hash = id;
-              __WEBPACK_IMPORTED_MODULE_0_jquery___default()(value).attr('id', hash);
-              __WEBPACK_IMPORTED_MODULE_0_jquery___default()($liHeadsA.get(key)).attr('href', __WEBPACK_IMPORTED_MODULE_0_jquery___default()($liHeadsA.get(key)).attr('href').replace('#', '') + '#' + hash);
-            };
-          };
-          var isActive = __WEBPACK_IMPORTED_MODULE_0_jquery___default()($liHeads.get(key)).hasClass('is-active');
-          if (isActive) {
-            tempValue.addClass('is-active');
-          };
-        });
-        $liHeads.addClass(tabsTitle);
-      };
-    }
-
-    /**
-     * Destroys the instance of the current plugin on this element, as well as the window resize handler that switches the plugins out.
-     * @function
-     */
-
-  }, {
-    key: '_destroy',
-    value: function _destroy() {
-      if (this.currentPlugin) this.currentPlugin.destroy();
-      __WEBPACK_IMPORTED_MODULE_0_jquery___default()(window).off('.zf.ResponsiveAccordionTabs');
-    }
-  }]);
-
-  return ResponsiveAccordionTabs;
-}(__WEBPACK_IMPORTED_MODULE_3__foundation_plugin__["a" /* Plugin */]);
-
-ResponsiveAccordionTabs.defaults = {};
-
-
-
-/***/ }),
 /* 29 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -8638,12 +8733,12 @@ ResponsiveAccordionTabs.defaults = {};
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return ResponsiveMenu; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_jquery__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_jquery___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_jquery__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__foundation_util_mediaQuery__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__foundation_util_mediaQuery__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__foundation_util_core__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__foundation_plugin__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__foundation_dropdownMenu__ = __webpack_require__(14);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__foundation_drilldown__ = __webpack_require__(13);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__foundation_accordionMenu__ = __webpack_require__(12);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__foundation_dropdownMenu__ = __webpack_require__(16);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__foundation_drilldown__ = __webpack_require__(14);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__foundation_accordionMenu__ = __webpack_require__(13);
 
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -8756,7 +8851,7 @@ var ResponsiveMenu = function (_Plugin) {
         this._checkMediaQueries();
       }
       // Add data-mutate since children may need it.
-      this.$element.attr('data-mutate', this.$element.attr('data-mutate') || __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__foundation_util_core__["b" /* GetYoDigits */])(6, 'responsive-menu'));
+      this.$element.attr('data-mutate', this.$element.attr('data-mutate') || Object(__WEBPACK_IMPORTED_MODULE_2__foundation_util_core__["GetYoDigits"])(6, 'responsive-menu'));
     }
 
     /**
@@ -8843,7 +8938,7 @@ ResponsiveMenu.defaults = {};
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return ResponsiveToggle; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_jquery__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_jquery___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_jquery__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__foundation_util_mediaQuery__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__foundation_util_mediaQuery__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__foundation_util_motion__ = __webpack_require__(6);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__foundation_plugin__ = __webpack_require__(2);
 
@@ -9046,11 +9141,12 @@ ResponsiveToggle.defaults = {
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Reveal; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_jquery__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_jquery___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_jquery__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__foundation_util_keyboard__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__foundation_util_mediaQuery__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__foundation_util_motion__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__foundation_plugin__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__foundation_util_triggers__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__foundation_util_core__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__foundation_util_keyboard__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__foundation_util_mediaQuery__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__foundation_util_motion__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__foundation_plugin__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__foundation_util_triggers__ = __webpack_require__(5);
 
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -9060,6 +9156,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
 
 
 
@@ -9103,9 +9200,9 @@ var Reveal = function (_Plugin) {
       this._init();
 
       // Triggers init is idempotent, just need to make sure it is initialized
-      __WEBPACK_IMPORTED_MODULE_5__foundation_util_triggers__["a" /* Triggers */].init(__WEBPACK_IMPORTED_MODULE_0_jquery___default.a);
+      __WEBPACK_IMPORTED_MODULE_6__foundation_util_triggers__["a" /* Triggers */].init(__WEBPACK_IMPORTED_MODULE_0_jquery___default.a);
 
-      __WEBPACK_IMPORTED_MODULE_1__foundation_util_keyboard__["a" /* Keyboard */].register('Reveal', {
+      __WEBPACK_IMPORTED_MODULE_2__foundation_util_keyboard__["a" /* Keyboard */].register('Reveal', {
         'ESCAPE': 'close'
       });
     }
@@ -9118,11 +9215,12 @@ var Reveal = function (_Plugin) {
   }, {
     key: '_init',
     value: function _init() {
-      __WEBPACK_IMPORTED_MODULE_2__foundation_util_mediaQuery__["a" /* MediaQuery */]._init();
+      var _this3 = this;
+
+      __WEBPACK_IMPORTED_MODULE_3__foundation_util_mediaQuery__["a" /* MediaQuery */]._init();
       this.id = this.$element.attr('id');
       this.isActive = false;
-      this.cached = { mq: __WEBPACK_IMPORTED_MODULE_2__foundation_util_mediaQuery__["a" /* MediaQuery */].current };
-      this.isMobile = mobileSniff();
+      this.cached = { mq: __WEBPACK_IMPORTED_MODULE_3__foundation_util_mediaQuery__["a" /* MediaQuery */].current };
 
       this.$anchor = __WEBPACK_IMPORTED_MODULE_0_jquery___default()('[data-open="' + this.id + '"]').length ? __WEBPACK_IMPORTED_MODULE_0_jquery___default()('[data-open="' + this.id + '"]') : __WEBPACK_IMPORTED_MODULE_0_jquery___default()('[data-toggle="' + this.id + '"]');
       this.$anchor.attr({
@@ -9154,7 +9252,9 @@ var Reveal = function (_Plugin) {
       }
       this._events();
       if (this.options.deepLink && window.location.hash === '#' + this.id) {
-        __WEBPACK_IMPORTED_MODULE_0_jquery___default()(window).one('load.zf.reveal', this.open.bind(this));
+        this.onLoadListener = Object(__WEBPACK_IMPORTED_MODULE_1__foundation_util_core__["onLoad"])(__WEBPACK_IMPORTED_MODULE_0_jquery___default()(window), function () {
+          return _this3.open();
+        });
       }
     }
 
@@ -9188,7 +9288,8 @@ var Reveal = function (_Plugin) {
       var outerWidth = __WEBPACK_IMPORTED_MODULE_0_jquery___default()(window).width();
       var height = this.$element.outerHeight();
       var outerHeight = __WEBPACK_IMPORTED_MODULE_0_jquery___default()(window).height();
-      var left, top;
+      var left,
+          top = null;
       if (this.options.hOffset === 'auto') {
         left = parseInt((outerWidth - width) / 2, 10);
       } else {
@@ -9200,11 +9301,15 @@ var Reveal = function (_Plugin) {
         } else {
           top = parseInt((outerHeight - height) / 4, 10);
         }
-      } else {
+      } else if (this.options.vOffset !== null) {
         top = parseInt(this.options.vOffset, 10);
       }
-      this.$element.css({ top: top + 'px' });
-      // only worry about left if we don't have an overlay or we havea  horizontal offset,
+
+      if (top !== null) {
+        this.$element.css({ top: top + 'px' });
+      }
+
+      // only worry about left if we don't have an overlay or we have a horizontal offset,
       // otherwise we're perfectly in the middle
       if (!this.$overlay || this.options.hOffset !== 'auto') {
         this.$element.css({ left: left + 'px' });
@@ -9220,7 +9325,7 @@ var Reveal = function (_Plugin) {
   }, {
     key: '_events',
     value: function _events() {
-      var _this3 = this;
+      var _this4 = this;
 
       var _this = this;
 
@@ -9229,7 +9334,7 @@ var Reveal = function (_Plugin) {
         'close.zf.trigger': function (event, $element) {
           if (event.target === _this.$element[0] || __WEBPACK_IMPORTED_MODULE_0_jquery___default()(event.target).parents('[data-closable]')[0] === $element) {
             // only close reveal when it's explicitly called
-            return _this3.close.apply(_this3);
+            return _this4.close.apply(_this4);
           }
         },
         'toggle.zf.trigger': this.toggle.bind(this),
@@ -9247,12 +9352,12 @@ var Reveal = function (_Plugin) {
         });
       }
       if (this.options.deepLink) {
-        __WEBPACK_IMPORTED_MODULE_0_jquery___default()(window).on('popstate.zf.reveal:' + this.id, this._handleState.bind(this));
+        __WEBPACK_IMPORTED_MODULE_0_jquery___default()(window).on('hashchange.zf.reveal:' + this.id, this._handleState.bind(this));
       }
     }
 
     /**
-     * Handles modal methods on back/forward button clicks or any other event that triggers popstate.
+     * Handles modal methods on back/forward button clicks or any other event that triggers hashchange.
      * @private
      */
 
@@ -9267,6 +9372,35 @@ var Reveal = function (_Plugin) {
     }
 
     /**
+    * Disables the scroll when Reveal is shown to prevent the background from shifting
+    * @param {number} scrollTop - Scroll to visually apply, window current scroll by default
+    */
+
+  }, {
+    key: '_disableScroll',
+    value: function _disableScroll(scrollTop) {
+      scrollTop = scrollTop || __WEBPACK_IMPORTED_MODULE_0_jquery___default()(window).scrollTop();
+      if (__WEBPACK_IMPORTED_MODULE_0_jquery___default()(document).height() > __WEBPACK_IMPORTED_MODULE_0_jquery___default()(window).height()) {
+        __WEBPACK_IMPORTED_MODULE_0_jquery___default()("html").css("top", -scrollTop);
+      }
+    }
+
+    /**
+    * Reenables the scroll when Reveal closes
+    * @param {number} scrollTop - Scroll to restore, html "top" property by default (as set by `_disableScroll`)
+    */
+
+  }, {
+    key: '_enableScroll',
+    value: function _enableScroll(scrollTop) {
+      scrollTop = scrollTop || parseInt(__WEBPACK_IMPORTED_MODULE_0_jquery___default()("html").css("top"));
+      if (__WEBPACK_IMPORTED_MODULE_0_jquery___default()(document).height() > __WEBPACK_IMPORTED_MODULE_0_jquery___default()(window).height()) {
+        __WEBPACK_IMPORTED_MODULE_0_jquery___default()("html").css("top", "");
+        __WEBPACK_IMPORTED_MODULE_0_jquery___default()(window).scrollTop(-scrollTop);
+      }
+    }
+
+    /**
      * Opens the modal controlled by `this.$anchor`, and closes all others by default.
      * @function
      * @fires Reveal#closeme
@@ -9276,7 +9410,7 @@ var Reveal = function (_Plugin) {
   }, {
     key: 'open',
     value: function open() {
-      var _this4 = this;
+      var _this5 = this;
 
       // either update or replace browser history
       if (this.options.deepLink) {
@@ -9292,6 +9426,9 @@ var Reveal = function (_Plugin) {
           window.location.hash = hash;
         }
       }
+
+      // Remember anchor that opened it to set focus back later, have general anchors as fallback
+      this.$activeAnchor = __WEBPACK_IMPORTED_MODULE_0_jquery___default()(document.activeElement).is(this.$anchor) ? __WEBPACK_IMPORTED_MODULE_0_jquery___default()(document.activeElement) : this.$anchor;
 
       this.isActive = true;
 
@@ -9323,18 +9460,10 @@ var Reveal = function (_Plugin) {
         this.$element.trigger('closeme.zf.reveal', this.id);
       }
 
+      this._disableScroll();
+
       var _this = this;
 
-      function addRevealOpenClasses() {
-        if (_this.isMobile) {
-          if (!_this.originalScrollPos) {
-            _this.originalScrollPos = window.pageYOffset;
-          }
-          __WEBPACK_IMPORTED_MODULE_0_jquery___default()('html, body').addClass('is-reveal-open');
-        } else {
-          __WEBPACK_IMPORTED_MODULE_0_jquery___default()('body').addClass('is-reveal-open');
-        }
-      }
       // Motion UI method of reveal
       if (this.options.animationIn) {
         var afterAnimation = function () {
@@ -9342,17 +9471,17 @@ var Reveal = function (_Plugin) {
             'aria-hidden': false,
             'tabindex': -1
           }).focus();
-          addRevealOpenClasses();
-          __WEBPACK_IMPORTED_MODULE_1__foundation_util_keyboard__["a" /* Keyboard */].trapFocus(_this.$element);
+          _this.addRevealOpenClasses();
+          __WEBPACK_IMPORTED_MODULE_2__foundation_util_keyboard__["a" /* Keyboard */].trapFocus(_this.$element);
         };
 
         if (this.options.overlay) {
-          __WEBPACK_IMPORTED_MODULE_3__foundation_util_motion__["a" /* Motion */].animateIn(this.$overlay, 'fade-in');
+          __WEBPACK_IMPORTED_MODULE_4__foundation_util_motion__["a" /* Motion */].animateIn(this.$overlay, 'fade-in');
         }
-        __WEBPACK_IMPORTED_MODULE_3__foundation_util_motion__["a" /* Motion */].animateIn(this.$element, this.options.animationIn, function () {
-          if (_this4.$element) {
+        __WEBPACK_IMPORTED_MODULE_4__foundation_util_motion__["a" /* Motion */].animateIn(this.$element, this.options.animationIn, function () {
+          if (_this5.$element) {
             // protect against object having been removed
-            _this4.focusableElements = __WEBPACK_IMPORTED_MODULE_1__foundation_util_keyboard__["a" /* Keyboard */].findFocusable(_this4.$element);
+            _this5.focusableElements = __WEBPACK_IMPORTED_MODULE_2__foundation_util_keyboard__["a" /* Keyboard */].findFocusable(_this5.$element);
             afterAnimation();
           }
         });
@@ -9370,9 +9499,9 @@ var Reveal = function (_Plugin) {
         'aria-hidden': false,
         'tabindex': -1
       }).focus();
-      __WEBPACK_IMPORTED_MODULE_1__foundation_util_keyboard__["a" /* Keyboard */].trapFocus(this.$element);
+      __WEBPACK_IMPORTED_MODULE_2__foundation_util_keyboard__["a" /* Keyboard */].trapFocus(this.$element);
 
-      addRevealOpenClasses();
+      this._addRevealOpenClasses();
 
       this._extraHandlers();
 
@@ -9381,6 +9510,16 @@ var Reveal = function (_Plugin) {
        * @event Reveal#open
        */
       this.$element.trigger('open.zf.reveal');
+    }
+  }, {
+    key: '_addRevealOpenClasses',
+    value: function _addRevealOpenClasses() {
+      __WEBPACK_IMPORTED_MODULE_0_jquery___default()('html').addClass('is-reveal-open');
+    }
+  }, {
+    key: '_removeRevealOpenClasses',
+    value: function _removeRevealOpenClasses() {
+      __WEBPACK_IMPORTED_MODULE_0_jquery___default()('html').removeClass('is-reveal-open');
     }
 
     /**
@@ -9395,7 +9534,7 @@ var Reveal = function (_Plugin) {
       if (!this.$element) {
         return;
       } // If we're in the middle of cleanup, don't freak out
-      this.focusableElements = __WEBPACK_IMPORTED_MODULE_1__foundation_util_keyboard__["a" /* Keyboard */].findFocusable(this.$element);
+      this.focusableElements = __WEBPACK_IMPORTED_MODULE_2__foundation_util_keyboard__["a" /* Keyboard */].findFocusable(this.$element);
 
       if (!this.options.overlay && this.options.closeOnClick && !this.options.fullScreen) {
         __WEBPACK_IMPORTED_MODULE_0_jquery___default()('body').on('click.zf.reveal', function (e) {
@@ -9408,7 +9547,7 @@ var Reveal = function (_Plugin) {
 
       if (this.options.closeOnEsc) {
         __WEBPACK_IMPORTED_MODULE_0_jquery___default()(window).on('keydown.zf.reveal', function (e) {
-          __WEBPACK_IMPORTED_MODULE_1__foundation_util_keyboard__["a" /* Keyboard */].handleKey(e, 'Reveal', {
+          __WEBPACK_IMPORTED_MODULE_2__foundation_util_keyboard__["a" /* Keyboard */].handleKey(e, 'Reveal', {
             close: function () {
               if (_this.options.closeOnEsc) {
                 _this.close();
@@ -9436,10 +9575,10 @@ var Reveal = function (_Plugin) {
       // Motion UI method of hiding
       if (this.options.animationOut) {
         if (this.options.overlay) {
-          __WEBPACK_IMPORTED_MODULE_3__foundation_util_motion__["a" /* Motion */].animateOut(this.$overlay, 'fade-out');
+          __WEBPACK_IMPORTED_MODULE_4__foundation_util_motion__["a" /* Motion */].animateOut(this.$overlay, 'fade-out');
         }
 
-        __WEBPACK_IMPORTED_MODULE_3__foundation_util_motion__["a" /* Motion */].animateOut(this.$element, this.options.animationOut, finishUp);
+        __WEBPACK_IMPORTED_MODULE_4__foundation_util_motion__["a" /* Motion */].animateOut(this.$element, this.options.animationOut, finishUp);
       }
       // jQuery method of hiding
       else {
@@ -9464,23 +9603,21 @@ var Reveal = function (_Plugin) {
       this.$element.off('keydown.zf.reveal');
 
       function finishUp() {
-        if (_this.isMobile) {
-          if (__WEBPACK_IMPORTED_MODULE_0_jquery___default()('.reveal:visible').length === 0) {
-            __WEBPACK_IMPORTED_MODULE_0_jquery___default()('html, body').removeClass('is-reveal-open');
-          }
-          if (_this.originalScrollPos) {
-            __WEBPACK_IMPORTED_MODULE_0_jquery___default()('body').scrollTop(_this.originalScrollPos);
-            _this.originalScrollPos = null;
-          }
-        } else {
-          if (__WEBPACK_IMPORTED_MODULE_0_jquery___default()('.reveal:visible').length === 0) {
-            __WEBPACK_IMPORTED_MODULE_0_jquery___default()('body').removeClass('is-reveal-open');
-          }
+
+        // Get the current top before the modal is closed and restore the scroll after.
+        // TODO: use component properties instead of HTML properties
+        // See https://github.com/zurb/foundation-sites/pull/10786
+        var scrollTop = parseInt(__WEBPACK_IMPORTED_MODULE_0_jquery___default()("html").css("top"));
+
+        if (__WEBPACK_IMPORTED_MODULE_0_jquery___default()('.reveal:visible').length === 0) {
+          _this._removeRevealOpenClasses(); // also remove .is-reveal-open from the html element when there is no opened reveal
         }
 
-        __WEBPACK_IMPORTED_MODULE_1__foundation_util_keyboard__["a" /* Keyboard */].releaseFocus(_this.$element);
+        __WEBPACK_IMPORTED_MODULE_2__foundation_util_keyboard__["a" /* Keyboard */].releaseFocus(_this.$element);
 
         _this.$element.attr('aria-hidden', true);
+
+        _this._enableScroll(scrollTop);
 
         /**
         * Fires when the modal is done closing.
@@ -9506,7 +9643,7 @@ var Reveal = function (_Plugin) {
         }
       }
 
-      this.$anchor.focus();
+      this.$activeAnchor.focus();
     }
 
     /**
@@ -9538,12 +9675,16 @@ var Reveal = function (_Plugin) {
       }
       this.$element.hide().off();
       this.$anchor.off('.zf');
-      __WEBPACK_IMPORTED_MODULE_0_jquery___default()(window).off('.zf.reveal:' + this.id);
+      __WEBPACK_IMPORTED_MODULE_0_jquery___default()(window).off('.zf.reveal:' + this.id).off(this.onLoadListener);
+
+      if (__WEBPACK_IMPORTED_MODULE_0_jquery___default()('.reveal:visible').length === 0) {
+        this._removeRevealOpenClasses(); // also remove .is-reveal-open from the html element when there is no opened reveal
+      }
     }
   }]);
 
   return Reveal;
-}(__WEBPACK_IMPORTED_MODULE_4__foundation_plugin__["a" /* Plugin */]);
+}(__WEBPACK_IMPORTED_MODULE_5__foundation_plugin__["a" /* Plugin */]);
 
 Reveal.defaults = {
   /**
@@ -9666,20 +9807,6 @@ Reveal.defaults = {
   additionalOverlayClasses: ''
 };
 
-function iPhoneSniff() {
-  return (/iP(ad|hone|od).*OS/.test(window.navigator.userAgent)
-  );
-}
-
-function androidSniff() {
-  return (/Android/.test(window.navigator.userAgent)
-  );
-}
-
-function mobileSniff() {
-  return iPhoneSniff() || androidSniff();
-}
-
 
 
 /***/ }),
@@ -9690,7 +9817,7 @@ function mobileSniff() {
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Slider; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_jquery__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_jquery___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_jquery__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__foundation_util_keyboard__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__foundation_util_keyboard__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__foundation_util_motion__ = __webpack_require__(6);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__foundation_util_core__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__foundation_plugin__ = __webpack_require__(2);
@@ -9883,7 +10010,7 @@ var Slider = function (_Plugin) {
           pctOfBar = this._logTransform(pctOfBar);
           break;
       }
-      var value = (this.options.end - this.options.start) * pctOfBar + this.options.start;
+      var value = (this.options.end - this.options.start) * pctOfBar + parseFloat(this.options.start);
 
       return value;
     }
@@ -10023,7 +10150,7 @@ var Slider = function (_Plugin) {
       //because we don't know exactly how the handle will be moved, check the amount of time it should take to move.
       var moveTime = this.$element.data('dragging') ? 1000 / 60 : this.options.moveTime;
 
-      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__foundation_util_motion__["b" /* Move */])(moveTime, $hndl, function () {
+      Object(__WEBPACK_IMPORTED_MODULE_2__foundation_util_motion__["b" /* Move */])(moveTime, $hndl, function () {
         // adjusting the left/top property of the handle, based on the percentage calculated above
         // if movement isNaN, that is because the slider is hidden and we cannot determine handle width,
         // fall back to next best guess.
@@ -10063,7 +10190,7 @@ var Slider = function (_Plugin) {
     key: '_setInitAttr',
     value: function _setInitAttr(idx) {
       var initVal = idx === 0 ? this.options.initialStart : this.options.initialEnd;
-      var id = this.inputs.eq(idx).attr('id') || __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__foundation_util_core__["b" /* GetYoDigits */])(6, 'slider');
+      var id = this.inputs.eq(idx).attr('id') || Object(__WEBPACK_IMPORTED_MODULE_3__foundation_util_core__["GetYoDigits"])(6, 'slider');
       this.inputs.eq(idx).attr({
         'id': id,
         'max': this.options.end,
@@ -10147,7 +10274,7 @@ var Slider = function (_Plugin) {
         value = this._value(offsetPct);
 
         // turn everything around for RTL, yay math!
-        if (__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__foundation_util_core__["a" /* rtl */])() && !this.options.vertical) {
+        if (Object(__WEBPACK_IMPORTED_MODULE_3__foundation_util_core__["rtl"])() && !this.options.vertical) {
           value = this.options.end - value;
         }
 
@@ -10497,7 +10624,7 @@ function baseLog(base, value) {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_jquery__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_jquery___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_jquery__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__foundation_util_core__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__foundation_util_mediaQuery__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__foundation_util_mediaQuery__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__foundation_plugin__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__foundation_util_triggers__ = __webpack_require__(5);
 
@@ -10565,7 +10692,7 @@ var Sticky = function (_Plugin) {
       __WEBPACK_IMPORTED_MODULE_2__foundation_util_mediaQuery__["a" /* MediaQuery */]._init();
 
       var $parent = this.$element.parent('[data-sticky-container]'),
-          id = this.$element[0].id || __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__foundation_util_core__["b" /* GetYoDigits */])(6, 'sticky'),
+          id = this.$element[0].id || Object(__WEBPACK_IMPORTED_MODULE_1__foundation_util_core__["GetYoDigits"])(6, 'sticky'),
           _this = this;
 
       if ($parent.length) {
@@ -10584,7 +10711,7 @@ var Sticky = function (_Plugin) {
 
       this.scrollCount = this.options.checkEvery;
       this.isStuck = false;
-      __WEBPACK_IMPORTED_MODULE_0_jquery___default()(window).one('load.zf.sticky', function () {
+      this.onLoadListener = Object(__WEBPACK_IMPORTED_MODULE_1__foundation_util_core__["onLoad"])(__WEBPACK_IMPORTED_MODULE_0_jquery___default()(window), function () {
         //We calculate the container height to have correct values for anchor points offset calculation.
         _this.containerHeight = _this.$element.css("display") == "none" ? 0 : _this.$element[0].getBoundingClientRect().height;
         _this.$container.css('height', _this.containerHeight);
@@ -10963,7 +11090,7 @@ var Sticky = function (_Plugin) {
       if (this.$anchor && this.$anchor.length) {
         this.$anchor.off('change.zf.sticky');
       }
-      __WEBPACK_IMPORTED_MODULE_0_jquery___default()(window).off(this.scrollListener);
+      __WEBPACK_IMPORTED_MODULE_0_jquery___default()(window).off(this.scrollListener).off(this.onLoadListener);
 
       if (this.wasWrapped) {
         this.$element.unwrap();
@@ -11153,16 +11280,20 @@ var Toggler = function (_Plugin) {
       }
       // Otherwise, parse toggle class
       else {
-          input = this.$element.data('toggler');
+          input = this.options.toggler;
+          if (typeof input !== 'string' || !input.length) {
+            throw new Error('The \'toogler\' option containing the target class is required, got "' + input + '"');
+          }
           // Allow for a . at the beginning of the string
           this.className = input[0] === '.' ? input.slice(1) : input;
         }
 
       // Add ARIA attributes to triggers
       var id = this.$element[0].id;
-      __WEBPACK_IMPORTED_MODULE_0_jquery___default()('[data-open="' + id + '"], [data-close="' + id + '"], [data-toggle="' + id + '"]').attr('aria-controls', id);
-      // If the target is hidden, add aria-hidden
-      this.$element.attr('aria-expanded', this.$element.is(':hidden') ? false : true);
+      __WEBPACK_IMPORTED_MODULE_0_jquery___default()('[data-open="' + id + '"], [data-close="' + id + '"], [data-toggle="' + id + '"]').attr({
+        'aria-controls': id,
+        'aria-expanded': this.$element.is(':hidden') ? false : true
+      });
     }
 
     /**
@@ -11234,7 +11365,10 @@ var Toggler = function (_Plugin) {
   }, {
     key: '_updateARIA',
     value: function _updateARIA(isOn) {
-      this.$element.attr('aria-expanded', isOn ? true : false);
+      var id = this.$element[0].id;
+      __WEBPACK_IMPORTED_MODULE_0_jquery___default()('[data-open="' + id + '"], [data-close="' + id + '"], [data-toggle="' + id + '"]').attr({
+        'aria-expanded': isOn ? true : false
+      });
     }
 
     /**
@@ -11253,6 +11387,12 @@ var Toggler = function (_Plugin) {
 }(__WEBPACK_IMPORTED_MODULE_2__foundation_plugin__["a" /* Plugin */]);
 
 Toggler.defaults = {
+  /**
+   * Class of the element to toggle. It can be provided with or without "."
+   * @option
+   * @type {string}
+   */
+  toggler: undefined,
   /**
    * Tells the plugin if the element should animated when toggled.
    * @option
@@ -11273,7 +11413,7 @@ Toggler.defaults = {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_jquery__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_jquery___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_jquery__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__foundation_util_core__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__foundation_util_mediaQuery__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__foundation_util_mediaQuery__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__foundation_util_triggers__ = __webpack_require__(5);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__foundation_positionable__ = __webpack_require__(15);
 
@@ -11346,7 +11486,7 @@ var Tooltip = function (_Positionable) {
     key: '_init',
     value: function _init() {
       __WEBPACK_IMPORTED_MODULE_2__foundation_util_mediaQuery__["a" /* MediaQuery */]._init();
-      var elemId = this.$element.attr('aria-describedby') || __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__foundation_util_core__["b" /* GetYoDigits */])(6, 'tooltip');
+      var elemId = this.$element.attr('aria-describedby') || Object(__WEBPACK_IMPORTED_MODULE_1__foundation_util_core__["GetYoDigits"])(6, 'tooltip');
 
       this.options.tipText = this.options.tipText || this.$element.attr('title');
       this.template = this.options.template ? __WEBPACK_IMPORTED_MODULE_0_jquery___default()(this.options.template) : this._buildTemplate(elemId);
@@ -11407,7 +11547,7 @@ var Tooltip = function (_Positionable) {
   }, {
     key: '_buildTemplate',
     value: function _buildTemplate(id) {
-      var templateClasses = (this.options.tooltipClass + ' ' + this.options.positionClass + ' ' + this.options.templateClasses).trim();
+      var templateClasses = (this.options.tooltipClass + ' ' + this.options.templateClasses).trim();
       var $template = __WEBPACK_IMPORTED_MODULE_0_jquery___default()('<div></div>').addClass(templateClasses).attr({
         'role': 'tooltip',
         'aria-hidden': true,
@@ -11605,7 +11745,7 @@ var Tooltip = function (_Positionable) {
   }, {
     key: '_destroy',
     value: function _destroy() {
-      this.$element.attr('title', this.template.text()).off('.zf.trigger .zf.tooltip').removeClass('has-tip top right left').removeAttr('aria-describedby aria-haspopup data-disable-hover data-resize data-toggle data-tooltip data-yeti-box');
+      this.$element.attr('title', this.template.text()).off('.zf.trigger .zf.tooltip').removeClass(this.options.triggerClass).removeClass('top right left bottom').removeAttr('aria-describedby data-disable-hover data-resize data-toggle data-tooltip data-yeti-box');
 
       this.template.remove();
     }
@@ -11695,13 +11835,6 @@ Tooltip.defaults = {
    */
   clickOpen: true,
   /**
-   * DEPRECATED Additional positioning classes, set by the JS
-   * @option
-   * @type {string}
-   * @default ''
-   */
-  positionClass: '',
-  /**
    * Position of tooltip. Can be left, right, bottom, top, or auto.
    * @option
    * @type {string}
@@ -11779,10 +11912,292 @@ Tooltip.defaults = {
 
 /***/ }),
 /* 36 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
-module.exports = __webpack_require__(19);
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return ResponsiveAccordionTabs; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_jquery__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_jquery___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_jquery__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__foundation_util_mediaQuery__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__foundation_util_core__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__foundation_plugin__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__foundation_accordion__ = __webpack_require__(12);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__foundation_tabs__ = __webpack_require__(18);
+
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+
+
+
+
+
+
+
+
+// The plugin matches the plugin classes with these plugin instances.
+var MenuPlugins = {
+  tabs: {
+    cssClass: 'tabs',
+    plugin: __WEBPACK_IMPORTED_MODULE_5__foundation_tabs__["a" /* Tabs */]
+  },
+  accordion: {
+    cssClass: 'accordion',
+    plugin: __WEBPACK_IMPORTED_MODULE_4__foundation_accordion__["a" /* Accordion */]
+  }
+};
+
+/**
+ * ResponsiveAccordionTabs module.
+ * @module foundation.responsiveAccordionTabs
+ * @requires foundation.util.motion
+ * @requires foundation.accordion
+ * @requires foundation.tabs
+ */
+
+var ResponsiveAccordionTabs = function (_Plugin) {
+  _inherits(ResponsiveAccordionTabs, _Plugin);
+
+  function ResponsiveAccordionTabs() {
+    _classCallCheck(this, ResponsiveAccordionTabs);
+
+    return _possibleConstructorReturn(this, (ResponsiveAccordionTabs.__proto__ || Object.getPrototypeOf(ResponsiveAccordionTabs)).apply(this, arguments));
+  }
+
+  _createClass(ResponsiveAccordionTabs, [{
+    key: '_setup',
+
+    /**
+     * Creates a new instance of a responsive accordion tabs.
+     * @class
+     * @name ResponsiveAccordionTabs
+     * @fires ResponsiveAccordionTabs#init
+     * @param {jQuery} element - jQuery object to make into Responsive Accordion Tabs.
+     * @param {Object} options - Overrides to the default plugin settings.
+     */
+    value: function _setup(element, options) {
+      this.$element = __WEBPACK_IMPORTED_MODULE_0_jquery___default()(element);
+      this.options = __WEBPACK_IMPORTED_MODULE_0_jquery___default.a.extend({}, this.$element.data(), options);
+      this.rules = this.$element.data('responsive-accordion-tabs');
+      this.currentMq = null;
+      this.currentPlugin = null;
+      this.className = 'ResponsiveAccordionTabs'; // ie9 back compat
+      if (!this.$element.attr('id')) {
+        this.$element.attr('id', Object(__WEBPACK_IMPORTED_MODULE_2__foundation_util_core__["GetYoDigits"])(6, 'responsiveaccordiontabs'));
+      };
+
+      this._init();
+      this._events();
+    }
+
+    /**
+     * Initializes the Menu by parsing the classes from the 'data-responsive-accordion-tabs' attribute on the element.
+     * @function
+     * @private
+     */
+
+  }, {
+    key: '_init',
+    value: function _init() {
+      __WEBPACK_IMPORTED_MODULE_1__foundation_util_mediaQuery__["a" /* MediaQuery */]._init();
+
+      // The first time an Interchange plugin is initialized, this.rules is converted from a string of "classes" to an object of rules
+      if (typeof this.rules === 'string') {
+        var rulesTree = {};
+
+        // Parse rules from "classes" pulled from data attribute
+        var rules = this.rules.split(' ');
+
+        // Iterate through every rule found
+        for (var i = 0; i < rules.length; i++) {
+          var rule = rules[i].split('-');
+          var ruleSize = rule.length > 1 ? rule[0] : 'small';
+          var rulePlugin = rule.length > 1 ? rule[1] : rule[0];
+
+          if (MenuPlugins[rulePlugin] !== null) {
+            rulesTree[ruleSize] = MenuPlugins[rulePlugin];
+          }
+        }
+
+        this.rules = rulesTree;
+      }
+
+      this._getAllOptions();
+
+      if (!__WEBPACK_IMPORTED_MODULE_0_jquery___default.a.isEmptyObject(this.rules)) {
+        this._checkMediaQueries();
+      }
+    }
+  }, {
+    key: '_getAllOptions',
+    value: function _getAllOptions() {
+      //get all defaults and options
+      var _this = this;
+      _this.allOptions = {};
+      for (var key in MenuPlugins) {
+        if (MenuPlugins.hasOwnProperty(key)) {
+          var obj = MenuPlugins[key];
+          try {
+            var dummyPlugin = __WEBPACK_IMPORTED_MODULE_0_jquery___default()('<ul></ul>');
+            var tmpPlugin = new obj.plugin(dummyPlugin, _this.options);
+            for (var keyKey in tmpPlugin.options) {
+              if (tmpPlugin.options.hasOwnProperty(keyKey) && keyKey !== 'zfPlugin') {
+                var objObj = tmpPlugin.options[keyKey];
+                _this.allOptions[keyKey] = objObj;
+              }
+            }
+            tmpPlugin.destroy();
+          } catch (e) {}
+        }
+      }
+    }
+
+    /**
+     * Initializes events for the Menu.
+     * @function
+     * @private
+     */
+
+  }, {
+    key: '_events',
+    value: function _events() {
+      this._changedZfMediaQueryHandler = this._checkMediaQueries.bind(this);
+      __WEBPACK_IMPORTED_MODULE_0_jquery___default()(window).on('changed.zf.mediaquery', this._changedZfMediaQueryHandler);
+    }
+
+    /**
+     * Checks the current screen width against available media queries. If the media query has changed, and the plugin needed has changed, the plugins will swap out.
+     * @function
+     * @private
+     */
+
+  }, {
+    key: '_checkMediaQueries',
+    value: function _checkMediaQueries() {
+      var matchedMq,
+          _this = this;
+      // Iterate through each rule and find the last matching rule
+      __WEBPACK_IMPORTED_MODULE_0_jquery___default.a.each(this.rules, function (key) {
+        if (__WEBPACK_IMPORTED_MODULE_1__foundation_util_mediaQuery__["a" /* MediaQuery */].atLeast(key)) {
+          matchedMq = key;
+        }
+      });
+
+      // No match? No dice
+      if (!matchedMq) return;
+
+      // Plugin already initialized? We good
+      if (this.currentPlugin instanceof this.rules[matchedMq].plugin) return;
+
+      // Remove existing plugin-specific CSS classes
+      __WEBPACK_IMPORTED_MODULE_0_jquery___default.a.each(MenuPlugins, function (key, value) {
+        _this.$element.removeClass(value.cssClass);
+      });
+
+      // Add the CSS class for the new plugin
+      this.$element.addClass(this.rules[matchedMq].cssClass);
+
+      // Create an instance of the new plugin
+      if (this.currentPlugin) {
+        //don't know why but on nested elements data zfPlugin get's lost
+        if (!this.currentPlugin.$element.data('zfPlugin') && this.storezfData) this.currentPlugin.$element.data('zfPlugin', this.storezfData);
+        this.currentPlugin.destroy();
+      }
+      this._handleMarkup(this.rules[matchedMq].cssClass);
+      this.currentPlugin = new this.rules[matchedMq].plugin(this.$element, {});
+      this.storezfData = this.currentPlugin.$element.data('zfPlugin');
+    }
+  }, {
+    key: '_handleMarkup',
+    value: function _handleMarkup(toSet) {
+      var _this = this,
+          fromString = 'accordion';
+      var $panels = __WEBPACK_IMPORTED_MODULE_0_jquery___default()('[data-tabs-content=' + this.$element.attr('id') + ']');
+      if ($panels.length) fromString = 'tabs';
+      if (fromString === toSet) {
+        return;
+      };
+
+      var tabsTitle = _this.allOptions.linkClass ? _this.allOptions.linkClass : 'tabs-title';
+      var tabsPanel = _this.allOptions.panelClass ? _this.allOptions.panelClass : 'tabs-panel';
+
+      this.$element.removeAttr('role');
+      var $liHeads = this.$element.children('.' + tabsTitle + ',[data-accordion-item]').removeClass(tabsTitle).removeClass('accordion-item').removeAttr('data-accordion-item');
+      var $liHeadsA = $liHeads.children('a').removeClass('accordion-title');
+
+      if (fromString === 'tabs') {
+        $panels = $panels.children('.' + tabsPanel).removeClass(tabsPanel).removeAttr('role').removeAttr('aria-hidden').removeAttr('aria-labelledby');
+        $panels.children('a').removeAttr('role').removeAttr('aria-controls').removeAttr('aria-selected');
+      } else {
+        $panels = $liHeads.children('[data-tab-content]').removeClass('accordion-content');
+      };
+
+      $panels.css({ display: '', visibility: '' });
+      $liHeads.css({ display: '', visibility: '' });
+      if (toSet === 'accordion') {
+        $panels.each(function (key, value) {
+          __WEBPACK_IMPORTED_MODULE_0_jquery___default()(value).appendTo($liHeads.get(key)).addClass('accordion-content').attr('data-tab-content', '').removeClass('is-active').css({ height: '' });
+          __WEBPACK_IMPORTED_MODULE_0_jquery___default()('[data-tabs-content=' + _this.$element.attr('id') + ']').after('<div id="tabs-placeholder-' + _this.$element.attr('id') + '"></div>').detach();
+          $liHeads.addClass('accordion-item').attr('data-accordion-item', '');
+          $liHeadsA.addClass('accordion-title');
+        });
+      } else if (toSet === 'tabs') {
+        var $tabsContent = __WEBPACK_IMPORTED_MODULE_0_jquery___default()('[data-tabs-content=' + _this.$element.attr('id') + ']');
+        var $placeholder = __WEBPACK_IMPORTED_MODULE_0_jquery___default()('#tabs-placeholder-' + _this.$element.attr('id'));
+        if ($placeholder.length) {
+          $tabsContent = __WEBPACK_IMPORTED_MODULE_0_jquery___default()('<div class="tabs-content"></div>').insertAfter($placeholder).attr('data-tabs-content', _this.$element.attr('id'));
+          $placeholder.remove();
+        } else {
+          $tabsContent = __WEBPACK_IMPORTED_MODULE_0_jquery___default()('<div class="tabs-content"></div>').insertAfter(_this.$element).attr('data-tabs-content', _this.$element.attr('id'));
+        };
+        $panels.each(function (key, value) {
+          var tempValue = __WEBPACK_IMPORTED_MODULE_0_jquery___default()(value).appendTo($tabsContent).addClass(tabsPanel);
+          var hash = $liHeadsA.get(key).hash.slice(1);
+          var id = __WEBPACK_IMPORTED_MODULE_0_jquery___default()(value).attr('id') || Object(__WEBPACK_IMPORTED_MODULE_2__foundation_util_core__["GetYoDigits"])(6, 'accordion');
+          if (hash !== id) {
+            if (hash !== '') {
+              __WEBPACK_IMPORTED_MODULE_0_jquery___default()(value).attr('id', hash);
+            } else {
+              hash = id;
+              __WEBPACK_IMPORTED_MODULE_0_jquery___default()(value).attr('id', hash);
+              __WEBPACK_IMPORTED_MODULE_0_jquery___default()($liHeadsA.get(key)).attr('href', __WEBPACK_IMPORTED_MODULE_0_jquery___default()($liHeadsA.get(key)).attr('href').replace('#', '') + '#' + hash);
+            };
+          };
+          var isActive = __WEBPACK_IMPORTED_MODULE_0_jquery___default()($liHeads.get(key)).hasClass('is-active');
+          if (isActive) {
+            tempValue.addClass('is-active');
+          };
+        });
+        $liHeads.addClass(tabsTitle);
+      };
+    }
+
+    /**
+     * Destroys the instance of the current plugin on this element, as well as the window resize handler that switches the plugins out.
+     * @function
+     */
+
+  }, {
+    key: '_destroy',
+    value: function _destroy() {
+      if (this.currentPlugin) this.currentPlugin.destroy();
+      __WEBPACK_IMPORTED_MODULE_0_jquery___default()(window).off('changed.zf.mediaquery', this._changedZfMediaQueryHandler);
+    }
+  }]);
+
+  return ResponsiveAccordionTabs;
+}(__WEBPACK_IMPORTED_MODULE_3__foundation_plugin__["a" /* Plugin */]);
+
+ResponsiveAccordionTabs.defaults = {};
+
 
 
 /***/ })
 /******/ ]);
+//# sourceMappingURL=foundation.js.map

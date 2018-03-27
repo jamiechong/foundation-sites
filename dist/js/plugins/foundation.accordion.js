@@ -33,9 +33,6 @@
 /******/ 	// expose the module cache
 /******/ 	__webpack_require__.c = installedModules;
 /******/
-/******/ 	// identity function for calling harmony imports with the correct context
-/******/ 	__webpack_require__.i = function(value) { return value; };
-/******/
 /******/ 	// define getter function for harmony exports
 /******/ 	__webpack_require__.d = function(exports, name, getter) {
 /******/ 		if(!__webpack_require__.o(exports, name)) {
@@ -63,66 +60,84 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 80);
+/******/ 	return __webpack_require__(__webpack_require__.s = 16);
 /******/ })
 /************************************************************************/
-/******/ ({
-
-/***/ 0:
+/******/ ([
+/* 0 */
 /***/ (function(module, exports) {
 
 module.exports = jQuery;
 
 /***/ }),
-
-/***/ 1:
+/* 1 */
 /***/ (function(module, exports) {
 
 module.exports = {Foundation: window.Foundation};
 
 /***/ }),
+/* 2 */
+/***/ (function(module, exports) {
 
-/***/ 14:
+module.exports = {rtl: window.Foundation.rtl, GetYoDigits: window.Foundation.GetYoDigits, transitionend: window.Foundation.transitionend, RegExpEscape: window.Foundation.RegExpEscape, onLoad: window.Foundation.onLoad};
+
+/***/ }),
+/* 3 */
+/***/ (function(module, exports) {
+
+module.exports = {Plugin: window.Foundation.Plugin};
+
+/***/ }),
+/* 4 */,
+/* 5 */
+/***/ (function(module, exports) {
+
+module.exports = {Keyboard: window.Foundation.Keyboard};
+
+/***/ }),
+/* 6 */,
+/* 7 */,
+/* 8 */,
+/* 9 */,
+/* 10 */,
+/* 11 */,
+/* 12 */,
+/* 13 */,
+/* 14 */,
+/* 15 */,
+/* 16 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = __webpack_require__(17);
+
+
+/***/ }),
+/* 17 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__foundation_core__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__foundation_core___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__foundation_core__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__foundation_accordion__ = __webpack_require__(44);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__foundation_accordion__ = __webpack_require__(18);
 
 
 
 __WEBPACK_IMPORTED_MODULE_0__foundation_core__["Foundation"].plugin(__WEBPACK_IMPORTED_MODULE_1__foundation_accordion__["a" /* Accordion */], 'Accordion');
 
 /***/ }),
-
-/***/ 2:
-/***/ (function(module, exports) {
-
-module.exports = {Plugin: window.Foundation.Plugin};
-
-/***/ }),
-
-/***/ 3:
-/***/ (function(module, exports) {
-
-module.exports = {rtl: window.Foundation.rtl, GetYoDigits: window.Foundation.GetYoDigits, transitionend: window.Foundation.transitionend};
-
-/***/ }),
-
-/***/ 44:
+/* 18 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Accordion; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_jquery__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_jquery___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_jquery__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__foundation_util_keyboard__ = __webpack_require__(5);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__foundation_util_keyboard___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__foundation_util_keyboard__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__foundation_util_core__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__foundation_util_core___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2__foundation_util_core__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__foundation_plugin__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__foundation_util_core__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__foundation_util_core___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__foundation_util_core__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__foundation_util_keyboard__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__foundation_util_keyboard___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2__foundation_util_keyboard__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__foundation_plugin__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__foundation_plugin___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3__foundation_plugin__);
 
 
@@ -172,7 +187,7 @@ var Accordion = function (_Plugin) {
       this.className = 'Accordion'; // ie9 back compat
       this._init();
 
-      __WEBPACK_IMPORTED_MODULE_1__foundation_util_keyboard__["Keyboard"].register('Accordion', {
+      __WEBPACK_IMPORTED_MODULE_2__foundation_util_keyboard__["Keyboard"].register('Accordion', {
         'ENTER': 'toggle',
         'SPACE': 'toggle',
         'ARROW_DOWN': 'next',
@@ -196,8 +211,8 @@ var Accordion = function (_Plugin) {
       this.$tabs.each(function (idx, el) {
         var $el = __WEBPACK_IMPORTED_MODULE_0_jquery___default()(el),
             $content = $el.children('[data-tab-content]'),
-            id = $content[0].id || __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__foundation_util_core__["GetYoDigits"])(6, 'accordion'),
-            linkId = el.id || id + '-label';
+            id = $content[0].id || Object(__WEBPACK_IMPORTED_MODULE_1__foundation_util_core__["GetYoDigits"])(6, 'accordion'),
+            linkId = el.id ? el.id + '-label' : id + '-label';
 
         $el.find('a:first').attr({
           'aria-controls': id,
@@ -232,7 +247,7 @@ var Accordion = function (_Plugin) {
             //roll up a little to show the titles
             if (_this3.options.deepLinkSmudge) {
               var _this = _this3;
-              __WEBPACK_IMPORTED_MODULE_0_jquery___default()(window).load(function () {
+              Object(__WEBPACK_IMPORTED_MODULE_1__foundation_util_core__["onLoad"])(__WEBPACK_IMPORTED_MODULE_0_jquery___default()(window), function () {
                 var offset = _this.$element.offset();
                 __WEBPACK_IMPORTED_MODULE_0_jquery___default()('html, body').animate({ scrollTop: offset.top }, _this.options.deepLinkSmudgeDelay);
               });
@@ -273,7 +288,7 @@ var Accordion = function (_Plugin) {
             e.preventDefault();
             _this.toggle($tabContent);
           }).on('keydown.zf.accordion', function (e) {
-            __WEBPACK_IMPORTED_MODULE_1__foundation_util_keyboard__["Keyboard"].handleKey(e, 'Accordion', {
+            __WEBPACK_IMPORTED_MODULE_2__foundation_util_keyboard__["Keyboard"].handleKey(e, 'Accordion', {
               toggle: function () {
                 _this.toggle($tabContent);
               },
@@ -298,7 +313,7 @@ var Accordion = function (_Plugin) {
         }
       });
       if (this.options.deepLink) {
-        __WEBPACK_IMPORTED_MODULE_0_jquery___default()(window).on('popstate', this._checkDeepLink);
+        __WEBPACK_IMPORTED_MODULE_0_jquery___default()(window).on('hashchange', this._checkDeepLink);
       }
     }
 
@@ -426,7 +441,7 @@ var Accordion = function (_Plugin) {
       this.$element.find('[data-tab-content]').stop(true).slideUp(0).css('display', '');
       this.$element.find('a').off('.zf.accordion');
       if (this.options.deepLink) {
-        __WEBPACK_IMPORTED_MODULE_0_jquery___default()(window).off('popstate', this._checkDeepLink);
+        __WEBPACK_IMPORTED_MODULE_0_jquery___default()(window).off('hashchange', this._checkDeepLink);
       }
     }
   }]);
@@ -491,21 +506,6 @@ Accordion.defaults = {
 
 
 
-/***/ }),
-
-/***/ 5:
-/***/ (function(module, exports) {
-
-module.exports = {Keyboard: window.Foundation.Keyboard};
-
-/***/ }),
-
-/***/ 80:
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports = __webpack_require__(14);
-
-
 /***/ })
-
-/******/ });
+/******/ ]);
+//# sourceMappingURL=foundation.accordion.js.map

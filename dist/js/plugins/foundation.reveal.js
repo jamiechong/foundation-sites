@@ -33,9 +33,6 @@
 /******/ 	// expose the module cache
 /******/ 	__webpack_require__.c = installedModules;
 /******/
-/******/ 	// identity function for calling harmony imports with the correct context
-/******/ 	__webpack_require__.i = function(value) { return value; };
-/******/
 /******/ 	// define getter function for harmony exports
 /******/ 	__webpack_require__.d = function(exports, name, getter) {
 /******/ 		if(!__webpack_require__.o(exports, name)) {
@@ -63,7 +60,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 93);
+/******/ 	return __webpack_require__(__webpack_require__.s = 62);
 /******/ })
 /************************************************************************/
 /******/ ({
@@ -85,22 +82,14 @@ module.exports = {Foundation: window.Foundation};
 /***/ 2:
 /***/ (function(module, exports) {
 
-module.exports = {Plugin: window.Foundation.Plugin};
+module.exports = {rtl: window.Foundation.rtl, GetYoDigits: window.Foundation.GetYoDigits, transitionend: window.Foundation.transitionend, RegExpEscape: window.Foundation.RegExpEscape, onLoad: window.Foundation.onLoad};
 
 /***/ }),
 
-/***/ 27:
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ 3:
+/***/ (function(module, exports) {
 
-"use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__foundation_core__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__foundation_core___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__foundation_core__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__foundation_reveal__ = __webpack_require__(57);
-
-
-
-__WEBPACK_IMPORTED_MODULE_0__foundation_core__["Foundation"].plugin(__WEBPACK_IMPORTED_MODULE_1__foundation_reveal__["a" /* Reveal */], 'Reveal');
+module.exports = {Plugin: window.Foundation.Plugin};
 
 /***/ }),
 
@@ -118,22 +107,54 @@ module.exports = {Keyboard: window.Foundation.Keyboard};
 
 /***/ }),
 
-/***/ 57:
+/***/ 6:
+/***/ (function(module, exports) {
+
+module.exports = {MediaQuery: window.Foundation.MediaQuery};
+
+/***/ }),
+
+/***/ 62:
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = __webpack_require__(63);
+
+
+/***/ }),
+
+/***/ 63:
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__foundation_core__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__foundation_core___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__foundation_core__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__foundation_reveal__ = __webpack_require__(64);
+
+
+
+__WEBPACK_IMPORTED_MODULE_0__foundation_core__["Foundation"].plugin(__WEBPACK_IMPORTED_MODULE_1__foundation_reveal__["a" /* Reveal */], 'Reveal');
+
+/***/ }),
+
+/***/ 64:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Reveal; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_jquery__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_jquery___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_jquery__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__foundation_util_keyboard__ = __webpack_require__(5);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__foundation_util_keyboard___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__foundation_util_keyboard__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__foundation_util_mediaQuery__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__foundation_util_mediaQuery___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2__foundation_util_mediaQuery__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__foundation_util_motion__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__foundation_util_motion___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3__foundation_util_motion__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__foundation_plugin__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__foundation_plugin___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4__foundation_plugin__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__foundation_util_triggers__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__foundation_util_core__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__foundation_util_core___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__foundation_util_core__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__foundation_util_keyboard__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__foundation_util_keyboard___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2__foundation_util_keyboard__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__foundation_util_mediaQuery__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__foundation_util_mediaQuery___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3__foundation_util_mediaQuery__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__foundation_util_motion__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__foundation_util_motion___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4__foundation_util_motion__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__foundation_plugin__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__foundation_plugin___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_5__foundation_plugin__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__foundation_util_triggers__ = __webpack_require__(7);
 
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -143,6 +164,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
 
 
 
@@ -186,9 +208,9 @@ var Reveal = function (_Plugin) {
       this._init();
 
       // Triggers init is idempotent, just need to make sure it is initialized
-      __WEBPACK_IMPORTED_MODULE_5__foundation_util_triggers__["a" /* Triggers */].init(__WEBPACK_IMPORTED_MODULE_0_jquery___default.a);
+      __WEBPACK_IMPORTED_MODULE_6__foundation_util_triggers__["a" /* Triggers */].init(__WEBPACK_IMPORTED_MODULE_0_jquery___default.a);
 
-      __WEBPACK_IMPORTED_MODULE_1__foundation_util_keyboard__["Keyboard"].register('Reveal', {
+      __WEBPACK_IMPORTED_MODULE_2__foundation_util_keyboard__["Keyboard"].register('Reveal', {
         'ESCAPE': 'close'
       });
     }
@@ -201,11 +223,12 @@ var Reveal = function (_Plugin) {
   }, {
     key: '_init',
     value: function _init() {
-      __WEBPACK_IMPORTED_MODULE_2__foundation_util_mediaQuery__["MediaQuery"]._init();
+      var _this3 = this;
+
+      __WEBPACK_IMPORTED_MODULE_3__foundation_util_mediaQuery__["MediaQuery"]._init();
       this.id = this.$element.attr('id');
       this.isActive = false;
-      this.cached = { mq: __WEBPACK_IMPORTED_MODULE_2__foundation_util_mediaQuery__["MediaQuery"].current };
-      this.isMobile = mobileSniff();
+      this.cached = { mq: __WEBPACK_IMPORTED_MODULE_3__foundation_util_mediaQuery__["MediaQuery"].current };
 
       this.$anchor = __WEBPACK_IMPORTED_MODULE_0_jquery___default()('[data-open="' + this.id + '"]').length ? __WEBPACK_IMPORTED_MODULE_0_jquery___default()('[data-open="' + this.id + '"]') : __WEBPACK_IMPORTED_MODULE_0_jquery___default()('[data-toggle="' + this.id + '"]');
       this.$anchor.attr({
@@ -237,7 +260,9 @@ var Reveal = function (_Plugin) {
       }
       this._events();
       if (this.options.deepLink && window.location.hash === '#' + this.id) {
-        __WEBPACK_IMPORTED_MODULE_0_jquery___default()(window).one('load.zf.reveal', this.open.bind(this));
+        this.onLoadListener = Object(__WEBPACK_IMPORTED_MODULE_1__foundation_util_core__["onLoad"])(__WEBPACK_IMPORTED_MODULE_0_jquery___default()(window), function () {
+          return _this3.open();
+        });
       }
     }
 
@@ -271,7 +296,8 @@ var Reveal = function (_Plugin) {
       var outerWidth = __WEBPACK_IMPORTED_MODULE_0_jquery___default()(window).width();
       var height = this.$element.outerHeight();
       var outerHeight = __WEBPACK_IMPORTED_MODULE_0_jquery___default()(window).height();
-      var left, top;
+      var left,
+          top = null;
       if (this.options.hOffset === 'auto') {
         left = parseInt((outerWidth - width) / 2, 10);
       } else {
@@ -283,11 +309,15 @@ var Reveal = function (_Plugin) {
         } else {
           top = parseInt((outerHeight - height) / 4, 10);
         }
-      } else {
+      } else if (this.options.vOffset !== null) {
         top = parseInt(this.options.vOffset, 10);
       }
-      this.$element.css({ top: top + 'px' });
-      // only worry about left if we don't have an overlay or we havea  horizontal offset,
+
+      if (top !== null) {
+        this.$element.css({ top: top + 'px' });
+      }
+
+      // only worry about left if we don't have an overlay or we have a horizontal offset,
       // otherwise we're perfectly in the middle
       if (!this.$overlay || this.options.hOffset !== 'auto') {
         this.$element.css({ left: left + 'px' });
@@ -303,7 +333,7 @@ var Reveal = function (_Plugin) {
   }, {
     key: '_events',
     value: function _events() {
-      var _this3 = this;
+      var _this4 = this;
 
       var _this = this;
 
@@ -312,7 +342,7 @@ var Reveal = function (_Plugin) {
         'close.zf.trigger': function (event, $element) {
           if (event.target === _this.$element[0] || __WEBPACK_IMPORTED_MODULE_0_jquery___default()(event.target).parents('[data-closable]')[0] === $element) {
             // only close reveal when it's explicitly called
-            return _this3.close.apply(_this3);
+            return _this4.close.apply(_this4);
           }
         },
         'toggle.zf.trigger': this.toggle.bind(this),
@@ -330,12 +360,12 @@ var Reveal = function (_Plugin) {
         });
       }
       if (this.options.deepLink) {
-        __WEBPACK_IMPORTED_MODULE_0_jquery___default()(window).on('popstate.zf.reveal:' + this.id, this._handleState.bind(this));
+        __WEBPACK_IMPORTED_MODULE_0_jquery___default()(window).on('hashchange.zf.reveal:' + this.id, this._handleState.bind(this));
       }
     }
 
     /**
-     * Handles modal methods on back/forward button clicks or any other event that triggers popstate.
+     * Handles modal methods on back/forward button clicks or any other event that triggers hashchange.
      * @private
      */
 
@@ -350,6 +380,35 @@ var Reveal = function (_Plugin) {
     }
 
     /**
+    * Disables the scroll when Reveal is shown to prevent the background from shifting
+    * @param {number} scrollTop - Scroll to visually apply, window current scroll by default
+    */
+
+  }, {
+    key: '_disableScroll',
+    value: function _disableScroll(scrollTop) {
+      scrollTop = scrollTop || __WEBPACK_IMPORTED_MODULE_0_jquery___default()(window).scrollTop();
+      if (__WEBPACK_IMPORTED_MODULE_0_jquery___default()(document).height() > __WEBPACK_IMPORTED_MODULE_0_jquery___default()(window).height()) {
+        __WEBPACK_IMPORTED_MODULE_0_jquery___default()("html").css("top", -scrollTop);
+      }
+    }
+
+    /**
+    * Reenables the scroll when Reveal closes
+    * @param {number} scrollTop - Scroll to restore, html "top" property by default (as set by `_disableScroll`)
+    */
+
+  }, {
+    key: '_enableScroll',
+    value: function _enableScroll(scrollTop) {
+      scrollTop = scrollTop || parseInt(__WEBPACK_IMPORTED_MODULE_0_jquery___default()("html").css("top"));
+      if (__WEBPACK_IMPORTED_MODULE_0_jquery___default()(document).height() > __WEBPACK_IMPORTED_MODULE_0_jquery___default()(window).height()) {
+        __WEBPACK_IMPORTED_MODULE_0_jquery___default()("html").css("top", "");
+        __WEBPACK_IMPORTED_MODULE_0_jquery___default()(window).scrollTop(-scrollTop);
+      }
+    }
+
+    /**
      * Opens the modal controlled by `this.$anchor`, and closes all others by default.
      * @function
      * @fires Reveal#closeme
@@ -359,7 +418,7 @@ var Reveal = function (_Plugin) {
   }, {
     key: 'open',
     value: function open() {
-      var _this4 = this;
+      var _this5 = this;
 
       // either update or replace browser history
       if (this.options.deepLink) {
@@ -375,6 +434,9 @@ var Reveal = function (_Plugin) {
           window.location.hash = hash;
         }
       }
+
+      // Remember anchor that opened it to set focus back later, have general anchors as fallback
+      this.$activeAnchor = __WEBPACK_IMPORTED_MODULE_0_jquery___default()(document.activeElement).is(this.$anchor) ? __WEBPACK_IMPORTED_MODULE_0_jquery___default()(document.activeElement) : this.$anchor;
 
       this.isActive = true;
 
@@ -406,18 +468,10 @@ var Reveal = function (_Plugin) {
         this.$element.trigger('closeme.zf.reveal', this.id);
       }
 
+      this._disableScroll();
+
       var _this = this;
 
-      function addRevealOpenClasses() {
-        if (_this.isMobile) {
-          if (!_this.originalScrollPos) {
-            _this.originalScrollPos = window.pageYOffset;
-          }
-          __WEBPACK_IMPORTED_MODULE_0_jquery___default()('html, body').addClass('is-reveal-open');
-        } else {
-          __WEBPACK_IMPORTED_MODULE_0_jquery___default()('body').addClass('is-reveal-open');
-        }
-      }
       // Motion UI method of reveal
       if (this.options.animationIn) {
         var afterAnimation = function () {
@@ -425,17 +479,17 @@ var Reveal = function (_Plugin) {
             'aria-hidden': false,
             'tabindex': -1
           }).focus();
-          addRevealOpenClasses();
-          __WEBPACK_IMPORTED_MODULE_1__foundation_util_keyboard__["Keyboard"].trapFocus(_this.$element);
+          _this.addRevealOpenClasses();
+          __WEBPACK_IMPORTED_MODULE_2__foundation_util_keyboard__["Keyboard"].trapFocus(_this.$element);
         };
 
         if (this.options.overlay) {
-          __WEBPACK_IMPORTED_MODULE_3__foundation_util_motion__["Motion"].animateIn(this.$overlay, 'fade-in');
+          __WEBPACK_IMPORTED_MODULE_4__foundation_util_motion__["Motion"].animateIn(this.$overlay, 'fade-in');
         }
-        __WEBPACK_IMPORTED_MODULE_3__foundation_util_motion__["Motion"].animateIn(this.$element, this.options.animationIn, function () {
-          if (_this4.$element) {
+        __WEBPACK_IMPORTED_MODULE_4__foundation_util_motion__["Motion"].animateIn(this.$element, this.options.animationIn, function () {
+          if (_this5.$element) {
             // protect against object having been removed
-            _this4.focusableElements = __WEBPACK_IMPORTED_MODULE_1__foundation_util_keyboard__["Keyboard"].findFocusable(_this4.$element);
+            _this5.focusableElements = __WEBPACK_IMPORTED_MODULE_2__foundation_util_keyboard__["Keyboard"].findFocusable(_this5.$element);
             afterAnimation();
           }
         });
@@ -453,9 +507,9 @@ var Reveal = function (_Plugin) {
         'aria-hidden': false,
         'tabindex': -1
       }).focus();
-      __WEBPACK_IMPORTED_MODULE_1__foundation_util_keyboard__["Keyboard"].trapFocus(this.$element);
+      __WEBPACK_IMPORTED_MODULE_2__foundation_util_keyboard__["Keyboard"].trapFocus(this.$element);
 
-      addRevealOpenClasses();
+      this._addRevealOpenClasses();
 
       this._extraHandlers();
 
@@ -464,6 +518,16 @@ var Reveal = function (_Plugin) {
        * @event Reveal#open
        */
       this.$element.trigger('open.zf.reveal');
+    }
+  }, {
+    key: '_addRevealOpenClasses',
+    value: function _addRevealOpenClasses() {
+      __WEBPACK_IMPORTED_MODULE_0_jquery___default()('html').addClass('is-reveal-open');
+    }
+  }, {
+    key: '_removeRevealOpenClasses',
+    value: function _removeRevealOpenClasses() {
+      __WEBPACK_IMPORTED_MODULE_0_jquery___default()('html').removeClass('is-reveal-open');
     }
 
     /**
@@ -478,7 +542,7 @@ var Reveal = function (_Plugin) {
       if (!this.$element) {
         return;
       } // If we're in the middle of cleanup, don't freak out
-      this.focusableElements = __WEBPACK_IMPORTED_MODULE_1__foundation_util_keyboard__["Keyboard"].findFocusable(this.$element);
+      this.focusableElements = __WEBPACK_IMPORTED_MODULE_2__foundation_util_keyboard__["Keyboard"].findFocusable(this.$element);
 
       if (!this.options.overlay && this.options.closeOnClick && !this.options.fullScreen) {
         __WEBPACK_IMPORTED_MODULE_0_jquery___default()('body').on('click.zf.reveal', function (e) {
@@ -491,7 +555,7 @@ var Reveal = function (_Plugin) {
 
       if (this.options.closeOnEsc) {
         __WEBPACK_IMPORTED_MODULE_0_jquery___default()(window).on('keydown.zf.reveal', function (e) {
-          __WEBPACK_IMPORTED_MODULE_1__foundation_util_keyboard__["Keyboard"].handleKey(e, 'Reveal', {
+          __WEBPACK_IMPORTED_MODULE_2__foundation_util_keyboard__["Keyboard"].handleKey(e, 'Reveal', {
             close: function () {
               if (_this.options.closeOnEsc) {
                 _this.close();
@@ -519,10 +583,10 @@ var Reveal = function (_Plugin) {
       // Motion UI method of hiding
       if (this.options.animationOut) {
         if (this.options.overlay) {
-          __WEBPACK_IMPORTED_MODULE_3__foundation_util_motion__["Motion"].animateOut(this.$overlay, 'fade-out');
+          __WEBPACK_IMPORTED_MODULE_4__foundation_util_motion__["Motion"].animateOut(this.$overlay, 'fade-out');
         }
 
-        __WEBPACK_IMPORTED_MODULE_3__foundation_util_motion__["Motion"].animateOut(this.$element, this.options.animationOut, finishUp);
+        __WEBPACK_IMPORTED_MODULE_4__foundation_util_motion__["Motion"].animateOut(this.$element, this.options.animationOut, finishUp);
       }
       // jQuery method of hiding
       else {
@@ -547,23 +611,21 @@ var Reveal = function (_Plugin) {
       this.$element.off('keydown.zf.reveal');
 
       function finishUp() {
-        if (_this.isMobile) {
-          if (__WEBPACK_IMPORTED_MODULE_0_jquery___default()('.reveal:visible').length === 0) {
-            __WEBPACK_IMPORTED_MODULE_0_jquery___default()('html, body').removeClass('is-reveal-open');
-          }
-          if (_this.originalScrollPos) {
-            __WEBPACK_IMPORTED_MODULE_0_jquery___default()('body').scrollTop(_this.originalScrollPos);
-            _this.originalScrollPos = null;
-          }
-        } else {
-          if (__WEBPACK_IMPORTED_MODULE_0_jquery___default()('.reveal:visible').length === 0) {
-            __WEBPACK_IMPORTED_MODULE_0_jquery___default()('body').removeClass('is-reveal-open');
-          }
+
+        // Get the current top before the modal is closed and restore the scroll after.
+        // TODO: use component properties instead of HTML properties
+        // See https://github.com/zurb/foundation-sites/pull/10786
+        var scrollTop = parseInt(__WEBPACK_IMPORTED_MODULE_0_jquery___default()("html").css("top"));
+
+        if (__WEBPACK_IMPORTED_MODULE_0_jquery___default()('.reveal:visible').length === 0) {
+          _this._removeRevealOpenClasses(); // also remove .is-reveal-open from the html element when there is no opened reveal
         }
 
-        __WEBPACK_IMPORTED_MODULE_1__foundation_util_keyboard__["Keyboard"].releaseFocus(_this.$element);
+        __WEBPACK_IMPORTED_MODULE_2__foundation_util_keyboard__["Keyboard"].releaseFocus(_this.$element);
 
         _this.$element.attr('aria-hidden', true);
+
+        _this._enableScroll(scrollTop);
 
         /**
         * Fires when the modal is done closing.
@@ -589,7 +651,7 @@ var Reveal = function (_Plugin) {
         }
       }
 
-      this.$anchor.focus();
+      this.$activeAnchor.focus();
     }
 
     /**
@@ -621,12 +683,16 @@ var Reveal = function (_Plugin) {
       }
       this.$element.hide().off();
       this.$anchor.off('.zf');
-      __WEBPACK_IMPORTED_MODULE_0_jquery___default()(window).off('.zf.reveal:' + this.id);
+      __WEBPACK_IMPORTED_MODULE_0_jquery___default()(window).off('.zf.reveal:' + this.id).off(this.onLoadListener);
+
+      if (__WEBPACK_IMPORTED_MODULE_0_jquery___default()('.reveal:visible').length === 0) {
+        this._removeRevealOpenClasses(); // also remove .is-reveal-open from the html element when there is no opened reveal
+      }
     }
   }]);
 
   return Reveal;
-}(__WEBPACK_IMPORTED_MODULE_4__foundation_plugin__["Plugin"]);
+}(__WEBPACK_IMPORTED_MODULE_5__foundation_plugin__["Plugin"]);
 
 Reveal.defaults = {
   /**
@@ -749,28 +815,7 @@ Reveal.defaults = {
   additionalOverlayClasses: ''
 };
 
-function iPhoneSniff() {
-  return (/iP(ad|hone|od).*OS/.test(window.navigator.userAgent)
-  );
-}
 
-function androidSniff() {
-  return (/Android/.test(window.navigator.userAgent)
-  );
-}
-
-function mobileSniff() {
-  return iPhoneSniff() || androidSniff();
-}
-
-
-
-/***/ }),
-
-/***/ 6:
-/***/ (function(module, exports) {
-
-module.exports = {MediaQuery: window.Foundation.MediaQuery};
 
 /***/ }),
 
@@ -781,8 +826,11 @@ module.exports = {MediaQuery: window.Foundation.MediaQuery};
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Triggers; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_jquery__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_jquery___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_jquery__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__foundation_util_motion__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__foundation_util_motion___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__foundation_util_motion__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__foundation_util_core__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__foundation_util_core___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__foundation_util_core__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__foundation_util_motion__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__foundation_util_motion___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2__foundation_util_motion__);
+
 
 
 
@@ -837,7 +885,7 @@ Triggers.Listeners.Basic = {
     var animation = __WEBPACK_IMPORTED_MODULE_0_jquery___default()(this).data('closable');
 
     if (animation !== '') {
-      __WEBPACK_IMPORTED_MODULE_1__foundation_util_motion__["Motion"].animateOut(__WEBPACK_IMPORTED_MODULE_0_jquery___default()(this), animation, function () {
+      __WEBPACK_IMPORTED_MODULE_2__foundation_util_motion__["Motion"].animateOut(__WEBPACK_IMPORTED_MODULE_0_jquery___default()(this), animation, function () {
         __WEBPACK_IMPORTED_MODULE_0_jquery___default()(this).trigger('closed.zf');
       });
     } else {
@@ -1030,15 +1078,10 @@ Triggers.init = function ($, Foundation) {
   if (typeof $.triggersInitialized === 'undefined') {
     var $document = $(document);
 
-    if (document.readyState === "complete") {
+    Object(__WEBPACK_IMPORTED_MODULE_1__foundation_util_core__["onLoad"])($(window), function () {
       Triggers.Initializers.addSimpleListeners();
       Triggers.Initializers.addGlobalListeners();
-    } else {
-      $(window).on('load', function () {
-        Triggers.Initializers.addSimpleListeners();
-        Triggers.Initializers.addGlobalListeners();
-      });
-    }
+    });
 
     $.triggersInitialized = true;
   }
@@ -1052,14 +1095,7 @@ Triggers.init = function ($, Foundation) {
 
 
 
-/***/ }),
-
-/***/ 93:
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports = __webpack_require__(27);
-
-
 /***/ })
 
 /******/ });
+//# sourceMappingURL=foundation.reveal.js.map

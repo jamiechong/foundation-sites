@@ -33,9 +33,6 @@
 /******/ 	// expose the module cache
 /******/ 	__webpack_require__.c = installedModules;
 /******/
-/******/ 	// identity function for calling harmony imports with the correct context
-/******/ 	__webpack_require__.i = function(value) { return value; };
-/******/
 /******/ 	// define getter function for harmony exports
 /******/ 	__webpack_require__.d = function(exports, name, getter) {
 /******/ 		if(!__webpack_require__.o(exports, name)) {
@@ -63,55 +60,95 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 84);
+/******/ 	return __webpack_require__(__webpack_require__.s = 28);
 /******/ })
 /************************************************************************/
-/******/ ({
-
-/***/ 0:
+/******/ ([
+/* 0 */
 /***/ (function(module, exports) {
 
 module.exports = jQuery;
 
 /***/ }),
-
-/***/ 1:
+/* 1 */
 /***/ (function(module, exports) {
 
 module.exports = {Foundation: window.Foundation};
 
 /***/ }),
+/* 2 */
+/***/ (function(module, exports) {
 
-/***/ 18:
+module.exports = {rtl: window.Foundation.rtl, GetYoDigits: window.Foundation.GetYoDigits, transitionend: window.Foundation.transitionend, RegExpEscape: window.Foundation.RegExpEscape, onLoad: window.Foundation.onLoad};
+
+/***/ }),
+/* 3 */
+/***/ (function(module, exports) {
+
+module.exports = {Plugin: window.Foundation.Plugin};
+
+/***/ }),
+/* 4 */,
+/* 5 */
+/***/ (function(module, exports) {
+
+module.exports = {Keyboard: window.Foundation.Keyboard};
+
+/***/ }),
+/* 6 */,
+/* 7 */,
+/* 8 */
+/***/ (function(module, exports) {
+
+module.exports = {Box: window.Foundation.Box};
+
+/***/ }),
+/* 9 */
+/***/ (function(module, exports) {
+
+module.exports = {Nest: window.Foundation.Nest};
+
+/***/ }),
+/* 10 */,
+/* 11 */,
+/* 12 */,
+/* 13 */,
+/* 14 */,
+/* 15 */,
+/* 16 */,
+/* 17 */,
+/* 18 */,
+/* 19 */,
+/* 20 */,
+/* 21 */,
+/* 22 */,
+/* 23 */,
+/* 24 */,
+/* 25 */,
+/* 26 */,
+/* 27 */,
+/* 28 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = __webpack_require__(29);
+
+
+/***/ }),
+/* 29 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__foundation_core__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__foundation_core___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__foundation_core__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__foundation_dropdownMenu__ = __webpack_require__(48);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__foundation_dropdownMenu__ = __webpack_require__(30);
 
 
 
 __WEBPACK_IMPORTED_MODULE_0__foundation_core__["Foundation"].plugin(__WEBPACK_IMPORTED_MODULE_1__foundation_dropdownMenu__["a" /* DropdownMenu */], 'DropdownMenu');
 
 /***/ }),
-
-/***/ 2:
-/***/ (function(module, exports) {
-
-module.exports = {Plugin: window.Foundation.Plugin};
-
-/***/ }),
-
-/***/ 3:
-/***/ (function(module, exports) {
-
-module.exports = {rtl: window.Foundation.rtl, GetYoDigits: window.Foundation.GetYoDigits, transitionend: window.Foundation.transitionend};
-
-/***/ }),
-
-/***/ 48:
+/* 30 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -124,9 +161,9 @@ module.exports = {rtl: window.Foundation.rtl, GetYoDigits: window.Foundation.Get
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__foundation_util_nest___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2__foundation_util_nest__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__foundation_util_box__ = __webpack_require__(8);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__foundation_util_box___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3__foundation_util_box__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__foundation_util_core__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__foundation_util_core__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__foundation_util_core___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4__foundation_util_core__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__foundation_plugin__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__foundation_plugin__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__foundation_plugin___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_5__foundation_plugin__);
 
 
@@ -147,7 +184,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 /**
  * DropdownMenu module.
- * @module foundation.dropdown-menu
+ * @module foundation.dropdownMenu
  * @requires foundation.util.keyboard
  * @requires foundation.util.box
  * @requires foundation.util.nest
@@ -210,7 +247,7 @@ var DropdownMenu = function (_Plugin) {
       this.$tabs.find('ul.is-dropdown-submenu').addClass(this.options.verticalClass);
 
       if (this.options.alignment === 'auto') {
-        if (this.$element.hasClass(this.options.rightClass) || __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__foundation_util_core__["rtl"])() || this.$element.parents('.top-bar-right').is('*')) {
+        if (this.$element.hasClass(this.options.rightClass) || Object(__WEBPACK_IMPORTED_MODULE_4__foundation_util_core__["rtl"])() || this.$element.parents('.top-bar-right').is('*')) {
           this.options.alignment = 'right';
           subs.addClass('opens-left');
         } else {
@@ -235,7 +272,7 @@ var DropdownMenu = function (_Plugin) {
   }, {
     key: '_isRtl',
     value: function _isRtl() {
-      return this.$element.hasClass('align-right') || __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__foundation_util_core__["rtl"])() && !this.$element.hasClass('align-left');
+      return this.$element.hasClass('align-right') || Object(__WEBPACK_IMPORTED_MODULE_4__foundation_util_core__["rtl"])() && !this.$element.hasClass('align-left');
     }
 
     /**
@@ -277,12 +314,12 @@ var DropdownMenu = function (_Plugin) {
       };
 
       if (this.options.clickOpen || hasTouch) {
-        this.$menuItems.on('click.zf.dropdownmenu touchstart.zf.dropdownmenu', handleClickFn);
+        this.$menuItems.on('click.zf.dropdownMenu touchstart.zf.dropdownMenu', handleClickFn);
       }
 
       // Handle Leaf element Clicks
       if (_this.options.closeOnClickInside) {
-        this.$menuItems.on('click.zf.dropdownmenu', function (e) {
+        this.$menuItems.on('click.zf.dropdownMenu', function (e) {
           var $elem = __WEBPACK_IMPORTED_MODULE_0_jquery___default()(this),
               hasSub = $elem.hasClass(parClass);
           if (!hasSub) {
@@ -292,7 +329,7 @@ var DropdownMenu = function (_Plugin) {
       }
 
       if (!this.options.disableHover) {
-        this.$menuItems.on('mouseenter.zf.dropdownmenu', function (e) {
+        this.$menuItems.on('mouseenter.zf.dropdownMenu', function (e) {
           var $elem = __WEBPACK_IMPORTED_MODULE_0_jquery___default()(this),
               hasSub = $elem.hasClass(parClass);
 
@@ -302,7 +339,7 @@ var DropdownMenu = function (_Plugin) {
               _this._show($elem.children('.is-dropdown-submenu'));
             }, _this.options.hoverDelay));
           }
-        }).on('mouseleave.zf.dropdownmenu', function (e) {
+        }).on('mouseleave.zf.dropdownMenu', function (e) {
           var $elem = __WEBPACK_IMPORTED_MODULE_0_jquery___default()(this),
               hasSub = $elem.hasClass(parClass);
           if (hasSub && _this.options.autoclose) {
@@ -317,7 +354,7 @@ var DropdownMenu = function (_Plugin) {
           }
         });
       }
-      this.$menuItems.on('keydown.zf.dropdownmenu', function (e) {
+      this.$menuItems.on('keydown.zf.dropdownMenu', function (e) {
         var $element = __WEBPACK_IMPORTED_MODULE_0_jquery___default()(e.target).parentsUntil('ul', '[role="menuitem"]'),
             isTab = _this.$tabs.index($element) > -1,
             $elements = isTab ? _this.$tabs : $element.siblings('li').add($element),
@@ -445,14 +482,14 @@ var DropdownMenu = function (_Plugin) {
     value: function _addBodyHandler() {
       var $body = __WEBPACK_IMPORTED_MODULE_0_jquery___default()(document.body),
           _this = this;
-      $body.off('mouseup.zf.dropdownmenu touchend.zf.dropdownmenu').on('mouseup.zf.dropdownmenu touchend.zf.dropdownmenu', function (e) {
+      $body.off('mouseup.zf.dropdownMenu touchend.zf.dropdownMenu').on('mouseup.zf.dropdownMenu touchend.zf.dropdownMenu', function (e) {
         var $link = _this.$element.find(e.target);
         if ($link.length) {
           return;
         }
 
         _this._hide();
-        $body.off('mouseup.zf.dropdownmenu touchend.zf.dropdownmenu');
+        $body.off('mouseup.zf.dropdownMenu touchend.zf.dropdownMenu');
       });
     }
 
@@ -492,7 +529,7 @@ var DropdownMenu = function (_Plugin) {
        * Fires when the new dropdown pane is visible.
        * @event DropdownMenu#show
        */
-      this.$element.trigger('show.zf.dropdownmenu', [$sub]);
+      this.$element.trigger('show.zf.dropdownMenu', [$sub]);
     }
 
     /**
@@ -534,7 +571,7 @@ var DropdownMenu = function (_Plugin) {
          * Fires when the open menus are closed.
          * @event DropdownMenu#hide
          */
-        this.$element.trigger('hide.zf.dropdownmenu', [$toClose]);
+        this.$element.trigger('hide.zf.dropdownMenu', [$toClose]);
       }
     }
 
@@ -546,8 +583,8 @@ var DropdownMenu = function (_Plugin) {
   }, {
     key: '_destroy',
     value: function _destroy() {
-      this.$menuItems.off('.zf.dropdownmenu').removeAttr('data-is-click').removeClass('is-right-arrow is-left-arrow is-down-arrow opens-right opens-left opens-inner');
-      __WEBPACK_IMPORTED_MODULE_0_jquery___default()(document.body).off('.zf.dropdownmenu');
+      this.$menuItems.off('.zf.dropdownMenu').removeAttr('data-is-click').removeClass('is-right-arrow is-left-arrow is-down-arrow opens-right opens-left opens-inner');
+      __WEBPACK_IMPORTED_MODULE_0_jquery___default()(document.body).off('.zf.dropdownMenu');
       __WEBPACK_IMPORTED_MODULE_2__foundation_util_nest__["Nest"].Burn(this.$element, 'dropdown');
     }
   }]);
@@ -643,35 +680,6 @@ DropdownMenu.defaults = {
 
 
 
-/***/ }),
-
-/***/ 5:
-/***/ (function(module, exports) {
-
-module.exports = {Keyboard: window.Foundation.Keyboard};
-
-/***/ }),
-
-/***/ 8:
-/***/ (function(module, exports) {
-
-module.exports = {Box: window.Foundation.Box};
-
-/***/ }),
-
-/***/ 84:
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports = __webpack_require__(18);
-
-
-/***/ }),
-
-/***/ 9:
-/***/ (function(module, exports) {
-
-module.exports = {Nest: window.Foundation.Nest};
-
 /***/ })
-
-/******/ });
+/******/ ]);
+//# sourceMappingURL=foundation.dropdownMenu.js.map

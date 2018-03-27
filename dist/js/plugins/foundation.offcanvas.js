@@ -33,9 +33,6 @@
 /******/ 	// expose the module cache
 /******/ 	__webpack_require__.c = installedModules;
 /******/
-/******/ 	// identity function for calling harmony imports with the correct context
-/******/ 	__webpack_require__.i = function(value) { return value; };
-/******/
 /******/ 	// define getter function for harmony exports
 /******/ 	__webpack_require__.d = function(exports, name, getter) {
 /******/ 		if(!__webpack_require__.o(exports, name)) {
@@ -63,7 +60,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 88);
+/******/ 	return __webpack_require__(__webpack_require__.s = 41);
 /******/ })
 /************************************************************************/
 /******/ ({
@@ -85,29 +82,14 @@ module.exports = {Foundation: window.Foundation};
 /***/ 2:
 /***/ (function(module, exports) {
 
-module.exports = {Plugin: window.Foundation.Plugin};
-
-/***/ }),
-
-/***/ 22:
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__foundation_core__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__foundation_core___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__foundation_core__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__foundation_offcanvas__ = __webpack_require__(52);
-
-
-
-__WEBPACK_IMPORTED_MODULE_0__foundation_core__["Foundation"].plugin(__WEBPACK_IMPORTED_MODULE_1__foundation_offcanvas__["a" /* OffCanvas */], 'OffCanvas');
+module.exports = {rtl: window.Foundation.rtl, GetYoDigits: window.Foundation.GetYoDigits, transitionend: window.Foundation.transitionend, RegExpEscape: window.Foundation.RegExpEscape, onLoad: window.Foundation.onLoad};
 
 /***/ }),
 
 /***/ 3:
 /***/ (function(module, exports) {
 
-module.exports = {rtl: window.Foundation.rtl, GetYoDigits: window.Foundation.GetYoDigits, transitionend: window.Foundation.transitionend};
+module.exports = {Plugin: window.Foundation.Plugin};
 
 /***/ }),
 
@@ -118,27 +100,43 @@ module.exports = {Motion: window.Foundation.Motion, Move: window.Foundation.Move
 
 /***/ }),
 
-/***/ 5:
-/***/ (function(module, exports) {
+/***/ 41:
+/***/ (function(module, exports, __webpack_require__) {
 
-module.exports = {Keyboard: window.Foundation.Keyboard};
+module.exports = __webpack_require__(42);
+
 
 /***/ }),
 
-/***/ 52:
+/***/ 42:
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__foundation_core__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__foundation_core___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__foundation_core__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__foundation_offcanvas__ = __webpack_require__(43);
+
+
+
+__WEBPACK_IMPORTED_MODULE_0__foundation_core__["Foundation"].plugin(__WEBPACK_IMPORTED_MODULE_1__foundation_offcanvas__["a" /* OffCanvas */], 'OffCanvas');
+
+/***/ }),
+
+/***/ 43:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return OffCanvas; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_jquery__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_jquery___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_jquery__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__foundation_util_keyboard__ = __webpack_require__(5);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__foundation_util_keyboard___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__foundation_util_keyboard__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__foundation_util_mediaQuery__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__foundation_util_mediaQuery___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2__foundation_util_mediaQuery__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__foundation_util_core__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__foundation_util_core___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3__foundation_util_core__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__foundation_plugin__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__foundation_util_core__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__foundation_util_core___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__foundation_util_core__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__foundation_util_keyboard__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__foundation_util_keyboard___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2__foundation_util_keyboard__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__foundation_util_mediaQuery__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__foundation_util_mediaQuery___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3__foundation_util_mediaQuery__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__foundation_plugin__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__foundation_plugin___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4__foundation_plugin__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__foundation_util_triggers__ = __webpack_require__(7);
 
@@ -161,7 +159,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 /**
  * OffCanvas module.
- * @module foundation.offcanvas
+ * @module foundation.offCanvas
  * @requires foundation.util.keyboard
  * @requires foundation.util.mediaQuery
  * @requires foundation.util.triggers
@@ -211,12 +209,12 @@ var OffCanvas = function (_Plugin) {
 
       // Triggers init is idempotent, just need to make sure it is initialized
       __WEBPACK_IMPORTED_MODULE_5__foundation_util_triggers__["a" /* Triggers */].init(__WEBPACK_IMPORTED_MODULE_0_jquery___default.a);
-      __WEBPACK_IMPORTED_MODULE_2__foundation_util_mediaQuery__["MediaQuery"]._init();
+      __WEBPACK_IMPORTED_MODULE_3__foundation_util_mediaQuery__["MediaQuery"]._init();
 
       this._init();
       this._events();
 
-      __WEBPACK_IMPORTED_MODULE_1__foundation_util_keyboard__["Keyboard"].register('OffCanvas', {
+      __WEBPACK_IMPORTED_MODULE_2__foundation_util_keyboard__["Keyboard"].register('OffCanvas', {
         'ESCAPE': 'close'
       });
     }
@@ -280,10 +278,17 @@ var OffCanvas = function (_Plugin) {
         }
       }
 
-      this.options.isRevealed = this.options.isRevealed || new RegExp(this.options.revealClass, 'g').test(this.$element[0].className);
+      // Get the revealOn option from the class.
+      var revealOnRegExp = new RegExp(Object(__WEBPACK_IMPORTED_MODULE_1__foundation_util_core__["RegExpEscape"])(this.options.revealClass) + '([^\\s]+)', 'g');
+      var revealOnClass = revealOnRegExp.exec(this.$element[0].className);
+      if (revealOnClass) {
+        this.options.isRevealed = true;
+        this.options.revealOn = this.options.revealOn || revealOnClass[1];
+      }
 
-      if (this.options.isRevealed === true) {
-        this.options.revealOn = this.options.revealOn || this.$element[0].className.match(/(reveal-for-medium|reveal-for-large)/g)[0].split('-')[2];
+      // Ensure the `reveal-on-*` class is set.
+      if (this.options.isRevealed === true && this.options.revealOn) {
+        this.$element.first().addClass('' + this.options.revealClass + this.options.revealOn);
         this._setMQChecker();
       }
 
@@ -304,16 +309,16 @@ var OffCanvas = function (_Plugin) {
   }, {
     key: '_events',
     value: function _events() {
-      this.$element.off('.zf.trigger .zf.offcanvas').on({
+      this.$element.off('.zf.trigger .zf.offCanvas').on({
         'open.zf.trigger': this.open.bind(this),
         'close.zf.trigger': this.close.bind(this),
         'toggle.zf.trigger': this.toggle.bind(this),
-        'keydown.zf.offcanvas': this._handleKeyboard.bind(this)
+        'keydown.zf.offCanvas': this._handleKeyboard.bind(this)
       });
 
       if (this.options.closeOnClick === true) {
         var $target = this.options.contentOverlay ? this.$overlay : this.$content;
-        $target.on({ 'click.zf.offcanvas': this.close.bind(this) });
+        $target.on({ 'click.zf.offCanvas': this.close.bind(this) });
       }
     }
 
@@ -327,15 +332,17 @@ var OffCanvas = function (_Plugin) {
     value: function _setMQChecker() {
       var _this = this;
 
+      this.onLoadListener = Object(__WEBPACK_IMPORTED_MODULE_1__foundation_util_core__["onLoad"])(__WEBPACK_IMPORTED_MODULE_0_jquery___default()(window), function () {
+        if (__WEBPACK_IMPORTED_MODULE_3__foundation_util_mediaQuery__["MediaQuery"].atLeast(_this.options.revealOn)) {
+          _this.reveal(true);
+        }
+      });
+
       __WEBPACK_IMPORTED_MODULE_0_jquery___default()(window).on('changed.zf.mediaquery', function () {
-        if (__WEBPACK_IMPORTED_MODULE_2__foundation_util_mediaQuery__["MediaQuery"].atLeast(_this.options.revealOn)) {
+        if (__WEBPACK_IMPORTED_MODULE_3__foundation_util_mediaQuery__["MediaQuery"].atLeast(_this.options.revealOn)) {
           _this.reveal(true);
         } else {
           _this.reveal(false);
-        }
-      }).one('load.zf.offcanvas', function () {
-        if (__WEBPACK_IMPORTED_MODULE_2__foundation_util_mediaQuery__["MediaQuery"].atLeast(_this.options.revealOn)) {
-          _this.reveal(true);
         }
       });
     }
@@ -403,7 +410,7 @@ var OffCanvas = function (_Plugin) {
     }
 
     /**
-     * Stops scrolling of the body when offcanvas is open on mobile Safari and other troublesome browsers.
+     * Stops scrolling of the body when OffCanvas is open on mobile Safari and other troublesome browsers.
      * @private
      */
 
@@ -457,6 +464,7 @@ var OffCanvas = function (_Plugin) {
      * @param {Object} event - Event object passed from listener.
      * @param {jQuery} trigger - element that triggered the off-canvas to open.
      * @fires OffCanvas#opened
+     * @todo also trigger 'open' event?
      */
 
   }, {
@@ -483,14 +491,10 @@ var OffCanvas = function (_Plugin) {
         this.$element.siblings('[data-off-canvas-content]').css('transition-duration', '');
       }
 
-      /**
-       * Fires when the off-canvas menu opens.
-       * @event OffCanvas#opened
-       */
       this.$element.addClass('is-open').removeClass('is-closed');
 
       this.$triggers.attr('aria-expanded', 'true');
-      this.$element.attr('aria-hidden', 'false').trigger('opened.zf.offcanvas');
+      this.$element.attr('aria-hidden', 'false');
 
       this.$content.addClass('is-open-' + this.position);
 
@@ -510,7 +514,7 @@ var OffCanvas = function (_Plugin) {
       }
 
       if (this.options.autoFocus === true) {
-        this.$element.one(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__foundation_util_core__["transitionend"])(this.$element), function () {
+        this.$element.one(Object(__WEBPACK_IMPORTED_MODULE_1__foundation_util_core__["transitionend"])(this.$element), function () {
           if (!_this.$element.hasClass('is-open')) {
             return; // exit if prematurely closed
           }
@@ -525,10 +529,16 @@ var OffCanvas = function (_Plugin) {
 
       if (this.options.trapFocus === true) {
         this.$content.attr('tabindex', '-1');
-        __WEBPACK_IMPORTED_MODULE_1__foundation_util_keyboard__["Keyboard"].trapFocus(this.$element);
+        __WEBPACK_IMPORTED_MODULE_2__foundation_util_keyboard__["Keyboard"].trapFocus(this.$element);
       }
 
       this._addContentClasses();
+
+      /**
+       * Fires when the off-canvas menu opens.
+       * @event OffCanvas#opened
+       */
+      this.$element.trigger('opened.zf.offCanvas');
     }
 
     /**
@@ -554,7 +564,7 @@ var OffCanvas = function (_Plugin) {
        * Fires when the off-canvas menu opens.
        * @event OffCanvas#closed
        */
-      .trigger('closed.zf.offcanvas');
+      .trigger('closed.zf.offCanvas');
 
       this.$content.removeClass('is-open-left is-open-top is-open-right is-open-bottom');
 
@@ -577,11 +587,11 @@ var OffCanvas = function (_Plugin) {
 
       if (this.options.trapFocus === true) {
         this.$content.removeAttr('tabindex');
-        __WEBPACK_IMPORTED_MODULE_1__foundation_util_keyboard__["Keyboard"].releaseFocus(this.$element);
+        __WEBPACK_IMPORTED_MODULE_2__foundation_util_keyboard__["Keyboard"].releaseFocus(this.$element);
       }
 
       // Listen to transitionEnd and add class when done.
-      this.$element.one(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__foundation_util_core__["transitionend"])(this.$element), function (e) {
+      this.$element.one(Object(__WEBPACK_IMPORTED_MODULE_1__foundation_util_core__["transitionend"])(this.$element), function (e) {
         _this.$element.addClass('is-closed');
         _this._removeContentClasses();
       });
@@ -615,7 +625,7 @@ var OffCanvas = function (_Plugin) {
     value: function _handleKeyboard(e) {
       var _this4 = this;
 
-      __WEBPACK_IMPORTED_MODULE_1__foundation_util_keyboard__["Keyboard"].handleKey(e, 'OffCanvas', {
+      __WEBPACK_IMPORTED_MODULE_2__foundation_util_keyboard__["Keyboard"].handleKey(e, 'OffCanvas', {
         close: function () {
           _this4.close();
           _this4.$lastTrigger.focus();
@@ -629,7 +639,7 @@ var OffCanvas = function (_Plugin) {
     }
 
     /**
-     * Destroys the offcanvas plugin.
+     * Destroys the OffCanvas plugin.
      * @function
      */
 
@@ -637,8 +647,9 @@ var OffCanvas = function (_Plugin) {
     key: '_destroy',
     value: function _destroy() {
       this.close();
-      this.$element.off('.zf.trigger .zf.offcanvas');
-      this.$overlay.off('.zf.offcanvas');
+      this.$element.off('.zf.trigger .zf.offCanvas');
+      this.$overlay.off('.zf.offCanvas');
+      __WEBPACK_IMPORTED_MODULE_0_jquery___default()(window).off(this.onLoadListener);
     }
   }]);
 
@@ -695,7 +706,7 @@ OffCanvas.defaults = {
   transitionTime: null,
 
   /**
-   * Type of transition for the offcanvas menu. Options are 'push', 'detached' or 'slide'.
+   * Type of transition for the OffCanvas menu. Options are 'push', 'detached' or 'slide'.
    * @option
    * @type {string}
    * @default push
@@ -711,7 +722,7 @@ OffCanvas.defaults = {
   forceTo: null,
 
   /**
-   * Allow the offcanvas to remain open for certain breakpoints.
+   * Allow the OffCanvas to remain open for certain breakpoints.
    * @option
    * @type {boolean}
    * @default false
@@ -727,7 +738,7 @@ OffCanvas.defaults = {
   revealOn: null,
 
   /**
-   * Force focus to the offcanvas on open. If true, will focus the opening trigger on close.
+   * Force focus to the OffCanvas on open. If true, will focus the opening trigger on close.
    * @option
    * @type {boolean}
    * @default true
@@ -735,7 +746,7 @@ OffCanvas.defaults = {
   autoFocus: true,
 
   /**
-   * Class used to force an offcanvas to remain open. Foundation defaults for this are `reveal-for-large` & `reveal-for-medium`.
+   * Class used to force an OffCanvas to remain open. Foundation defaults for this are `reveal-for-large` & `reveal-for-medium`.
    * @option
    * @type {string}
    * @default reveal-for-
@@ -744,7 +755,7 @@ OffCanvas.defaults = {
   revealClass: 'reveal-for-',
 
   /**
-   * Triggers optional focus trapping when opening an offcanvas. Sets tabindex of [data-off-canvas-content] to -1 for accessibility purposes.
+   * Triggers optional focus trapping when opening an OffCanvas. Sets tabindex of [data-off-canvas-content] to -1 for accessibility purposes.
    * @option
    * @type {boolean}
    * @default false
@@ -753,6 +764,13 @@ OffCanvas.defaults = {
 };
 
 
+
+/***/ }),
+
+/***/ 5:
+/***/ (function(module, exports) {
+
+module.exports = {Keyboard: window.Foundation.Keyboard};
 
 /***/ }),
 
@@ -770,8 +788,11 @@ module.exports = {MediaQuery: window.Foundation.MediaQuery};
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Triggers; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_jquery__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_jquery___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_jquery__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__foundation_util_motion__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__foundation_util_motion___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__foundation_util_motion__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__foundation_util_core__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__foundation_util_core___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__foundation_util_core__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__foundation_util_motion__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__foundation_util_motion___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2__foundation_util_motion__);
+
 
 
 
@@ -826,7 +847,7 @@ Triggers.Listeners.Basic = {
     var animation = __WEBPACK_IMPORTED_MODULE_0_jquery___default()(this).data('closable');
 
     if (animation !== '') {
-      __WEBPACK_IMPORTED_MODULE_1__foundation_util_motion__["Motion"].animateOut(__WEBPACK_IMPORTED_MODULE_0_jquery___default()(this), animation, function () {
+      __WEBPACK_IMPORTED_MODULE_2__foundation_util_motion__["Motion"].animateOut(__WEBPACK_IMPORTED_MODULE_0_jquery___default()(this), animation, function () {
         __WEBPACK_IMPORTED_MODULE_0_jquery___default()(this).trigger('closed.zf');
       });
     } else {
@@ -1019,15 +1040,10 @@ Triggers.init = function ($, Foundation) {
   if (typeof $.triggersInitialized === 'undefined') {
     var $document = $(document);
 
-    if (document.readyState === "complete") {
+    Object(__WEBPACK_IMPORTED_MODULE_1__foundation_util_core__["onLoad"])($(window), function () {
       Triggers.Initializers.addSimpleListeners();
       Triggers.Initializers.addGlobalListeners();
-    } else {
-      $(window).on('load', function () {
-        Triggers.Initializers.addSimpleListeners();
-        Triggers.Initializers.addGlobalListeners();
-      });
-    }
+    });
 
     $.triggersInitialized = true;
   }
@@ -1041,14 +1057,7 @@ Triggers.init = function ($, Foundation) {
 
 
 
-/***/ }),
-
-/***/ 88:
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports = __webpack_require__(22);
-
-
 /***/ })
 
 /******/ });
+//# sourceMappingURL=foundation.offcanvas.js.map

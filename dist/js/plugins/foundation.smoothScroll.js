@@ -33,9 +33,6 @@
 /******/ 	// expose the module cache
 /******/ 	__webpack_require__.c = installedModules;
 /******/
-/******/ 	// identity function for calling harmony imports with the correct context
-/******/ 	__webpack_require__.i = function(value) { return value; };
-/******/
 /******/ 	// define getter function for harmony exports
 /******/ 	__webpack_require__.d = function(exports, name, getter) {
 /******/ 		if(!__webpack_require__.o(exports, name)) {
@@ -63,7 +60,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 95);
+/******/ 	return __webpack_require__(__webpack_require__.s = 68);
 /******/ })
 /************************************************************************/
 /******/ ({
@@ -85,18 +82,33 @@ module.exports = {Foundation: window.Foundation};
 /***/ 2:
 /***/ (function(module, exports) {
 
+module.exports = {rtl: window.Foundation.rtl, GetYoDigits: window.Foundation.GetYoDigits, transitionend: window.Foundation.transitionend, RegExpEscape: window.Foundation.RegExpEscape, onLoad: window.Foundation.onLoad};
+
+/***/ }),
+
+/***/ 3:
+/***/ (function(module, exports) {
+
 module.exports = {Plugin: window.Foundation.Plugin};
 
 /***/ }),
 
-/***/ 29:
+/***/ 68:
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = __webpack_require__(69);
+
+
+/***/ }),
+
+/***/ 69:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__foundation_core__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__foundation_core___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__foundation_core__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__foundation_smoothScroll__ = __webpack_require__(59);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__foundation_smoothScroll__ = __webpack_require__(70);
 
 
 
@@ -104,23 +116,16 @@ __WEBPACK_IMPORTED_MODULE_0__foundation_core__["Foundation"].plugin(__WEBPACK_IM
 
 /***/ }),
 
-/***/ 3:
-/***/ (function(module, exports) {
-
-module.exports = {rtl: window.Foundation.rtl, GetYoDigits: window.Foundation.GetYoDigits, transitionend: window.Foundation.transitionend};
-
-/***/ }),
-
-/***/ 59:
+/***/ 70:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return SmoothScroll; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_jquery__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_jquery___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_jquery__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__foundation_util_core__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__foundation_util_core__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__foundation_util_core___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__foundation_util_core__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__foundation_plugin__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__foundation_plugin__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__foundation_plugin___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2__foundation_plugin__);
 
 
@@ -138,7 +143,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 /**
  * SmoothScroll module.
- * @module foundation.smooth-scroll
+ * @module foundation.smoothScroll
  */
 
 var SmoothScroll = function (_Plugin) {
@@ -177,7 +182,7 @@ var SmoothScroll = function (_Plugin) {
     }, {
         key: '_init',
         value: function _init() {
-            var id = this.$element[0].id || __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__foundation_util_core__["GetYoDigits"])(6, 'smooth-scroll');
+            var id = this.$element[0].id || Object(__WEBPACK_IMPORTED_MODULE_1__foundation_util_core__["GetYoDigits"])(6, 'smooth-scroll');
             var _this = this;
             this.$element.attr({
                 'id': id
@@ -290,14 +295,7 @@ SmoothScroll.defaults = {
 
 
 
-/***/ }),
-
-/***/ 95:
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports = __webpack_require__(29);
-
-
 /***/ })
 
 /******/ });
+//# sourceMappingURL=foundation.smoothScroll.js.map

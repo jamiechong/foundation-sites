@@ -33,9 +33,6 @@
 /******/ 	// expose the module cache
 /******/ 	__webpack_require__.c = installedModules;
 /******/
-/******/ 	// identity function for calling harmony imports with the correct context
-/******/ 	__webpack_require__.i = function(value) { return value; };
-/******/
 /******/ 	// define getter function for harmony exports
 /******/ 	__webpack_require__.d = function(exports, name, getter) {
 /******/ 		if(!__webpack_require__.o(exports, name)) {
@@ -63,56 +60,75 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 79);
+/******/ 	return __webpack_require__(__webpack_require__.s = 13);
 /******/ })
 /************************************************************************/
-/******/ ({
-
-/***/ 0:
+/******/ ([
+/* 0 */
 /***/ (function(module, exports) {
 
 module.exports = jQuery;
 
 /***/ }),
-
-/***/ 1:
+/* 1 */
 /***/ (function(module, exports) {
 
 module.exports = {Foundation: window.Foundation};
 
 /***/ }),
+/* 2 */
+/***/ (function(module, exports) {
 
-/***/ 13:
+module.exports = {rtl: window.Foundation.rtl, GetYoDigits: window.Foundation.GetYoDigits, transitionend: window.Foundation.transitionend, RegExpEscape: window.Foundation.RegExpEscape, onLoad: window.Foundation.onLoad};
+
+/***/ }),
+/* 3 */
+/***/ (function(module, exports) {
+
+module.exports = {Plugin: window.Foundation.Plugin};
+
+/***/ }),
+/* 4 */,
+/* 5 */,
+/* 6 */,
+/* 7 */,
+/* 8 */,
+/* 9 */,
+/* 10 */,
+/* 11 */,
+/* 12 */,
+/* 13 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = __webpack_require__(14);
+
+
+/***/ }),
+/* 14 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__foundation_core__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__foundation_core___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__foundation_core__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__foundation_abide__ = __webpack_require__(43);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__foundation_abide__ = __webpack_require__(15);
 
 
 
 __WEBPACK_IMPORTED_MODULE_0__foundation_core__["Foundation"].plugin(__WEBPACK_IMPORTED_MODULE_1__foundation_abide__["a" /* Abide */], 'Abide');
 
 /***/ }),
-
-/***/ 2:
-/***/ (function(module, exports) {
-
-module.exports = {Plugin: window.Foundation.Plugin};
-
-/***/ }),
-
-/***/ 43:
+/* 15 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Abide; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_jquery__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_jquery___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_jquery__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__foundation_plugin__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__foundation_plugin__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__foundation_plugin___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__foundation_plugin__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__foundation_util_core__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__foundation_util_core___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2__foundation_util_core__);
 
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -122,6 +138,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
 
 
 
@@ -169,7 +186,20 @@ var Abide = function (_Plugin) {
   }, {
     key: '_init',
     value: function _init() {
+      var _this3 = this;
+
       this.$inputs = this.$element.find('input, textarea, select');
+      var $globalErrors = this.$element.find('[data-abide-error]');
+
+      // Add a11y attributes to all fields
+      if (this.options.a11yAttributes) {
+        this.$inputs.each(function (i, input) {
+          return _this3.addA11yAttributes(__WEBPACK_IMPORTED_MODULE_0_jquery___default()(input));
+        });
+        $globalErrors.each(function (i, error) {
+          return _this3.addGlobalErrorA11yAttributes(__WEBPACK_IMPORTED_MODULE_0_jquery___default()(error));
+        });
+      }
 
       this._events();
     }
@@ -182,29 +212,29 @@ var Abide = function (_Plugin) {
   }, {
     key: '_events',
     value: function _events() {
-      var _this3 = this;
+      var _this4 = this;
 
       this.$element.off('.abide').on('reset.zf.abide', function () {
-        _this3.resetForm();
+        _this4.resetForm();
       }).on('submit.zf.abide', function () {
-        return _this3.validateForm();
+        return _this4.validateForm();
       });
 
       if (this.options.validateOn === 'fieldChange') {
         this.$inputs.off('change.zf.abide').on('change.zf.abide', function (e) {
-          _this3.validateInput(__WEBPACK_IMPORTED_MODULE_0_jquery___default()(e.target));
+          _this4.validateInput(__WEBPACK_IMPORTED_MODULE_0_jquery___default()(e.target));
         });
       }
 
       if (this.options.liveValidate) {
         this.$inputs.off('input.zf.abide').on('input.zf.abide', function (e) {
-          _this3.validateInput(__WEBPACK_IMPORTED_MODULE_0_jquery___default()(e.target));
+          _this4.validateInput(__WEBPACK_IMPORTED_MODULE_0_jquery___default()(e.target));
         });
       }
 
       if (this.options.validateOnBlur) {
         this.$inputs.off('blur.zf.abide').on('blur.zf.abide', function (e) {
-          _this3.validateInput(__WEBPACK_IMPORTED_MODULE_0_jquery___default()(e.target));
+          _this4.validateInput(__WEBPACK_IMPORTED_MODULE_0_jquery___default()(e.target));
         });
       }
     }
@@ -314,11 +344,11 @@ var Abide = function (_Plugin) {
   }, {
     key: 'findRadioLabels',
     value: function findRadioLabels($els) {
-      var _this4 = this;
+      var _this5 = this;
 
       var labels = $els.map(function (i, el) {
         var id = el.id;
-        var $label = _this4.$element.find('label[for="' + id + '"]');
+        var $label = _this5.$element.find('label[for="' + id + '"]');
 
         if (!$label.length) {
           $label = __WEBPACK_IMPORTED_MODULE_0_jquery___default()(el).closest('label');
@@ -348,7 +378,69 @@ var Abide = function (_Plugin) {
         $formError.addClass(this.options.formErrorClass);
       }
 
-      $el.addClass(this.options.inputErrorClass).attr('data-invalid', '');
+      $el.addClass(this.options.inputErrorClass).attr({
+        'data-invalid': '',
+        'aria-invalid': true
+      });
+    }
+
+    /**
+     * Adds [for] and [role=alert] attributes to all form error targetting $el,
+     * and [aria-describedby] attribute to $el toward the first form error.
+     * @param {Object} $el - jQuery object
+     */
+
+  }, {
+    key: 'addA11yAttributes',
+    value: function addA11yAttributes($el) {
+      var $errors = this.findFormError($el);
+      var $labels = $errors.filter('label');
+      var $error = $errors.first();
+      if (!$errors.length) return;
+
+      // Set [aria-describedby] on the input toward the first form error if it is not set
+      if (typeof $el.attr('aria-describedby') === 'undefined') {
+        // Get the first error ID or create one
+        var errorId = $error.attr('id');
+        if (typeof errorId === 'undefined') {
+          errorId = Object(__WEBPACK_IMPORTED_MODULE_2__foundation_util_core__["GetYoDigits"])(6, 'abide-error');
+          $error.attr('id', errorId);
+        };
+
+        $el.attr('aria-describedby', errorId);
+      }
+
+      if ($labels.filter('[for]').length < $labels.length) {
+        // Get the input ID or create one
+        var elemId = $el.attr('id');
+        if (typeof elemId === 'undefined') {
+          elemId = Object(__WEBPACK_IMPORTED_MODULE_2__foundation_util_core__["GetYoDigits"])(6, 'abide-input');
+          $el.attr('id', elemId);
+        };
+
+        // For each label targeting $el, set [for] if it is not set.
+        $labels.each(function (i, label) {
+          var $label = __WEBPACK_IMPORTED_MODULE_0_jquery___default()(label);
+          if (typeof $label.attr('for') === 'undefined') $label.attr('for', elemId);
+        });
+      }
+
+      // For each error targeting $el, set [role=alert] if it is not set.
+      $errors.each(function (i, label) {
+        var $label = __WEBPACK_IMPORTED_MODULE_0_jquery___default()(label);
+        if (typeof $label.attr('role') === 'undefined') $label.attr('role', 'alert');
+      }).end();
+    }
+
+    /**
+     * Adds [aria-live] attribute to the given global form error $el.
+     * @param {Object} $el - jQuery object to add the attribute to
+     */
+
+  }, {
+    key: 'addGlobalErrorA11yAttributes',
+    value: function addGlobalErrorA11yAttributes($el) {
+      if (typeof $el.attr('aria-live') === 'undefined') $el.attr('aria-live', this.options.a11yErrorLevel);
     }
 
     /**
@@ -372,7 +464,10 @@ var Abide = function (_Plugin) {
         $formErrors.removeClass(this.options.formErrorClass);
       }
 
-      $els.removeClass(this.options.inputErrorClass).removeAttr('data-invalid');
+      $els.removeClass(this.options.inputErrorClass).attr({
+        'data-invalid': null,
+        'aria-invalid': null
+      });
     }
 
     /**
@@ -399,7 +494,10 @@ var Abide = function (_Plugin) {
         $formError.removeClass(this.options.formErrorClass);
       }
 
-      $el.removeClass(this.options.inputErrorClass).removeAttr('data-invalid');
+      $el.removeClass(this.options.inputErrorClass).attr({
+        'data-invalid': null,
+        'aria-invalid': null
+      });
     }
 
     /**
@@ -491,6 +589,8 @@ var Abide = function (_Plugin) {
   }, {
     key: 'validateForm',
     value: function validateForm() {
+      var _this6 = this;
+
       var acc = [];
       var _this = this;
 
@@ -500,7 +600,13 @@ var Abide = function (_Plugin) {
 
       var noError = acc.indexOf(false) === -1;
 
-      this.$element.find('[data-abide-error]').css('display', noError ? 'none' : 'block');
+      this.$element.find('[data-abide-error]').each(function (i, elem) {
+        var $elem = __WEBPACK_IMPORTED_MODULE_0_jquery___default()(elem);
+        // Ensure a11y attributes are set
+        if (_this6.options.a11yAttributes) _this6.addGlobalErrorA11yAttributes($elem);
+        // Show or hide the error
+        $elem.css('display', noError ? 'none' : 'block');
+      });
 
       /**
        * Fires when the form is finished validating. Event trigger is either `formvalid.zf.abide` or `forminvalid.zf.abide`.
@@ -594,12 +700,12 @@ var Abide = function (_Plugin) {
   }, {
     key: 'matchValidation',
     value: function matchValidation($el, validators, required) {
-      var _this5 = this;
+      var _this7 = this;
 
       required = required ? true : false;
 
       var clear = validators.split(' ').map(function (v) {
-        return _this5.options.validators[v]($el, required, $el.parent());
+        return _this7.options.validators[v]($el, required, $el.parent());
       });
       return clear.indexOf(false) === -1;
     }
@@ -619,9 +725,18 @@ var Abide = function (_Plugin) {
       __WEBPACK_IMPORTED_MODULE_0_jquery___default()('.' + opts.inputErrorClass, $form).not('small').removeClass(opts.inputErrorClass);
       __WEBPACK_IMPORTED_MODULE_0_jquery___default()(opts.formErrorSelector + '.' + opts.formErrorClass).removeClass(opts.formErrorClass);
       $form.find('[data-abide-error]').css('display', 'none');
-      __WEBPACK_IMPORTED_MODULE_0_jquery___default()(':input', $form).not(':button, :submit, :reset, :hidden, :radio, :checkbox, [data-abide-ignore]').val('').removeAttr('data-invalid');
-      __WEBPACK_IMPORTED_MODULE_0_jquery___default()(':input:radio', $form).not('[data-abide-ignore]').prop('checked', false).removeAttr('data-invalid');
-      __WEBPACK_IMPORTED_MODULE_0_jquery___default()(':input:checkbox', $form).not('[data-abide-ignore]').prop('checked', false).removeAttr('data-invalid');
+      __WEBPACK_IMPORTED_MODULE_0_jquery___default()(':input', $form).not(':button, :submit, :reset, :hidden, :radio, :checkbox, [data-abide-ignore]').val('').attr({
+        'data-invalid': null,
+        'aria-invalid': null
+      });
+      __WEBPACK_IMPORTED_MODULE_0_jquery___default()(':input:radio', $form).not('[data-abide-ignore]').prop('checked', false).attr({
+        'data-invalid': null,
+        'aria-invalid': null
+      });
+      __WEBPACK_IMPORTED_MODULE_0_jquery___default()(':input:checkbox', $form).not('[data-abide-ignore]').prop('checked', false).attr({
+        'data-invalid': null,
+        'aria-invalid': null
+      });
       /**
        * Fires when the form has been reset.
        * @event Abide#formreset
@@ -697,6 +812,27 @@ Abide.defaults = {
   formErrorClass: 'is-visible',
 
   /**
+   * If true, automatically insert when possible:
+   * - `[aria-describedby]` on fields
+   * - `[role=alert]` on form errors and `[for]` on form error labels
+   * - `[aria-live]` on global errors `[data-abide-error]` (see option `a11yErrorLevel`).
+   * @option
+   * @type {boolean}
+   * @default true
+   */
+  a11yAttributes: true,
+
+  /**
+   * [aria-live] attribute value to be applied on global errors `[data-abide-error]`.
+   * Options are: 'assertive', 'polite' and 'off'/null
+   * @option
+   * @see https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/ARIA_Live_Regions
+   * @type {string}
+   * @default 'assertive'
+   */
+  a11yErrorLevel: 'assertive',
+
+  /**
    * Set to true to validate text inputs on any value change.
    * @option
    * @type {boolean}
@@ -768,14 +904,6 @@ Abide.defaults = {
 
 
 
-/***/ }),
-
-/***/ 79:
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports = __webpack_require__(13);
-
-
 /***/ })
-
-/******/ });
+/******/ ]);
+//# sourceMappingURL=foundation.abide.js.map

@@ -33,9 +33,6 @@
 /******/ 	// expose the module cache
 /******/ 	__webpack_require__.c = installedModules;
 /******/
-/******/ 	// identity function for calling harmony imports with the correct context
-/******/ 	__webpack_require__.i = function(value) { return value; };
-/******/
 /******/ 	// define getter function for harmony exports
 /******/ 	__webpack_require__.d = function(exports, name, getter) {
 /******/ 		if(!__webpack_require__.o(exports, name)) {
@@ -63,7 +60,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 108);
+/******/ 	return __webpack_require__(__webpack_require__.s = 107);
 /******/ })
 /************************************************************************/
 /******/ ({
@@ -82,22 +79,15 @@ module.exports = {Foundation: window.Foundation};
 
 /***/ }),
 
-/***/ 108:
+/***/ 107:
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(42);
+module.exports = __webpack_require__(108);
 
 
 /***/ }),
 
-/***/ 4:
-/***/ (function(module, exports) {
-
-module.exports = {Motion: window.Foundation.Motion, Move: window.Foundation.Move};
-
-/***/ }),
-
-/***/ 42:
+/***/ 108:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -115,6 +105,20 @@ __WEBPACK_IMPORTED_MODULE_2__foundation_util_triggers__["a" /* Triggers */].init
 
 /***/ }),
 
+/***/ 2:
+/***/ (function(module, exports) {
+
+module.exports = {rtl: window.Foundation.rtl, GetYoDigits: window.Foundation.GetYoDigits, transitionend: window.Foundation.transitionend, RegExpEscape: window.Foundation.RegExpEscape, onLoad: window.Foundation.onLoad};
+
+/***/ }),
+
+/***/ 4:
+/***/ (function(module, exports) {
+
+module.exports = {Motion: window.Foundation.Motion, Move: window.Foundation.Move};
+
+/***/ }),
+
 /***/ 7:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -122,8 +126,11 @@ __WEBPACK_IMPORTED_MODULE_2__foundation_util_triggers__["a" /* Triggers */].init
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Triggers; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_jquery__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_jquery___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_jquery__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__foundation_util_motion__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__foundation_util_motion___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__foundation_util_motion__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__foundation_util_core__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__foundation_util_core___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__foundation_util_core__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__foundation_util_motion__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__foundation_util_motion___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2__foundation_util_motion__);
+
 
 
 
@@ -178,7 +185,7 @@ Triggers.Listeners.Basic = {
     var animation = __WEBPACK_IMPORTED_MODULE_0_jquery___default()(this).data('closable');
 
     if (animation !== '') {
-      __WEBPACK_IMPORTED_MODULE_1__foundation_util_motion__["Motion"].animateOut(__WEBPACK_IMPORTED_MODULE_0_jquery___default()(this), animation, function () {
+      __WEBPACK_IMPORTED_MODULE_2__foundation_util_motion__["Motion"].animateOut(__WEBPACK_IMPORTED_MODULE_0_jquery___default()(this), animation, function () {
         __WEBPACK_IMPORTED_MODULE_0_jquery___default()(this).trigger('closed.zf');
       });
     } else {
@@ -371,15 +378,10 @@ Triggers.init = function ($, Foundation) {
   if (typeof $.triggersInitialized === 'undefined') {
     var $document = $(document);
 
-    if (document.readyState === "complete") {
+    Object(__WEBPACK_IMPORTED_MODULE_1__foundation_util_core__["onLoad"])($(window), function () {
       Triggers.Initializers.addSimpleListeners();
       Triggers.Initializers.addGlobalListeners();
-    } else {
-      $(window).on('load', function () {
-        Triggers.Initializers.addSimpleListeners();
-        Triggers.Initializers.addGlobalListeners();
-      });
-    }
+    });
 
     $.triggersInitialized = true;
   }
@@ -396,3 +398,4 @@ Triggers.init = function ($, Foundation) {
 /***/ })
 
 /******/ });
+//# sourceMappingURL=foundation.util.triggers.js.map
